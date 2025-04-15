@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispot.mapper.impl</a> &gt; <span class="el_source">WifiSpotMapperImpl.java</span></div><h1>WifiSpotMapperImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispot.mapper.impl;
+
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotAddressDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotDto;
+import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
+import com.netquest.domain.wifispot.model.*;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Service
+<span class="nc" id="L17">public class WifiSpotMapperImpl implements WifiSpotMapper {</span>
+    @Override
+    public WifiSpotDto wifiSpotDomainToDto(WifiSpot wifiSpot) {
+
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (wifiSpot == null) {</span>
+<span class="nc" id="L22">            return null;</span>
+        }
+
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        UUID userUUID = (wifiSpot.getUserId() != null) ? wifiSpot.getUserId().getValue() : null;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        LocalDateTime wifiSpotCreateDateTime = (wifiSpot.getWifiSpotCreateDateTime() != null) ? wifiSpot.getWifiSpotCreateDateTime().getValue() : null;</span>
+<span class="nc" id="L27">        return new WifiSpotDto(</span>
+<span class="nc" id="L28">                wifiSpot.getWifiSpotId().getValue(),</span>
+                userUUID,
+<span class="nc" id="L30">                wifiSpot.getWifiSpotName().getValue(),</span>
+<span class="nc" id="L31">                wifiSpot.getWifiSpotDescription().getValue(),</span>
+<span class="nc" id="L32">                wifiSpot.getWifiSpotCoordinates().getLatitude(),</span>
+<span class="nc" id="L33">                wifiSpot.getWifiSpotCoordinates().getLongitude(),</span>
+<span class="nc" id="L34">                wifiSpot.getWifiSpotLocationType().getValue(),</span>
+<span class="nc" id="L35">                wifiSpot.getWifiSpotQualityIndicators().getWifiQuality(),</span>
+<span class="nc" id="L36">                wifiSpot.getWifiSpotQualityIndicators().getSignalStrength(),</span>
+<span class="nc" id="L37">                wifiSpot.getWifiSpotQualityIndicators().getBandwithLimitations(),</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">                wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval() != null ? wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval().getStartTime() : null,</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval() != null ? wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval().getEndTime() : null,</span>
+<span class="nc" id="L40">                wifiSpot.getWifiSpotEnvironmentalFeatures().isCrowded(),</span>
+<span class="nc" id="L41">                wifiSpot.getWifiSpotEnvironmentalFeatures().isCoveredArea(),</span>
+<span class="nc" id="L42">                wifiSpot.getWifiSpotEnvironmentalFeatures().isAirConditioning(),</span>
+<span class="nc" id="L43">                wifiSpot.getWifiSpotEnvironmentalFeatures().isOutdoorSeating(),</span>
+<span class="nc" id="L44">                wifiSpot.getWifiSpotEnvironmentalFeatures().isGoodView(),</span>
+<span class="nc" id="L45">                wifiSpot.getWifiSpotEnvironmentalFeatures().getNoiseLevel(),</span>
+<span class="nc" id="L46">                wifiSpot.getWifiSpotEnvironmentalFeatures().isPetFriendly(),</span>
+<span class="nc" id="L47">                wifiSpot.getWifiSpotEnvironmentalFeatures().isChildFriendly(),</span>
+<span class="nc" id="L48">                wifiSpot.getWifiSpotEnvironmentalFeatures().isDisabledAccess(),</span>
+<span class="nc" id="L49">                wifiSpot.getWifiSpotFacilities().isAvailablePowerOutlets(),</span>
+<span class="nc" id="L50">                wifiSpot.getWifiSpotFacilities().isChargingStations(),</span>
+<span class="nc" id="L51">                wifiSpot.getWifiSpotFacilities().isRestroomsAvailable(),</span>
+<span class="nc" id="L52">                wifiSpot.getWifiSpotFacilities().isParkingAvailability(),</span>
+<span class="nc" id="L53">                wifiSpot.getWifiSpotFacilities().isFoodOptions(),</span>
+<span class="nc" id="L54">                wifiSpot.getWifiSpotFacilities().isDrinkOptions(),</span>
+<span class="nc" id="L55">                wifiSpot.getWifiSpotWeatherFeatures().isOpenDuringRain(),</span>
+<span class="nc" id="L56">                wifiSpot.getWifiSpotWeatherFeatures().isOpenDuringHeat(),</span>
+<span class="nc" id="L57">                wifiSpot.getWifiSpotWeatherFeatures().isHeatedInWinter(),</span>
+<span class="nc" id="L58">                wifiSpot.getWifiSpotWeatherFeatures().isShadedAreas(),</span>
+<span class="nc" id="L59">                wifiSpot.getWifiSpotWeatherFeatures().isOutdoorFans(),</span>
+<span class="nc" id="L60">                wifiSpotAddressDomainToDto(wifiSpot.getWifiSpotAddress()),</span>
+<span class="nc" id="L61">                wifiSpot.getWifiSpotManagement().getValue(),</span>
+                wifiSpotCreateDateTime
+        );
+    }
+
+    @Override
+    public WifiSpot wifiSpotCreateDtoToDomain(WifiSpotCreateDto wifiSpotDto, UUID userUUID) {
+<span class="nc" id="L68">        return new WifiSpot(</span>
+<span class="nc" id="L69">                new WifiSpotName(wifiSpotDto.name()),</span>
+<span class="nc" id="L70">                new WifiSpotDescription(wifiSpotDto.description()),</span>
+<span class="nc" id="L71">                new WifiSpotCoordinates(wifiSpotDto.longitude(), wifiSpotDto.latitude()),</span>
+<span class="nc" id="L72">                new WifiSpotLocationType(wifiSpotDto.locationType()),</span>
+                new WifiSpotQualityIndicators(
+<span class="nc" id="L74">                        wifiSpotDto.wifiQuality(),</span>
+<span class="nc" id="L75">                        wifiSpotDto.signalStrength(),</span>
+<span class="nc" id="L76">                        wifiSpotDto.bandwidth(),</span>
+<span class="nc" id="L77">                        new WifiSpotPeakUsageInterval(wifiSpotDto.peakUsageStart(), wifiSpotDto.peakUsageEnd())</span>
+                ),
+                new WifiSpotEnvironmentalFeatures(
+<span class="nc" id="L80">                        wifiSpotDto.crowded(),</span>
+<span class="nc" id="L81">                        wifiSpotDto.coveredArea(),</span>
+<span class="nc" id="L82">                        wifiSpotDto.airConditioning(),</span>
+<span class="nc" id="L83">                        wifiSpotDto.outdoorSeating(),</span>
+<span class="nc" id="L84">                        wifiSpotDto.goodView(),</span>
+<span class="nc" id="L85">                        wifiSpotDto.noiseLevel(),</span>
+<span class="nc" id="L86">                        wifiSpotDto.petFriendly(),</span>
+<span class="nc" id="L87">                        wifiSpotDto.childFriendly(),</span>
+<span class="nc" id="L88">                        wifiSpotDto.disableAccess()</span>
+                ),
+                new WifiSpotFacilities(
+<span class="nc" id="L91">                        wifiSpotDto.availablePowerOutlets(),</span>
+<span class="nc" id="L92">                        wifiSpotDto.chargingStations(),</span>
+<span class="nc" id="L93">                        wifiSpotDto.restroomsAvailable(),</span>
+<span class="nc" id="L94">                        wifiSpotDto.parkingAvailability(),</span>
+<span class="nc" id="L95">                        wifiSpotDto.foodOptions(),</span>
+<span class="nc" id="L96">                        wifiSpotDto.drinkOptions()</span>
+                ),
+                new WifiSpotWeatherFeatures(
+<span class="nc" id="L99">                        wifiSpotDto.openDuringRain(),</span>
+<span class="nc" id="L100">                        wifiSpotDto.openDuringHeat(),</span>
+<span class="nc" id="L101">                        wifiSpotDto.heatedInWinter(),</span>
+<span class="nc" id="L102">                        wifiSpotDto.shadedAreas(),</span>
+<span class="nc" id="L103">                        wifiSpotDto.outdoorFans()</span>
+                ),
+<span class="nc" id="L105">                wifiSpotAddressCreateDtoToDomain(wifiSpotDto.address()),</span>
+                new WifiSpotManagement(
+<span class="nc" id="L107">                        wifiSpotDto.wifiSpotManagementType()</span>
+                ),
+                new UserId(userUUID)
+        );
+    }
+
+    @Override
+    public WifiSpot wifiSpotDtoToDomain(WifiSpotDto wifiSpotDto) {
+<span class="nc" id="L115">        return new WifiSpot(</span>
+<span class="nc" id="L116">                new WifiSpotId(wifiSpotDto.uuid()),</span>
+<span class="nc" id="L117">                new WifiSpotName(wifiSpotDto.name()),</span>
+<span class="nc" id="L118">                new WifiSpotDescription(wifiSpotDto.description()),</span>
+<span class="nc" id="L119">                new WifiSpotCoordinates(wifiSpotDto.longitude(), wifiSpotDto.latitude()),</span>
+<span class="nc" id="L120">                new WifiSpotLocationType(wifiSpotDto.locationType()),</span>
+                new WifiSpotQualityIndicators(
+<span class="nc" id="L122">                        wifiSpotDto.wifiQuality(),</span>
+<span class="nc" id="L123">                        wifiSpotDto.signalStrength(),</span>
+<span class="nc" id="L124">                        wifiSpotDto.bandwidth(),</span>
+<span class="nc" id="L125">                        new WifiSpotPeakUsageInterval(wifiSpotDto.peakUsageStart(), wifiSpotDto.peakUsageEnd())</span>
+                ),
+                new WifiSpotEnvironmentalFeatures(
+<span class="nc" id="L128">                        wifiSpotDto.crowded(),</span>
+<span class="nc" id="L129">                        wifiSpotDto.coveredArea(),</span>
+<span class="nc" id="L130">                        wifiSpotDto.airConditioning(),</span>
+<span class="nc" id="L131">                        wifiSpotDto.outdoorSeating(),</span>
+<span class="nc" id="L132">                        wifiSpotDto.goodView(),</span>
+<span class="nc" id="L133">                        wifiSpotDto.noiseLevel(),</span>
+<span class="nc" id="L134">                        wifiSpotDto.petFriendly(),</span>
+<span class="nc" id="L135">                        wifiSpotDto.childFriendly(),</span>
+<span class="nc" id="L136">                        wifiSpotDto.disableAccess()</span>
+                ),
+                new WifiSpotFacilities(
+<span class="nc" id="L139">                        wifiSpotDto.availablePowerOutlets(),</span>
+<span class="nc" id="L140">                        wifiSpotDto.chargingStations(),</span>
+<span class="nc" id="L141">                        wifiSpotDto.restroomsAvailable(),</span>
+<span class="nc" id="L142">                        wifiSpotDto.parkingAvailability(),</span>
+<span class="nc" id="L143">                        wifiSpotDto.foodOptions(),</span>
+<span class="nc" id="L144">                        wifiSpotDto.drinkOptions()</span>
+                ),
+                new WifiSpotWeatherFeatures(
+<span class="nc" id="L147">                        wifiSpotDto.openDuringRain(),</span>
+<span class="nc" id="L148">                        wifiSpotDto.openDuringHeat(),</span>
+<span class="nc" id="L149">                        wifiSpotDto.heatedInWinter(),</span>
+<span class="nc" id="L150">                        wifiSpotDto.shadedAreas(),</span>
+<span class="nc" id="L151">                        wifiSpotDto.outdoorFans()</span>
+                ),
+<span class="nc" id="L153">                wifiSpotAddressDtoToDomain(wifiSpotDto.address()),</span>
+                new WifiSpotManagement(
+<span class="nc" id="L155">                        wifiSpotDto.wifiSpotManagementType()</span>
+                ),
+<span class="nc" id="L157">                new UserId(wifiSpotDto.userId())</span>
+        );
+    }
+
+    @Override
+    public WifiSpotAddressDto wifiSpotAddressDomainToDto(WifiSpotAddress wifiSpotAddress) {
+<span class="nc" id="L163">        return new WifiSpotAddressDto(</span>
+<span class="nc" id="L164">                wifiSpotAddress.getWifiSpotAddressId().getValue(),</span>
+<span class="nc" id="L165">                wifiSpotAddress.getWifiSpotAddressCountry().getValue(),</span>
+<span class="nc" id="L166">                wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),</span>
+<span class="nc" id="L167">                wifiSpotAddress.getWifiSpotAddressLine1().getValue(),</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                wifiSpotAddress.getWifiSpotAddressLine2() != null ? wifiSpotAddress.getWifiSpotAddressLine2().getValue() : null,</span>
+<span class="nc" id="L169">                wifiSpotAddress.getWifiSpotAddressCity().getValue(),</span>
+<span class="nc" id="L170">                wifiSpotAddress.getWifiSpotAddressDistrict().getValue()</span>
+        );
+    }
+
+    @Override
+    public WifiSpotAddress wifiSpotAddressDtoToDomain(WifiSpotAddressDto wifiSpotAddressDto) {
+<span class="nc" id="L176">        return new WifiSpotAddress(</span>
+<span class="nc" id="L177">                new WifiSpotAddressId(wifiSpotAddressDto.uuid()),</span>
+<span class="nc" id="L178">                new WifiSpotAddressCountry(wifiSpotAddressDto.country()),</span>
+<span class="nc" id="L179">                new WifiSpotAddressZipCode(wifiSpotAddressDto.zipCode()),</span>
+<span class="nc" id="L180">                new WifiSpotAddressLine1(wifiSpotAddressDto.addressLine1()),</span>
+<span class="nc" id="L181">                new WifiSpotAddressLine2(wifiSpotAddressDto.addressLine2()),</span>
+<span class="nc" id="L182">                new WifiSpotAddressCity(wifiSpotAddressDto.city()),</span>
+<span class="nc" id="L183">                new WifiSpotAddressDistrict(wifiSpotAddressDto.district())</span>
+        );
+    }
+
+    @Override
+    public WifiSpotAddressCreateDto wifiSpotAddressDomainToCreateDto(WifiSpotAddress wifiSpotAddress) {
+<span class="nc" id="L189">        return new WifiSpotAddressCreateDto(</span>
+<span class="nc" id="L190">                wifiSpotAddress.getWifiSpotAddressCountry().getValue(),</span>
+<span class="nc" id="L191">                wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),</span>
+<span class="nc" id="L192">                wifiSpotAddress.getWifiSpotAddressLine1().getValue(),</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">                wifiSpotAddress.getWifiSpotAddressLine2() != null ? wifiSpotAddress.getWifiSpotAddressLine2().getValue() : null,</span>
+<span class="nc" id="L194">                wifiSpotAddress.getWifiSpotAddressCity().getValue(),</span>
+<span class="nc" id="L195">                wifiSpotAddress.getWifiSpotAddressDistrict().getValue()</span>
+        );
+    }
+
+    @Override
+    public WifiSpotAddress wifiSpotAddressCreateDtoToDomain(WifiSpotAddressCreateDto wifiSpotAddressDto) {
+<span class="nc" id="L201">        return new WifiSpotAddress(</span>
+<span class="nc" id="L202">                new WifiSpotAddressCountry(wifiSpotAddressDto.country()),</span>
+<span class="nc" id="L203">                new WifiSpotAddressZipCode(wifiSpotAddressDto.zipCode()),</span>
+<span class="nc" id="L204">                new WifiSpotAddressLine1(wifiSpotAddressDto.addressLine1()),</span>
+<span class="nc" id="L205">                new WifiSpotAddressLine2(wifiSpotAddressDto.addressLine2()),</span>
+<span class="nc" id="L206">                new WifiSpotAddressCity(wifiSpotAddressDto.city()),</span>
+<span class="nc" id="L207">                new WifiSpotAddressDistrict(wifiSpotAddressDto.district())</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

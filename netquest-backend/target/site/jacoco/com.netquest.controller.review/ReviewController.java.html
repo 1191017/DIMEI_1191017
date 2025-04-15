@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.controller.review</a> &gt; <span class="el_source">ReviewController.java</span></div><h1>ReviewController.java</h1><pre class="source lang-java linenums">package com.netquest.controller.review;
+
+import com.netquest.domain.review.dto.ReviewCreateDto;
+import com.netquest.domain.review.dto.ReviewDto;
+import com.netquest.domain.review.dto.ReviewFeedDto;
+import com.netquest.domain.review.dto.ReviewHistoryDto;
+import com.netquest.domain.review.service.ReviewService;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
+import com.netquest.security.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.bson.Document;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(&quot;api/review&quot;)
+public class ReviewController {
+    private final ReviewService reviewService;
+
+    //MongoDB
+
+    // 5.3.1 - Create a new review
+    @PostMapping(&quot;/mongodb/{userId}&quot;)
+    public ResponseEntity&lt;String&gt; createReviewMongoDB(@PathVariable String userId, @RequestBody ReviewCreateDto reviewCreateDto) {
+<span class="nc" id="L40">        String reviewId = reviewService.createReviewMongoDB(reviewCreateDto, UUID.fromString(userId));</span>
+<span class="nc" id="L41">        return ResponseEntity.ok(&quot;Review created successfully with ID: &quot; + reviewId);</span>
+    }
+
+    @DeleteMapping(&quot;/mongodb/{reviewId}&quot;)
+    public ResponseEntity&lt;String&gt; deleteReviewMongoDB(@PathVariable String reviewId) {
+<span class="nc" id="L46">        reviewService.deleteReviewMongoDB(reviewId);</span>
+<span class="nc" id="L47">        return ResponseEntity.ok(&quot;Review deleted successfully.&quot;);</span>
+    }
+
+    @GetMapping(&quot;/mongodb/wifiSpot/{wifiSpotId}&quot;)
+    public ResponseEntity&lt;List&lt;ReviewDto&gt;&gt; getReviewsForWifiSpotMongoDB(@PathVariable String wifiSpotId) {
+<span class="nc" id="L52">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMongoDB(UUID.fromString(wifiSpotId)));</span>
+    }
+
+    @GetMapping(&quot;/mongodb/feed&quot;)
+    public ResponseEntity&lt;List&lt;ReviewFeedDto&gt;&gt; getReviewFeedMongoDB() {
+<span class="nc" id="L57">        return ResponseEntity.ok(reviewService.getReviewFeedMongoDB());</span>
+    }
+
+    //MySQL
+    @PostMapping(&quot;/mysql/{userId}&quot;)
+    public ResponseEntity&lt;String&gt; createReviewMySQL(@PathVariable String userId, @RequestBody ReviewCreateDto reviewCreateDto) {
+<span class="nc" id="L63">        int reviewId = reviewService.createReviewMySQL(reviewCreateDto, UUID.fromString(userId));</span>
+<span class="nc" id="L64">        return ResponseEntity.ok(&quot;Reviews created: &quot; + reviewId);</span>
+    }
+
+    @DeleteMapping(&quot;/mysql/{reviewId}&quot;)
+    public ResponseEntity&lt;String&gt; deleteReviewMySQL(@PathVariable String reviewId) {
+<span class="nc" id="L69">        int reviews = reviewService.deleteReviewMySQL(UUID.fromString(reviewId));</span>
+<span class="nc" id="L70">        return ResponseEntity.ok(&quot;Review deleted successfully:&quot; + reviews);</span>
+    }
+
+    @GetMapping(&quot;/mysql/wifiSpot/{wifiSpotId}&quot;)
+    public ResponseEntity&lt;List&lt;ReviewDto&gt;&gt; getReviewsForWifiSpotMySQL(@PathVariable String wifiSpotId) {
+<span class="nc" id="L75">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMySQL(UUID.fromString(wifiSpotId)));</span>
+    }
+
+    @GetMapping(&quot;/mysql/feed&quot;)
+    public ResponseEntity&lt;List&lt;ReviewFeedDto&gt;&gt; getReviewFeedMySQL() {
+<span class="nc" id="L80">        return ResponseEntity.ok(reviewService.getReviewFeedMySQL());</span>
+    }
+
+    //CASSANDRA
+
+    @PostMapping(&quot;/cassandra/{userId}&quot;)
+    public ResponseEntity&lt;String&gt; createReviewCassandra(@PathVariable String userId, @RequestBody ReviewCreateDto reviewCreateDto) {
+<span class="nc" id="L87">        reviewService.createReviewCassandra(reviewCreateDto, UUID.fromString(userId));</span>
+<span class="nc" id="L88">        return ResponseEntity.ok(&quot;Review created successfully.&quot;);</span>
+    }
+
+    @DeleteMapping(&quot;/cassandra/{wifiSpotId}/{reviewId}&quot;)
+    public ResponseEntity&lt;String&gt; deleteReviewCassandra(@PathVariable String wifiSpotId, @PathVariable String reviewId) {
+<span class="nc" id="L93">        reviewService.deleteReviewCassandra(UUID.fromString(reviewId), UUID.fromString(wifiSpotId));</span>
+<span class="nc" id="L94">        return ResponseEntity.ok(&quot;Review deleted successfully.&quot;);</span>
+    }
+
+    @GetMapping(&quot;/cassandra/wifiSpot/{wifiSpotId}&quot;)
+    public ResponseEntity&lt;List&lt;ReviewDto&gt;&gt; getReviewsForWifiSpotCassandra(@PathVariable String wifiSpotId) {
+<span class="nc" id="L99">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotCassandra(UUID.fromString(wifiSpotId)));</span>
+    }
+
+    @GetMapping(&quot;/cassandra/feed&quot;)
+    public ResponseEntity&lt;List&lt;ReviewFeedDto&gt;&gt; getReviewFeedCassandra() {
+<span class="nc" id="L104">        return ResponseEntity.ok(reviewService.getReviewFeedCassandra());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

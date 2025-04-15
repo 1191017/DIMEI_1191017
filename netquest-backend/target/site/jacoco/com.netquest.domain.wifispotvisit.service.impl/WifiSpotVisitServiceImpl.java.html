@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotVisitServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispotvisit.service.impl</a> &gt; <span class="el_source">WifiSpotVisitServiceImpl.java</span></div><h1>WifiSpotVisitServiceImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispotvisit.service.impl;
+
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitMySpotDto;
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
+import com.netquest.domain.user.exception.UserNotFoundException;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.user.service.UserService;
+import com.netquest.domain.wifispot.dto.WifiSpotDto;
+import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispot.service.WifiSpotService;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
+import com.netquest.domain.wifispotvisit.exception.*;
+import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
+import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
+import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@RequiredArgsConstructor
+@Service
+public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
+    private final WifiSpotVisitRepository wifiSpotVisitRepository;
+    private final WifiSpotVisitMapper wifiSpotVisitMapper;
+    private final PointsEarnTransactionService pointsEarnTransactionService;
+    private final UserService userService;
+    private final WifiSpotService wifiSpotService;
+
+
+    @Override
+    public WifiSpotVisitDto saveWifiSpotVisit(UUID userUUID, WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
+<span class="nc" id="L49">        WifiSpotVisit wifiSpotVisit = wifiSpotVisitMapper.toNewEntity(userUUID,wifiSpotVisitCreateDto);</span>
+
+
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if(!userService.existsById(userUUID)){</span>
+<span class="nc" id="L53">            throw new UserNotFoundException(&quot;User not found&quot;);</span>
+        }
+
+<span class="nc" id="L56">        UserId userId = new UserId(userUUID);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if(wifiSpotVisitRepository.existsOnGoingWifiSpotVisitByUserId(userId)){</span>
+<span class="nc" id="L58">            throw new WifiSpotVisitOngoingException(&quot;Wifi spot visit ongoing for this user&quot;);</span>
+        }
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if(wifiSpotVisitRepository.existsWifiSpotVisitConflictingIntervalByUserId(</span>
+<span class="nc" id="L62">                wifiSpotVisitCreateDto.getStartDateTime(),</span>
+<span class="nc" id="L63">                wifiSpotVisitCreateDto.getEndDateTime(),</span>
+                userId
+        )){
+<span class="nc" id="L66">            throw new WifiSpotVisitDatesConflictException(&quot;There is a conflict of dates to another visit for this user&quot;);</span>
+        }
+<span class="nc" id="L68">        WifiSpotId wifiSpotId = new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId());</span>
+<span class="nc" id="L69">        LocalDateTime wifiSpotVisitStartDate10MinutesAgo = wifiSpotVisitCreateDto.getStartDateTime().minusMinutes(10);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if(wifiSpotVisitRepository.existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(userId,wifiSpotId,wifiSpotVisitStartDate10MinutesAgo)){</span>
+<span class="nc" id="L71">            throw new WifiSpotVisitInSameWifiSpotInLast10Minutes(&quot;There is already a visit in the same wifi spot in last 10 minutes&quot;);</span>
+        }
+
+<span class="nc" id="L74">        WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));</span>
+<span class="nc" id="L75">        createPointsEarnTransactionBasedOnVisit(wifiSpotVisitDto);</span>
+<span class="nc" id="L76">        return wifiSpotVisitDto;</span>
+
+    }
+
+    @Override
+    public WifiSpotVisitDto finishVisit(UUID userUUID, UUID wifiSpotVisitUUID) {
+<span class="nc" id="L82">        WifiSpotVisitId wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitUUID);</span>
+<span class="nc" id="L83">        UserId userId = new UserId(userUUID);</span>
+<span class="nc" id="L84">        WifiSpotVisit wifiSpotVisit = wifiSpotVisitRepository.findByWifiSpotVisitIdAndUserId(wifiSpotVisitId,userId)</span>
+<span class="nc" id="L85">                .orElseThrow(() -&gt; new WifiSpotVisitNotFoundException(&quot;Wifi spot visit not found&quot;));</span>
+
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if(wifiSpotVisit.getWifiSpotVisitEndDateTime() != null){</span>
+<span class="nc" id="L89">            throw new WifiSpotVisitEndDateTimeAlreadyFilledException(&quot;Wifi spot visit end date time already filled&quot;);</span>
+        }
+
+
+
+<span class="nc" id="L94">        WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(LocalDateTime.now());</span>
+<span class="nc" id="L95">        wifiSpotVisit.updateEndDateTime(wifiSpotVisitEndDateTime);</span>
+
+<span class="nc" id="L97">        WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));</span>
+<span class="nc" id="L98">        createPointsEarnTransactionBasedOnVisit(wifiSpotVisitDto);</span>
+<span class="nc" id="L99">        return wifiSpotVisitDto;</span>
+    }
+
+    @Override
+    public boolean hasUserVisitedWifiSpotBasedOnMinutes(UUID userUUID, UUID wifiSpotUUID,long minutes) {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if(!userService.existsById(userUUID)){</span>
+<span class="nc" id="L105">            throw new UserNotFoundException(&quot;User not found&quot;);</span>
+        }
+
+<span class="nc" id="L108">        List&lt;WifiSpotVisit&gt; listWifiSpotVisits = wifiSpotVisitRepository.findByWifiSpotIdAndUserIdAndWifiSpotVisitEndDateTimeIsNotNull(new WifiSpotId(wifiSpotUUID),new UserId(userUUID));</span>
+<span class="nc" id="L109">        long totalMinutes = listWifiSpotVisits.stream()</span>
+<span class="nc" id="L110">                .mapToLong(visit -&gt; Duration.between(visit.getWifiSpotVisitStartDateTime().getValue(), visit.getWifiSpotVisitEndDateTime().getValue()).toMinutes())</span>
+<span class="nc" id="L111">                .sum();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        return totalMinutes &gt;= minutes;</span>
+    }
+
+    @Override
+    public WifiSpotVisitDto getWifiSpotVisitOngoing(UUID userUUID) {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if(!userService.existsById(userUUID)){</span>
+<span class="nc" id="L118">            throw new UserNotFoundException(&quot;User not found&quot;);</span>
+        }
+<span class="nc" id="L120">        UserId userId = new UserId(userUUID);</span>
+<span class="nc" id="L121">        WifiSpotVisit wifiSpotVisit = wifiSpotVisitRepository.getOnGoingWifiSpotVisitByUserId(userId).orElseThrow(</span>
+<span class="nc" id="L122">                () -&gt; new WifiSpotVisitNotFoundException(&quot;There is not any wifi spot visit ongoing&quot;));</span>
+<span class="nc" id="L123">        return wifiSpotVisitMapper.toDto(wifiSpotVisit);</span>
+
+    }
+
+    @Override
+    public WifiSpotVisitDto startVisit(UUID userUUID, UUID wifiSpotUUID) {
+<span class="nc" id="L129">        WifiSpotVisitCreateDto wifiSpotVisitCreateDto = new WifiSpotVisitCreateDto();</span>
+<span class="nc" id="L130">        wifiSpotVisitCreateDto.setWifiSpotId(wifiSpotUUID);</span>
+<span class="nc" id="L131">        wifiSpotVisitCreateDto.setStartDateTime(LocalDateTime.now());</span>
+<span class="nc" id="L132">        return saveWifiSpotVisit(userUUID, wifiSpotVisitCreateDto) ;</span>
+    }
+    private void createPointsEarnTransactionBasedOnVisit(WifiSpotVisitDto wifiSpotVisitDto) {
+<span class="nc" id="L135">        createPointsEarnTransactionBasedOnMyVisit(wifiSpotVisitDto);</span>
+<span class="nc" id="L136">        createPointsEarnTransactionBasedOnVisitMySpot(wifiSpotVisitDto);</span>
+<span class="nc" id="L137">    }</span>
+
+    private void createPointsEarnTransactionBasedOnMyVisit(WifiSpotVisitDto wifiSpotVisitDto) {
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if(wifiSpotVisitDto.endDateTime() == null) {</span>
+<span class="nc" id="L141">            return;</span>
+        }
+<span class="nc" id="L143">        pointsEarnTransactionService.savePointsEarnTransactionByMyVisit(</span>
+                new PointsEarnTransactionCreateByVisitDto(
+<span class="nc" id="L145">                        wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(), wifiSpotVisitDto.userId(), wifiSpotVisitDto.id()</span>
+                )
+        );
+
+<span class="nc" id="L149">    }</span>
+
+    private void createPointsEarnTransactionBasedOnVisitMySpot(WifiSpotVisitDto wifiSpotVisitDto){
+
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if(wifiSpotVisitDto.endDateTime() == null) {</span>
+<span class="nc" id="L154">            return;</span>
+        }
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if(wifiSpotVisitDto.startDateTime() == null) {</span>
+<span class="nc" id="L157">            return;</span>
+        }
+
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if(ChronoUnit.MINUTES.between(wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime()) &lt; 10){</span>
+<span class="nc" id="L161">            return;</span>
+        }
+
+        WifiSpotDto wifiSpotDto;
+
+
+<span class="nc" id="L167">    }</span>
+
+    @Override
+    public List&lt;WifiSpotVisitHistoryDto&gt; getMyWifiSpotsVisits(UUID userUUID, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate) {
+<span class="fc" id="L171">        List&lt;WifiSpotVisitHistoryDto&gt; wifiSpotVisitHistoryDtos = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if(!userService.existsById(userUUID)){</span>
+<span class="nc" id="L173">            throw new UserNotFoundException(&quot;User not found&quot;);</span>
+        }
+<span class="fc" id="L175">        UserId userId = new UserId(userUUID);</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        List&lt;WifiSpotVisit&gt; wifiSpotVisit = wifiSpotVisitRepository.getMyWifiSpotsVisits(userId, wifiSpotName != null ? &quot;%&quot; + wifiSpotName + &quot;%&quot; : null, startDate, endDate).orElse(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L177">        List&lt;WifiSpotVisitDto&gt; wifiSpotVisitDtoList = wifiSpotVisit.stream().map(wifiSpotVisitMapper::toDto).collect(Collectors.toList());</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        for (WifiSpotVisitDto wifiSpotVisitDto: wifiSpotVisitDtoList) {</span>
+
+<span class="nc" id="L180">        }</span>
+<span class="fc" id="L181">        return  wifiSpotVisitHistoryDtos;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

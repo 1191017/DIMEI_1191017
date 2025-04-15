@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotVisit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispotvisit.model</a> &gt; <span class="el_source">WifiSpotVisit.java</span></div><h1>WifiSpotVisit.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispotvisit.model;
+
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = &quot;wifi_spot_visit&quot;)
+public class WifiSpotVisit {
+
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_visit_id&quot;))
+    })
+    private WifiSpotVisitId wifiSpotVisitId;
+
+    @Embedded
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_visit_start_datetime&quot;))
+    })
+    private WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime;
+
+    @Embedded
+    @Temporal(TemporalType.TIMESTAMP)
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_visit_end_datetime&quot;))
+    })
+    private WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_visit_wifi_spot_id&quot;))
+    })
+    private WifiSpotId wifiSpotId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;wifi_spot_visit_wifi_spot_id&quot;, insertable = false, updatable = false)
+    private WifiSpot wifiSpot;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_visit_user_id&quot;))
+    })
+    private UserId userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;wifi_spot_visit_user_id&quot;, insertable = false, updatable = false)
+    private User user;
+
+
+    public WifiSpotVisit(
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            @NonNull WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime</span>
+            ,WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            ,@NonNull WifiSpotId wifiSpotId</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            ,@NonNull UserId userId</span>
+<span class="fc" id="L67">    ) {</span>
+<span class="fc" id="L68">       validateEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime);</span>
+
+<span class="fc" id="L70">        this.wifiSpotVisitId = new WifiSpotVisitId();</span>
+<span class="fc" id="L71">        this.wifiSpotVisitStartDateTime = new WifiSpotVisitStartDateTime(wifiSpotVisitStartDateTime.getValue());</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        this.wifiSpotVisitEndDateTime = wifiSpotVisitEndDateTime != null ? new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTime.getValue()) : null;</span>
+<span class="fc" id="L73">        this.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());</span>
+<span class="fc" id="L74">        this.userId = new UserId(userId.getValue());</span>
+<span class="fc" id="L75">    }</span>
+
+    public void updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
+<span class="nc" id="L78">        validateEndDateBeforeStartDate(this.wifiSpotVisitStartDateTime, endDateTime);</span>
+<span class="nc" id="L79">        this.wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(endDateTime.getValue());</span>
+<span class="nc" id="L80">    }</span>
+
+    private void validateEndDateBeforeStartDate(WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime, WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime){
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if(</span>
+                wifiSpotVisitEndDateTime != null &amp;&amp;
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                wifiSpotVisitEndDateTime.getValue() != null &amp;&amp;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)</span>
+        ) {
+<span class="fc" id="L88">            throw new WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException(&quot;End date time cannot be before start date&quot;);</span>
+        }
+<span class="fc" id="L90">    }</span>
+
+    private boolean isEndDateBeforeStartDate(WifiSpotVisitStartDateTime start, WifiSpotVisitEndDateTime end){
+<span class="fc" id="L93">        return end.getValue().isBefore(start.getValue());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

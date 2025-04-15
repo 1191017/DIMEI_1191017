@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.review.service.impl</a> &gt; <span class="el_source">ReviewServiceImpl.java</span></div><h1>ReviewServiceImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.review.service.impl;
+
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
+import com.netquest.domain.review.dto.ReviewCreateDto;
+import com.netquest.domain.review.dto.ReviewDto;
+import com.netquest.domain.review.dto.ReviewFeedDto;
+import com.netquest.domain.review.mapper.ReviewMapper;
+import com.netquest.domain.review.service.ReviewService;
+import com.netquest.domain.user.service.UserService;
+import com.netquest.domain.wifispot.service.WifiSpotService;
+import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
+import com.netquest.infrastructure.review.ReviewRepositoryCassandra;
+import com.netquest.infrastructure.review.ReviewRepositoryMongoDB;
+import com.netquest.infrastructure.review.ReviewRepositoryMySQL;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.bson.Document;
+
+@RequiredArgsConstructor
+@Service
+public class ReviewServiceImpl implements ReviewService {
+    private final ReviewRepositoryMySQL reviewRepositoryMySQL;
+    private final ReviewRepositoryMongoDB reviewRepositoryMongoDB;
+    private final ReviewRepositoryCassandra reviewRepositoryCassandra;
+    private final ReviewMapper reviewMapper;
+    private final UserService userService;
+    private final WifiSpotService wifiSpotService;
+    private final WifiSpotVisitService wifiSpotVisitService;
+    private final PointsEarnTransactionService pointsEarnTransactionService;
+
+    // 5.3.1 - Create a new review
+    @Override
+    public String createReviewMongoDB(ReviewCreateDto reviewCreateDto, UUID userId) {
+<span class="nc" id="L38">        return reviewRepositoryMongoDB.insertReview(reviewCreateDto, userId);</span>
+    }
+
+    @Override
+    public void deleteReviewMongoDB(String reviewId) {
+<span class="nc" id="L43">        reviewRepositoryMongoDB.deleteReview(reviewId);</span>
+<span class="nc" id="L44">    }</span>
+
+    @Override
+    public List&lt;ReviewDto&gt; getReviewsForWifiSpotMongoDB(UUID wifiSpotId) {
+<span class="nc" id="L48">        return reviewRepositoryMongoDB.getReviewsForWifiSpot(wifiSpotId);</span>
+    }
+
+    @Override
+    public List&lt;ReviewFeedDto&gt; getReviewFeedMongoDB() {
+<span class="nc" id="L53">        return reviewRepositoryMongoDB.getReviewFeed();</span>
+    }
+
+    //5.3.1
+    @Override
+    public int createReviewMySQL(ReviewCreateDto reviewCreateDto, UUID userId) {
+<span class="nc" id="L59">        return reviewRepositoryMySQL.insertReview(reviewCreateDto, userId);</span>
+    }
+
+    //5.3.3
+    @Override
+    public int deleteReviewMySQL(UUID reviewId) {
+<span class="nc" id="L65">        return reviewRepositoryMySQL.deleteReview(reviewId);</span>
+    }
+
+    @Override
+    // 5.3.4 - Get all reviews for a Wi-Fi spot (oldest first)
+    public List&lt;ReviewDto&gt; getReviewsForWifiSpotMySQL(UUID wifiSpotId) {
+<span class="nc" id="L71">        return reviewRepositoryMySQL.getReviewsForWifiSpot(wifiSpotId);</span>
+    }
+
+    @Override
+    // 5.3.5 - Get review feed with user and Wi-Fi Spot info
+    public List&lt;ReviewFeedDto&gt; getReviewFeedMySQL() {
+<span class="nc" id="L77">        return reviewRepositoryMySQL.getReviewFeed();</span>
+    }
+
+    @Override
+    public void createReviewCassandra(ReviewCreateDto reviewCreateDto, UUID userId) {
+<span class="nc" id="L82">        reviewRepositoryCassandra.insertReview(reviewCreateDto, userId);</span>
+<span class="nc" id="L83">    }</span>
+
+    @Override
+    public void deleteReviewCassandra(UUID reviewId, UUID wifiSpotId) {
+<span class="nc" id="L87">        reviewRepositoryCassandra.deleteReview(reviewId, wifiSpotId);</span>
+<span class="nc" id="L88">    }</span>
+
+    @Override
+    public List&lt;ReviewDto&gt; getReviewsForWifiSpotCassandra(UUID wifiSpotId) {
+<span class="nc" id="L92">        return reviewRepositoryCassandra.getReviewsForWifiSpot(wifiSpotId);</span>
+    }
+
+    @Override
+    public List&lt;ReviewFeedDto&gt; getReviewFeedCassandra() {
+<span class="nc" id="L97">        return reviewRepositoryCassandra.getReviewFeed();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

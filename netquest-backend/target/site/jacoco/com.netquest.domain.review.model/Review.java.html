@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Review.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.review.model</a> &gt; <span class="el_source">Review.java</span></div><h1>Review.java</h1><pre class="source lang-java linenums">package com.netquest.domain.review.model;
+
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = &quot;review&quot;)
+public class Review {
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_id&quot;))
+    })
+    private ReviewId reviewId;
+
+    @NotNull
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_create_date_time&quot;))
+    })
+    private ReviewCreateDateTime reviewCreateDateTime;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_comment&quot;))
+    })
+    private ReviewComment reviewComment;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_overall_classification&quot;))
+    })
+    private ReviewOverallClassification reviewOverallClassification;
+
+    @ElementCollection
+    @CollectionTable(
+            name = &quot;review_attribute_classification&quot;,
+            joinColumns = @JoinColumn(name = &quot;review_id&quot;)
+    )
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;name&quot;, column = @Column(name = &quot;review_attribute_classification_name&quot;)),
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_attribute_classification_value&quot;))
+    })
+    private List&lt;ReviewAttributeClassification&gt; reviewAttributeClassificationList;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_wifi_spot_id&quot;))
+    })
+    private WifiSpotId wifiSpotId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;review_wifi_spot_id&quot;, insertable = false, updatable = false)
+    private WifiSpot wifiSpot;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;review_user_id&quot;))
+    })
+    private UserId userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;review_user_id&quot;, insertable = false, updatable = false)
+    private User user;
+
+
+<span class="pc bpc" id="L81" title="3 of 4 branches missed.">    public Review(@NonNull ReviewId reviewId, @NonNull ReviewCreateDateTime reviewCreateDateTime,</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                  ReviewComment reviewComment, @NonNull ReviewOverallClassification reviewOverallClassification,</span>
+                  List&lt;ReviewAttributeClassification&gt; reviewAttributeClassificationList
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                ,@NonNull WifiSpotId wifiSpotId</span>
+<span class="pc bnc" id="L85" title="All 2 branches missed.">                ,@NonNull UserId userId) {</span>
+<span class="nc" id="L86">        this.reviewId = new ReviewId(reviewId.getValue());</span>
+<span class="nc" id="L87">        this.reviewCreateDateTime = new ReviewCreateDateTime(reviewCreateDateTime.getValue());</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        this.reviewComment = (reviewComment != null ?  new ReviewComment(reviewComment.getValue()) : new ReviewComment());</span>
+<span class="nc" id="L89">        this.reviewOverallClassification =  new ReviewOverallClassification(reviewOverallClassification.getValue());</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        this.reviewAttributeClassificationList = (reviewAttributeClassificationList !=null ? new ArrayList&lt;&gt;(reviewAttributeClassificationList) : new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L91">        this.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());</span>
+<span class="nc" id="L92">        this.userId = new UserId(userId.getValue());</span>
+<span class="nc" id="L93">    }</span>
+
+<span class="nc bnc" id="L95" title="All 2 branches missed.">    public Review(ReviewComment reviewComment, @NonNull ReviewOverallClassification reviewOverallClassification,</span>
+                  List&lt;ReviewAttributeClassification&gt; reviewAttributeClassificationList
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            ,@NonNull WifiSpotId wifiSpotId</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            ,@NonNull UserId userId){</span>
+<span class="nc" id="L99">        this.reviewId = new ReviewId();</span>
+<span class="nc" id="L100">        this.reviewCreateDateTime = new ReviewCreateDateTime();</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        this.reviewComment = (reviewComment != null ?  new ReviewComment(reviewComment.getValue()) : new ReviewComment());</span>
+<span class="nc" id="L102">        this.reviewOverallClassification =  new ReviewOverallClassification(reviewOverallClassification.getValue());</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        this.reviewAttributeClassificationList = (reviewAttributeClassificationList !=null ? new ArrayList&lt;&gt;(reviewAttributeClassificationList) : new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L104">        this.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());</span>
+<span class="nc" id="L105">        this.userId = new UserId(userId.getValue());</span>
+<span class="nc" id="L106">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotQualityIndicators.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispot.model</a> &gt; <span class="el_source">WifiSpotQualityIndicators.java</span></div><h1>WifiSpotQualityIndicators.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispot.model;
+
+import com.netquest.domain.shared.BandwithType;
+import com.netquest.domain.shared.QualityType;
+import com.netquest.domain.shared.StrengthType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Embeddable
+@Getter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor(force = true)
+public class WifiSpotQualityIndicators {
+    @NotNull
+    private final QualityType wifiQuality;
+    @NotNull
+    private final StrengthType signalStrength;
+    @NotNull
+    private final BandwithType bandwithLimitations;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;wifiQuality&quot;, column = @Column(name = &quot;wifi_spot_peak_usage_start_time&quot;)),
+            @AttributeOverride(name = &quot;signalStrength&quot;, column = @Column(name = &quot;wifi_spot_peak_usage_end_time&quot;))
+    })
+    private final WifiSpotPeakUsageInterval peakUsageHourInterval;
+
+<span class="fc" id="L32">    public WifiSpotQualityIndicators(QualityType wifiQuality, StrengthType signalStrength, BandwithType bandwithLimitations, WifiSpotPeakUsageInterval peakUsageHourInterval) {</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (wifiQuality == null) {</span>
+<span class="nc" id="L34">            throw new IllegalArgumentException(&quot;Quality cannot be null&quot;);</span>
+        }
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if (signalStrength == null) {</span>
+<span class="nc" id="L37">            throw new IllegalArgumentException(&quot;Signal strength cannot be null&quot;);</span>
+        }
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if (bandwithLimitations == null) {</span>
+<span class="nc" id="L40">            throw new IllegalArgumentException(&quot;Bandwidth limitations cannot be null&quot;);</span>
+        }
+<span class="fc" id="L42">        this.wifiQuality = wifiQuality;</span>
+<span class="fc" id="L43">        this.signalStrength = signalStrength;</span>
+<span class="fc" id="L44">        this.bandwithLimitations = bandwithLimitations;</span>
+<span class="fc" id="L45">        this.peakUsageHourInterval = peakUsageHourInterval;</span>
+<span class="fc" id="L46">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

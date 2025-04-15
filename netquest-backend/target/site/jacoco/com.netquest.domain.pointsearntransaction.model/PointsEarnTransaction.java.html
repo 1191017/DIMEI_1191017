@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PointsEarnTransaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.pointsearntransaction.model</a> &gt; <span class="el_source">PointsEarnTransaction.java</span></div><h1>PointsEarnTransaction.java</h1><pre class="source lang-java linenums">package com.netquest.domain.pointsearntransaction.model;
+
+
+import com.netquest.domain.review.model.Review;
+import com.netquest.domain.review.model.ReviewId;
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = &quot;points_earn_transaction&quot;)
+public class PointsEarnTransaction {
+
+    private static final int MINUTE_VISIT_POINTS_MULTIPLIER = 5;
+    private static final int POINTS_BY_WIFI_SPOT_CREATION = 600;
+    private static final int POINTS_BY_REVIEW = 1000;
+    private static final int MINUTE_VISIT_MY_SPOT_POINTS_MULTIPLIER = MINUTE_VISIT_POINTS_MULTIPLIER/3;
+
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_id&quot;))
+    })
+    private PointsEarnTransactionId pointsEarnTransactionId;
+
+    @Embedded
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_datetime&quot;))
+    })
+    private PointsEarnTransactionDateTime pointsEarnTransactionDateTime;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_amount&quot;))
+    })
+    private PointsEarnTransactionAmount pointsEarnTransactionAmount;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_user_id&quot;))
+    })
+    private UserId userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;points_earn_transaction_user_id&quot;, insertable = false, updatable = false)
+    private User user;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_wifi_spot_visit_id&quot;))
+    })
+    private WifiSpotVisitId wifiSpotVisitId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;points_earn_transaction_wifi_spot_visit_id&quot;, insertable = false, updatable = false)
+    private WifiSpotVisit wifiSpotVisit;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_wifi_spot_id&quot;))
+    })
+    private WifiSpotId wifiSpotId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;points_earn_transaction_wifi_spot_id&quot;, insertable = false, updatable = false)
+    private WifiSpot wifiSpot;
+
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_wifi_spot_visit_my_spot_id&quot;))
+    })
+    private WifiSpotVisitId wifiSpotVisitMySpotId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;points_earn_transaction_wifi_spot_visit_my_spot_id&quot;, insertable = false, updatable = false)
+    private WifiSpotVisit wifiSpotVisitMySpot;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;points_earn_transaction_review_id&quot;))
+    })
+    private ReviewId reviewId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;points_earn_transaction_review_id&quot;,insertable = false, updatable = false)
+    private Review review;
+
+
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnMyVisit(
+            UserId userId,
+            WifiSpotVisitId wifiSpotVisitId,
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            @NonNull LocalDateTime start,</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">            @NonNull LocalDateTime end</span>
+    ) {
+<span class="fc" id="L112">        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();</span>
+<span class="fc" id="L113">        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();</span>
+<span class="fc" id="L114">        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();</span>
+<span class="fc" id="L115">        pointsEarnTransaction.pointsEarnTransactionAmount = calculateAmountBasedOnVisitDateTimes(start, end);</span>
+<span class="fc" id="L116">        pointsEarnTransaction.userId = new UserId(userId.getValue());</span>
+<span class="fc" id="L117">        pointsEarnTransaction.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());</span>
+<span class="fc" id="L118">        return pointsEarnTransaction;</span>
+    }
+
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnVisitingMySpot(
+            UserId userId,
+            WifiSpotVisitId wifiSpotVisitId,
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            @NonNull LocalDateTime start,</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            @NonNull LocalDateTime end</span>
+    ) {
+<span class="nc" id="L127">        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();</span>
+<span class="nc" id="L128">        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();</span>
+<span class="nc" id="L129">        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();</span>
+<span class="nc" id="L130">        pointsEarnTransaction.pointsEarnTransactionAmount = calculateAmountBasedOnVisitMySpotDateTimes(start, end);</span>
+<span class="nc" id="L131">        pointsEarnTransaction.userId = new UserId(userId.getValue());</span>
+<span class="nc" id="L132">        pointsEarnTransaction.wifiSpotVisitMySpotId = new WifiSpotVisitId(wifiSpotVisitId.getValue());</span>
+<span class="nc" id="L133">        return pointsEarnTransaction;</span>
+    }
+
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnReview(
+            UserId userId,
+            ReviewId reviewId
+    ){
+<span class="nc" id="L140">        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();</span>
+<span class="nc" id="L141">        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();</span>
+<span class="nc" id="L142">        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();</span>
+<span class="nc" id="L143">        pointsEarnTransaction.pointsEarnTransactionAmount = calculateAmountBasedOnReviewCreation();</span>
+<span class="nc" id="L144">        pointsEarnTransaction.userId = new UserId(userId.getValue());</span>
+<span class="nc" id="L145">        pointsEarnTransaction.reviewId = new ReviewId(reviewId.getValue());</span>
+<span class="nc" id="L146">        return pointsEarnTransaction;</span>
+    }
+
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnSpotCreation(UserId userId, WifiSpotId wifiSpotId) {
+<span class="fc" id="L150">        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();</span>
+<span class="fc" id="L151">        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();</span>
+<span class="fc" id="L152">        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();</span>
+<span class="fc" id="L153">        pointsEarnTransaction.pointsEarnTransactionAmount =  calculateAmountBasedOnWifiSpotCreation();</span>
+<span class="fc" id="L154">        pointsEarnTransaction.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());</span>
+<span class="fc" id="L155">        pointsEarnTransaction.userId = new UserId(userId.getValue());</span>
+<span class="fc" id="L156">        return pointsEarnTransaction;</span>
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnVisitDateTimes(LocalDateTime start, LocalDateTime end){
+<span class="fc" id="L160">        long minutes = ChronoUnit.MINUTES.between(start, end);</span>
+<span class="fc" id="L161">        return new PointsEarnTransactionAmount(minutes * getVisitMinutePointsMultiplier() );</span>
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnWifiSpotCreation(){
+<span class="fc" id="L165">        return new PointsEarnTransactionAmount(getPointsByWifiSpotCreation());</span>
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnVisitMySpotDateTimes(LocalDateTime start, LocalDateTime end){
+<span class="nc" id="L169">        long minutes = ChronoUnit.MINUTES.between(start, end);</span>
+<span class="nc" id="L170">        return new PointsEarnTransactionAmount(minutes * getMinuteVisitMySpotPointsMultiplier() );</span>
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnReviewCreation(){
+<span class="nc" id="L174">        return new PointsEarnTransactionAmount(getPointsByReview());</span>
+    }
+
+    public static int getVisitMinutePointsMultiplier(){
+<span class="fc" id="L178">        return MINUTE_VISIT_POINTS_MULTIPLIER;</span>
+    }
+
+    public static int getMinuteVisitMySpotPointsMultiplier(){
+<span class="nc" id="L182">        return MINUTE_VISIT_MY_SPOT_POINTS_MULTIPLIER;</span>
+    }
+
+    public static int getPointsByWifiSpotCreation(){
+<span class="fc" id="L186">        return POINTS_BY_WIFI_SPOT_CREATION;</span>
+    }
+
+    public static int getPointsByReview() {
+<span class="nc" id="L190">        return POINTS_BY_REVIEW;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.user.service.impl</a> &gt; <span class="el_source">UserServiceImpl.java</span></div><h1>UserServiceImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.user.service.impl;
+
+import com.netquest.domain.user.dto.UserDto;
+import com.netquest.domain.user.exception.UserNotFoundException;
+import com.netquest.domain.user.model.*;
+import com.netquest.domain.user.service.UserService;
+import com.netquest.infrastructure.user.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@Service
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public List&lt;User&gt; getUsers() {
+<span class="fc" id="L25">        return userRepository.findAll();</span>
+    }
+
+    @Override
+    public Optional&lt;User&gt; getUserByUsername(String username) {
+<span class="fc" id="L30">        return userRepository.findByUsername(new Username(username));</span>
+    }
+
+    @Override
+    public boolean hasUserWithUsername(String username) {
+<span class="fc" id="L35">        return userRepository.existsByUsername(new Username(username));</span>
+    }
+
+    @Override
+    public boolean hasUserWithEmail(String email) {
+<span class="fc" id="L40">        return userRepository.existsByEmail(new UserMail(email));</span>
+    }
+
+    @Override
+    public User validateAndGetUserByUsername(String username) {
+<span class="pc" id="L45">        return getUserByUsername(username)</span>
+<span class="pc" id="L46">                .orElseThrow(() -&gt; new UserNotFoundException(String.format(&quot;User with username %s not found&quot;, username)));</span>
+    }
+
+    @Override
+    public User saveUser(User user) {
+<span class="nc" id="L51">        user.setPassword(new UserPassword(passwordEncoder.encode(user.getPassword().getPassword())));</span>
+<span class="nc" id="L52">        return userRepository.save(user);</span>
+    }
+
+    @Override
+    public void deleteUser(User user) {
+<span class="fc" id="L57">        userRepository.delete(user);</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public void deleteUserById(UUID userUUID) {
+<span class="fc" id="L62">        UserId userId = new UserId(userUUID);</span>
+<span class="fc" id="L63">        userRepository.deleteById(userId);</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public User getUserById(UUID userUUID) {
+<span class="fc" id="L68">        UserId userId = new UserId(userUUID);</span>
+<span class="fc" id="L69">        return userRepository.findById(userId).orElseThrow();</span>
+    }
+
+    @Override
+    public Optional&lt;User&gt; validUsernameAndPassword(String username, String password) {
+<span class="fc" id="L74">        return getUserByUsername(username)</span>
+<span class="fc" id="L75">                .filter(user -&gt; passwordEncoder.matches(password, user.getPassword().getPassword()));</span>
+    }
+
+    @Override
+    public boolean existsById(UUID userUUID) {
+<span class="fc" id="L80">        UserId userId = new UserId(userUUID);</span>
+<span class="fc" id="L81">        return userRepository.existsById(userId);</span>
+    }
+
+    @Override
+    public void updateUserDetails(UserDto currentUser){
+<span class="fc" id="L86">        String password = null;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(currentUser.password() != null){</span>
+<span class="fc" id="L88">            password = passwordEncoder.encode(currentUser.password());</span>
+        }
+<span class="fc" id="L90">        userRepository.updateUser(currentUser.id(),password, currentUser.email(), currentUser.vatNumber(), currentUser.addressLine1(), currentUser.addressLine2(), currentUser.addressCity(), currentUser.addressDistrict(), currentUser.addressCountry(),currentUser.addressZipCode());</span>
+<span class="fc" id="L91">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

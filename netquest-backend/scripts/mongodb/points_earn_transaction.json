@@ -1,0 +1,502 @@
+[
+  {
+    "_id": "29a3dda2-a674-4ba8-8187-444a14cfc874",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 188,
+    "datetime": "2021-03-17T09:28:19",
+    "review_id": "e9868d2b-1067-4fbd-b0b8-10aa885a184b",
+    "wifi_spot_id": "c5f814a7-beec-4441-a22e-73d75a2f022f",
+    "wifi_spot_visit_id": "a14d377e-76f1-446e-89ab-65ae6d766382",
+    "wifi_spot_visit_my_spot_id": "59b17304-5b06-4e7c-9b15-a672cdbc5642"
+  },
+  {
+    "_id": "7bd6ddfd-bda8-47d8-aa1f-da6ba5b14537",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 181,
+    "datetime": "2022-07-18T06:55:40",
+    "review_id": "86104aa2-141f-447b-8122-3d583f53f20d",
+    "wifi_spot_id": "4edc5ca9-dd2b-43d3-a070-3046d1497471",
+    "wifi_spot_visit_id": "07d69737-d00d-48da-82df-480d69bdb969",
+    "wifi_spot_visit_my_spot_id": "a2fa212b-dfbc-45ee-986a-3d8cd3bae7cc"
+  },
+  {
+    "_id": "e91e48d0-fb12-4f9b-8757-2794019ca8ee",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 82,
+    "datetime": "2024-09-09T13:36:00",
+    "review_id": "c93d09b0-084c-4490-9aa8-283ab5ef5385",
+    "wifi_spot_id": "64a8d973-e495-408c-9c4d-cf48d39a83dc",
+    "wifi_spot_visit_id": "a81292df-44c2-4a1b-a743-b47950caeb96",
+    "wifi_spot_visit_my_spot_id": "3ff5cf94-4c8c-475d-bab4-18b9a072ed19"
+  },
+  {
+    "_id": "38b8fee1-b698-45f6-af67-3bf029914c54",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 158,
+    "datetime": "2023-02-24T04:18:12",
+    "review_id": "39eb021d-d580-4489-a08e-fe0bdfdb731f",
+    "wifi_spot_id": "8f099278-9b66-4090-b935-bb4fd962e1e7",
+    "wifi_spot_visit_id": "5200e20f-4b36-4733-939f-8b50e29a4b3e",
+    "wifi_spot_visit_my_spot_id": "3b44eebd-561a-4d41-b857-0115a8458a4d"
+  },
+  {
+    "_id": "813a4414-5631-41c9-b386-38c83359da0d",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 145,
+    "datetime": "2025-03-20T16:12:10",
+    "review_id": "47b088c3-4f1b-4b9e-9e0f-69671179c3fa",
+    "wifi_spot_id": "8fc6f0d4-1085-4231-8bb8-f338bdebde73",
+    "wifi_spot_visit_id": "68031fc4-1b4b-4090-ad90-d8ed7ce87d4c",
+    "wifi_spot_visit_my_spot_id": "27d69e0b-ef2d-4d29-bc64-6e307c992616"
+  },
+  {
+    "_id": "05669eb0-078c-43e0-8c7d-597634f4c77f",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 17,
+    "datetime": "2021-10-10T01:38:36",
+    "review_id": "d9b0b986-b2c0-4ce0-bd73-cb7705c06036",
+    "wifi_spot_id": "9415e164-44d6-4272-a071-7b784a9f071d",
+    "wifi_spot_visit_id": "99f12803-1796-48b4-85f6-710238014379",
+    "wifi_spot_visit_my_spot_id": "4a574053-d1e7-4662-8e5c-36c06c6dd661"
+  },
+  {
+    "_id": "6db23dcb-c441-4cf1-bb45-86918b61633a",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 169,
+    "datetime": "2020-05-19T22:46:45",
+    "review_id": "366ef083-b54e-4ccd-b36d-83544a9a0325",
+    "wifi_spot_id": "1f2a8513-2f81-437e-a467-47e3f66d28e9",
+    "wifi_spot_visit_id": "36a89f62-5f19-4ec4-a30c-69b6f0b36d6a",
+    "wifi_spot_visit_my_spot_id": "df6a8936-ca9f-485b-9e4d-7ca1340372f4"
+  },
+  {
+    "_id": "f5ae3e50-a2a6-470e-b3f3-025518a5b430",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 174,
+    "datetime": "2022-03-10T21:09:20",
+    "review_id": "5bad4d33-5657-4f16-a631-13421d67f923",
+    "wifi_spot_id": "11b10978-1c26-4fcc-afdb-bde091ac153e",
+    "wifi_spot_visit_id": "0cb3924a-9b61-454a-8903-9e9b384c5b56",
+    "wifi_spot_visit_my_spot_id": "5e1cf42e-e3bd-45e6-857d-a93176cb8861"
+  },
+  {
+    "_id": "82ee1b68-f44f-4032-a60f-5dc397c7bdff",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 141,
+    "datetime": "2024-11-17T06:49:46",
+    "review_id": "c7750895-ff8d-480f-887d-40242d6033e6",
+    "wifi_spot_id": "80cee6d9-5ba6-4b54-b5eb-f54ae965d210",
+    "wifi_spot_visit_id": "069ef077-4acb-40c8-97c0-abfeb1e656e3",
+    "wifi_spot_visit_my_spot_id": "89c2e661-3cfe-4a42-8a11-ec3e53d01839"
+  },
+  {
+    "_id": "8c7f9767-f31e-4468-b201-e0122f0735ed",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 59,
+    "datetime": "2023-07-13T12:41:18",
+    "review_id": "8a899fde-2beb-4991-a8ff-f7cab3e0620d",
+    "wifi_spot_id": "8b1f63c0-3f9d-4a52-830c-c650e48f60ed",
+    "wifi_spot_visit_id": "b9cc0a2a-d5ed-46be-a381-7d5301359b51",
+    "wifi_spot_visit_my_spot_id": "3990777f-5607-4122-81fc-eaef5458e712"
+  },
+  {
+    "_id": "5e159ca5-2b62-43f8-ad18-e21f68fbc5c2",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 177,
+    "datetime": "2020-08-11T04:23:58",
+    "review_id": "c7ca128a-b681-4ba4-8054-f8e39d300119",
+    "wifi_spot_id": "9999f6c9-b856-46da-9a87-34e7b69473c7",
+    "wifi_spot_visit_id": "4f2c11d8-10d9-4a7e-83ea-73a027aca92d",
+    "wifi_spot_visit_my_spot_id": "423bbd2b-d670-43d2-81d7-87161f28b930"
+  },
+  {
+    "_id": "0d423d6f-09de-4f14-9ccb-dcd31beb7d96",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 93,
+    "datetime": "2021-03-27T00:32:04",
+    "review_id": "15c1422a-6d45-4294-96e1-1e1d579e8b9f",
+    "wifi_spot_id": "c802b5cc-e612-4c1c-a615-26c26cb7a8c0",
+    "wifi_spot_visit_id": "446ff9bd-bea8-4804-b864-cd829a60ab1c",
+    "wifi_spot_visit_my_spot_id": "70d3ee20-8fb9-478b-968c-8a8919c87be8"
+  },
+  {
+    "_id": "8da8f1a2-c4f9-4878-b2aa-446185daec86",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 200,
+    "datetime": "2020-04-10T16:14:20",
+    "review_id": "f5d9e93b-3193-4363-8b55-5de598cb1b95",
+    "wifi_spot_id": "edb9f7f2-9d8a-47c6-a155-beb8db8244cd",
+    "wifi_spot_visit_id": "530d22ef-5c49-4820-851c-fb7b8eb482d4",
+    "wifi_spot_visit_my_spot_id": "9f16f66d-d711-4fab-91e6-0d393f4ab862"
+  },
+  {
+    "_id": "f6b4aabc-fcc4-4520-a79e-0dbe0b87e183",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 133,
+    "datetime": "2024-06-01T05:24:36",
+    "review_id": "77abfcdb-31ce-4ad6-bf4f-88152cce32d4",
+    "wifi_spot_id": "6f4d3eca-c440-4735-a4ab-77ddde931752",
+    "wifi_spot_visit_id": "ae37a7ff-c6b5-4df6-924e-f834256ca1e1",
+    "wifi_spot_visit_my_spot_id": "17a4a3e3-3575-4029-9b6e-db6f6ff21232"
+  },
+  {
+    "_id": "83ef7d28-2830-4df2-be42-56fc313cc6c6",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 32,
+    "datetime": "2020-11-25T06:06:15",
+    "review_id": "f24aa3d4-6921-44b1-8c03-642034348093",
+    "wifi_spot_id": "509b6a5c-65dd-48c9-84f0-9266f56d5c01",
+    "wifi_spot_visit_id": "62221d97-8d2c-4ac2-95b2-96b03b3d5bbe",
+    "wifi_spot_visit_my_spot_id": "f243987e-c6ad-400c-b76d-41b40e5dba38"
+  },
+  {
+    "_id": "4354495f-96c6-4c43-9d84-e15d042ee631",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 28,
+    "datetime": "2021-11-04T22:21:10",
+    "review_id": "a3a18f09-e8fc-4a51-915f-2586c34f0151",
+    "wifi_spot_id": "43789530-3389-414a-90b9-31408a82c5c4",
+    "wifi_spot_visit_id": "1c7c799a-cd00-47fa-b2a6-a067161e8caf",
+    "wifi_spot_visit_my_spot_id": "c36d09d3-3224-4f9b-b00b-b0d2d112ab5b"
+  },
+  {
+    "_id": "fe290a58-19d2-4e57-870e-4c11c2802b39",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 170,
+    "datetime": "2024-04-20T09:51:11",
+    "review_id": "dc247497-6a04-4739-b36d-6e2ae01e0220",
+    "wifi_spot_id": "cc2cd19f-cf51-4b0e-ab64-24a3bc9f95a8",
+    "wifi_spot_visit_id": "3e7bc597-648e-4aeb-88c6-f75275f5c8c0",
+    "wifi_spot_visit_my_spot_id": "69d6d11b-d44b-4137-b47b-076a1e1d38f3"
+  },
+  {
+    "_id": "1ba0ed04-9d76-4ca8-a327-73dc302cdf63",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 104,
+    "datetime": "2020-09-21T14:43:20",
+    "review_id": "02adf4c3-2eae-431f-b492-58847768a663",
+    "wifi_spot_id": "a5b5d64b-1b99-4564-b202-2025d41e0bb8",
+    "wifi_spot_visit_id": "5692998f-d72d-49b5-a8b4-25c04718a761",
+    "wifi_spot_visit_my_spot_id": "d0611102-f82c-4691-b27d-9dd13657982f"
+  },
+  {
+    "_id": "7c6e8421-740f-4d8e-b0bf-3c1c10f21e47",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 47,
+    "datetime": "2024-01-06T13:21:40",
+    "review_id": "00772c3c-1568-419d-add6-963744e78a34",
+    "wifi_spot_id": "bf9fcfc4-1a0a-45dd-823b-d8e73da05922",
+    "wifi_spot_visit_id": "d8adec8e-014c-4293-933a-e67110b80bc7",
+    "wifi_spot_visit_my_spot_id": "aad0c550-28ad-462d-8d86-b6b1172ab557"
+  },
+  {
+    "_id": "4af7cf3f-6329-4470-be9d-3ee8f36bcd2f",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 52,
+    "datetime": "2022-10-23T05:57:55",
+    "review_id": "a30cffbc-d631-4637-bc05-234fa1b5997f",
+    "wifi_spot_id": "7178d31f-0ea0-4101-a94b-e26459a0db0f",
+    "wifi_spot_visit_id": "a42556eb-3c2c-42e5-80ff-647cb17b55a0",
+    "wifi_spot_visit_my_spot_id": "b9d8c801-1f86-4bff-9abe-c1f1d70ce9ab"
+  },
+  {
+    "_id": "4cdb73dd-06ec-4a03-85be-49ac689863d2",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 43,
+    "datetime": "2023-08-13T13:47:11",
+    "review_id": "64654efb-935e-4d5c-9711-bf325c3b1399",
+    "wifi_spot_id": "2009b40f-c57e-43b3-9cef-b2796b14238d",
+    "wifi_spot_visit_id": "ad98d910-c4c8-4fc0-b6ba-baf87d7388eb",
+    "wifi_spot_visit_my_spot_id": "a3c5c667-285f-4eff-8a92-e953ab55d695"
+  },
+  {
+    "_id": "3f8181eb-6bcf-45a1-9865-92e707d84b75",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 41,
+    "datetime": "2022-08-17T11:05:50",
+    "review_id": "e9ca2988-1e78-4941-9a7d-ae9781ec1f57",
+    "wifi_spot_id": "9ae65e9e-7b0b-42f8-8ad3-a16076a6d7fe",
+    "wifi_spot_visit_id": "7409a204-964a-4ebf-a1c4-3850a2928e40",
+    "wifi_spot_visit_my_spot_id": "b3c2a9c7-8545-41e2-841f-37c5c52e1ee4"
+  },
+  {
+    "_id": "082672c4-1a1b-436b-914a-76e1b3c6ba65",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 72,
+    "datetime": "2021-10-25T20:41:52",
+    "review_id": "8c0be9a2-efcc-4354-a370-f8e05d21b30b",
+    "wifi_spot_id": "509b6a5c-65dd-48c9-84f0-9266f56d5c01",
+    "wifi_spot_visit_id": "0b31e6db-858f-4fc3-9bd8-ff95ae3b6aaf",
+    "wifi_spot_visit_my_spot_id": "40d18ebe-51a8-4ff0-b8bc-81beb3be65fd"
+  },
+  {
+    "_id": "3dafa367-0bd2-4cce-bc45-2851041b8975",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 191,
+    "datetime": "2020-10-15T08:00:07",
+    "review_id": "bbd2ea3a-1e7e-4b4d-bc89-cd9771caf267",
+    "wifi_spot_id": "a619c3a5-cf23-41dc-8338-78a18e6d61a4",
+    "wifi_spot_visit_id": "109ad629-e2c7-4609-acdb-99134c516fd5",
+    "wifi_spot_visit_my_spot_id": "46a93d80-45fa-448a-a7a1-7a1ab1173cf1"
+  },
+  {
+    "_id": "d4f2a440-850f-4080-984c-043ce127f364",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 64,
+    "datetime": "2020-08-07T02:52:06",
+    "review_id": "be589c10-63fb-45e2-a930-dda638309b18",
+    "wifi_spot_id": "b242f30e-3173-4a29-9eb3-eab60f504f44",
+    "wifi_spot_visit_id": "cb6ac873-a256-4620-864a-75285224d8fc",
+    "wifi_spot_visit_my_spot_id": "a9d1a906-2aa3-4ff8-8c34-1858e3195c8c"
+  },
+  {
+    "_id": "2246978e-2749-4a12-bf3b-3ede1c3483a7",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 147,
+    "datetime": "2021-01-04T10:40:36",
+    "review_id": "8685d09f-0214-4b49-af26-d987543c0285",
+    "wifi_spot_id": "72dc15de-6128-43ff-a2bc-6450874b9d03",
+    "wifi_spot_visit_id": "998119a7-3cb4-469b-9dfa-60943e804670",
+    "wifi_spot_visit_my_spot_id": "5b11b150-676c-4fc0-af85-cc818e59685f"
+  },
+  {
+    "_id": "d5f109cb-0cd2-4cda-94b4-a350a86da231",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 56,
+    "datetime": "2022-11-12T03:20:42",
+    "review_id": "b21c775c-4ad3-4c29-b617-a0f50ac72fab",
+    "wifi_spot_id": "f0636a38-b43b-4f80-b6bb-f27c713b4c61",
+    "wifi_spot_visit_id": "5e552ca2-1b1f-46bb-8e3c-8a2bf4f2c06e",
+    "wifi_spot_visit_my_spot_id": "3ddf1c27-c54a-4c13-8d2e-34dba57e2b77"
+  },
+  {
+    "_id": "b22c493a-0885-4648-9e8e-e3cc3868738b",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 52,
+    "datetime": "2021-10-16T20:15:58",
+    "review_id": "fabc0434-58ad-4050-ab17-21f5a4125287",
+    "wifi_spot_id": "11b10978-1c26-4fcc-afdb-bde091ac153e",
+    "wifi_spot_visit_id": "6681aa81-61a3-4875-8b31-23de90402572",
+    "wifi_spot_visit_my_spot_id": "5975ef5d-70dc-4818-bb18-0f7777120806"
+  },
+  {
+    "_id": "e4cae092-9f3a-43fe-a046-195791a854a8",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 27,
+    "datetime": "2022-01-26T03:37:15",
+    "review_id": "609a27c8-ed22-404c-b82f-43c53f854318",
+    "wifi_spot_id": "d7349dd2-8a92-41d6-921c-8dd6aa4deaf7",
+    "wifi_spot_visit_id": "a872f74e-89ce-43d6-aec9-3b19f135d7e9",
+    "wifi_spot_visit_my_spot_id": "21530247-281f-4097-8997-d4822890d04f"
+  },
+  {
+    "_id": "16006e15-2b7c-4ad5-9e51-459732512053",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 26,
+    "datetime": "2024-06-21T06:26:15",
+    "review_id": "53df9039-b865-4b2d-911b-bd228d0baa48",
+    "wifi_spot_id": "6e5a74e7-c6f0-4f29-bb5d-9914af50b11b",
+    "wifi_spot_visit_id": "a551f286-2cfa-46fc-adb5-48d95448cb10",
+    "wifi_spot_visit_my_spot_id": "68347a58-0f81-4c02-817d-a2c02e51c39c"
+  },
+  {
+    "_id": "65f30984-0a5a-44ff-a36d-7e5ae8b6d252",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 172,
+    "datetime": "2021-03-18T14:24:43",
+    "review_id": "6c363ff2-1c30-4fbd-aca9-3093c4c41313",
+    "wifi_spot_id": "1f2db6ad-bc87-42ac-b6ab-2c0f96c4dca4",
+    "wifi_spot_visit_id": "ce568f0b-9808-4812-ae75-4bf5cf2c1d3a",
+    "wifi_spot_visit_my_spot_id": "51e6294a-ebeb-4688-b84a-ae53f14afe79"
+  },
+  {
+    "_id": "a7b272b7-b53e-4775-a6f0-55dfe6473d17",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 172,
+    "datetime": "2021-06-20T17:15:01",
+    "review_id": "f6db6863-2bc4-449d-b8ef-8b828567c6e8",
+    "wifi_spot_id": "7a657eeb-f394-4b9d-929e-5e9310c21be8",
+    "wifi_spot_visit_id": "d195f378-c3c5-4ea1-a54f-396090d36acb",
+    "wifi_spot_visit_my_spot_id": "46dbe5b6-6641-4b22-b170-cbdc261d6c47"
+  },
+  {
+    "_id": "f43960c0-d31c-46b2-bf12-59504507b7fd",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 86,
+    "datetime": "2020-07-04T03:31:32",
+    "review_id": "31addef3-f944-4f83-a3d7-183d67eb585c",
+    "wifi_spot_id": "e07002fe-8c3c-4e6f-88f4-bb2002534967",
+    "wifi_spot_visit_id": "fffe7eab-f2da-4479-a929-091255f7edad",
+    "wifi_spot_visit_my_spot_id": "d6bf99fb-f716-4696-a946-df031d50eab3"
+  },
+  {
+    "_id": "a37abf4a-4118-4396-addd-5bb8323ce4ca",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 122,
+    "datetime": "2023-11-22T07:59:55",
+    "review_id": "aa987757-94c2-4011-8364-c3cffca232df",
+    "wifi_spot_id": "bf9fcfc4-1a0a-45dd-823b-d8e73da05922",
+    "wifi_spot_visit_id": "772d2603-e799-4e6c-9c56-d39d9b790b4a",
+    "wifi_spot_visit_my_spot_id": "f57a2332-987b-4d72-a2ae-aef8c5029e99"
+  },
+  {
+    "_id": "ca02cbb5-d047-4d5a-9ff2-899d9ec1ec34",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 109,
+    "datetime": "2021-09-19T14:41:34",
+    "review_id": "289c4eff-ec54-4696-9261-e0f80ce975e8",
+    "wifi_spot_id": "274b7105-715f-4905-9b22-15030e07c0c3",
+    "wifi_spot_visit_id": "9ff9e111-fa74-4949-83d3-eddd62941a5d",
+    "wifi_spot_visit_my_spot_id": "45eb305b-369f-4577-9e5c-df38bf3f7e4e"
+  },
+  {
+    "_id": "4cd575e9-4754-4109-9647-5d841610f8c1",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 178,
+    "datetime": "2022-05-19T03:15:17",
+    "review_id": "b6d5d801-8229-4700-85f1-b7c24c7615f4",
+    "wifi_spot_id": "fa6b8067-c651-47e6-9ce0-e14b1098add5",
+    "wifi_spot_visit_id": "3a3dd8c9-d034-46ce-96cf-86fc72b01065",
+    "wifi_spot_visit_my_spot_id": "bd29ee03-1159-4da4-924c-0df411737520"
+  },
+  {
+    "_id": "641dbfe5-1bb2-4c8d-a86a-916778ee9982",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 133,
+    "datetime": "2022-10-12T03:13:15",
+    "review_id": "08d7b0fa-9688-4cc8-ab05-44f9c1a66511",
+    "wifi_spot_id": "d47d5f17-8112-4a5b-8bc0-4241d192eb75",
+    "wifi_spot_visit_id": "b1d36908-81b9-4ca8-b216-9294e0d024b0",
+    "wifi_spot_visit_my_spot_id": "28f319ad-1830-43ac-b37a-80e805aa9142"
+  },
+  {
+    "_id": "37258cba-23ed-4043-ab40-254c5018ea8a",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 69,
+    "datetime": "2023-11-26T02:29:25",
+    "review_id": "ff8e6fd3-63f5-48be-bcce-a1fc1e322a50",
+    "wifi_spot_id": "72a68f44-d5b7-49cc-ad7a-61362e4814f9",
+    "wifi_spot_visit_id": "dbaf9049-f106-4d07-9fd3-bb27868dbc4d",
+    "wifi_spot_visit_my_spot_id": "e20e5baa-5727-4fc3-a873-5107aebe32da"
+  },
+  {
+    "_id": "840c5ddc-f905-4f20-ae0b-601dbe82710a",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 143,
+    "datetime": "2023-01-31T19:48:59",
+    "review_id": "0d57ae2b-1a9d-4192-9e8d-6bf573659657",
+    "wifi_spot_id": "ddf23f70-4267-4155-bbea-792bd9129ec3",
+    "wifi_spot_visit_id": "ec3d80c0-7e8d-425e-86f9-c4ecb907a7bf",
+    "wifi_spot_visit_my_spot_id": "3ec3a5d8-acb6-45e8-a527-6dea612c775d"
+  },
+  {
+    "_id": "638d2ff3-5391-4c7d-80d5-b244ed194774",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 80,
+    "datetime": "2024-06-27T18:08:43",
+    "review_id": "ff8e6fd3-63f5-48be-bcce-a1fc1e322a50",
+    "wifi_spot_id": "b592f287-b66d-4a06-bf48-890ba6e06f95",
+    "wifi_spot_visit_id": "a09f5136-2796-41b5-8818-56f258c706af",
+    "wifi_spot_visit_my_spot_id": "7cf593f3-b281-4c52-a2b3-0bc4c9b56003"
+  },
+  {
+    "_id": "ed8b471f-1014-4cfc-a627-b40c0591ea34",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 35,
+    "datetime": "2021-07-11T13:12:45",
+    "review_id": "f9eed0cf-612d-4db6-8c89-1d0aa0fdbad4",
+    "wifi_spot_id": "95dd9901-2867-412e-a611-8723fd942de6",
+    "wifi_spot_visit_id": "7830fedd-64ec-482e-b8cf-fe2a353799ae",
+    "wifi_spot_visit_my_spot_id": "cc36296f-e09e-4e90-aa03-5cd607e6be5c"
+  },
+  {
+    "_id": "8b9a31c1-5146-4df8-8597-cff2883a3efe",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 168,
+    "datetime": "2021-09-05T05:20:18",
+    "review_id": "a84ff028-7ea0-4649-8b0d-7a36e2a78178",
+    "wifi_spot_id": "ba4f7460-87ab-44d9-bbe2-35805df5028e",
+    "wifi_spot_visit_id": "76509ea6-3cf7-4c9b-b0c5-70db5d5c4de8",
+    "wifi_spot_visit_my_spot_id": "c48f01cc-919e-4b30-93a8-ef440890be69"
+  },
+  {
+    "_id": "6a87bc81-03e7-46fd-862c-9adf1c74fa4b",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 22,
+    "datetime": "2022-07-27T00:51:57",
+    "review_id": "f5d9e93b-3193-4363-8b55-5de598cb1b95",
+    "wifi_spot_id": "761a8282-7a3e-4a25-8f1c-d01cb8d91491",
+    "wifi_spot_visit_id": "7fef761c-c011-4e59-8981-cf1d3b9f496c",
+    "wifi_spot_visit_my_spot_id": "bca5a1ab-c1c6-4fed-9db0-b923bdf502a5"
+  },
+  {
+    "_id": "7d4dfd9e-8591-4340-90f3-f97c6f09e8fb",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 156,
+    "datetime": "2022-08-24T21:45:01",
+    "review_id": "636ad0ad-8284-4346-bf84-5bd1c6f04369",
+    "wifi_spot_id": "ebce2c8f-c392-40a0-8035-5535d42b835e",
+    "wifi_spot_visit_id": "da5c7efa-6c61-46cb-8c0f-e8557dfd56e0",
+    "wifi_spot_visit_my_spot_id": "310dd3a8-6bf2-477e-bdee-e04ee7ac0927"
+  },
+  {
+    "_id": "b288fb81-c847-4096-865f-012ca4627d8b",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 147,
+    "datetime": "2022-06-13T16:49:33",
+    "review_id": "f676478c-8ffb-4848-b00f-92ec9770ca12",
+    "wifi_spot_id": "feca78ba-7252-4f96-82d7-5492b5acfa11",
+    "wifi_spot_visit_id": "3f51c91d-3f80-4d04-bd7c-c37209b8673b",
+    "wifi_spot_visit_my_spot_id": "ea3009b9-f3e1-45c4-915a-9de204f55992"
+  },
+  {
+    "_id": "4ff776e0-1575-48bf-a858-8d8b98cecd9e",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 18,
+    "datetime": "2020-09-18T11:45:06",
+    "review_id": "1653c477-0d62-49e5-8fd7-39fd12374d89",
+    "wifi_spot_id": "52d8780f-9a5a-4a64-8b10-8731949eb323",
+    "wifi_spot_visit_id": "6f70da5f-5421-4940-bec3-c5a1f26dea5b",
+    "wifi_spot_visit_my_spot_id": "7b7bd6d4-9e93-449f-a8ba-34a33793b253"
+  },
+  {
+    "_id": "a7251f5b-076f-4fd3-913b-61555707b65f",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 120,
+    "datetime": "2022-11-22T17:07:29",
+    "review_id": "1ea213c1-573c-40c8-8d10-a43ff9bfdb4e",
+    "wifi_spot_id": "dbfa59a3-0b76-47c1-8c3c-7e69605f1582",
+    "wifi_spot_visit_id": "cd8862c3-f962-4782-9273-7f0f028baa96",
+    "wifi_spot_visit_my_spot_id": "5415a82b-c9d4-4b6e-adc8-ba2cbbd1b5a6"
+  },
+  {
+    "_id": "1c3dfdff-e73a-450c-a8ab-62e9304f6ce2",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 77,
+    "datetime": "2022-10-14T03:36:40",
+    "review_id": "6e9b3ef7-4a83-4576-9b35-6add1a14fdba",
+    "wifi_spot_id": "dd3122ea-8fea-4f12-a445-ce59e910b7c5",
+    "wifi_spot_visit_id": "f3ca6f4d-fdfb-4260-9929-27be13ec6369",
+    "wifi_spot_visit_my_spot_id": "871dbe2e-2e7a-44ab-a88b-250681d30c31"
+  },
+  {
+    "_id": "9f73f347-8543-4863-a1a5-5f2f36667347",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 192,
+    "datetime": "2021-02-07T06:30:05",
+    "review_id": "f73af1d1-0ea3-4db4-aa15-6be1234ea15f",
+    "wifi_spot_id": "5fa9a64e-0afb-4b1c-aeca-095f2a865410",
+    "wifi_spot_visit_id": "1e057124-2cb8-43fc-8275-29fb8d8a3e45",
+    "wifi_spot_visit_my_spot_id": "ef5f27e7-3a19-44ce-b18e-dfa2bb6c2831"
+  },
+  {
+    "_id": "5ed1b8aa-7cc1-4c21-9df0-d92cc7e7f921",
+    "user_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "amount": 84,
+    "datetime": "2021-10-19T04:34:40",
+    "review_id": "c55dcd74-3de6-4451-9b28-fb3d7620eba0",
+    "wifi_spot_id": "1b0375cf-2358-4980-8eca-1a086d4d2165",
+    "wifi_spot_visit_id": "3fd8ae5c-d9f3-4c7e-a0d2-6fc56990742b",
+    "wifi_spot_visit_my_spot_id": "eca9244b-237f-448a-8c77-418fad886a2c"
+  }
+]

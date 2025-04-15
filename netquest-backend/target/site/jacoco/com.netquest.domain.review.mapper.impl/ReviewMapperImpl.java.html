@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.review.mapper.impl</a> &gt; <span class="el_source">ReviewMapperImpl.java</span></div><h1>ReviewMapperImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.review.mapper.impl;
+
+import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
+import com.netquest.domain.review.dto.ReviewCreateDto;
+import com.netquest.domain.review.dto.ReviewDetailedDto;
+import com.netquest.domain.review.dto.ReviewDto;
+import com.netquest.domain.review.mapper.ReviewMapper;
+import com.netquest.domain.review.model.Review;
+import com.netquest.domain.review.model.ReviewAttributeClassification;
+import com.netquest.domain.review.model.ReviewComment;
+import com.netquest.domain.review.model.ReviewOverallClassification;
+import com.netquest.domain.user.mapper.UserMapper;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+
+@Service
+@AllArgsConstructor
+public class ReviewMapperImpl implements ReviewMapper {
+
+    private final UserMapper userMapper;
+    private final WifiSpotMapper wifiSpotMapper;
+
+    @Override
+    public Review toNewEntity(ReviewCreateDto reviewCreateDto, UUID userUUID) {
+<span class="nc" id="L32">        return new Review(</span>
+<span class="nc" id="L33">                new ReviewComment(reviewCreateDto.getReviewComment()),</span>
+<span class="nc" id="L34">                new ReviewOverallClassification(reviewCreateDto.getReviewOverallClassification()),</span>
+<span class="nc" id="L35">                reviewCreateDto.getReviewAttributeClassificationDtoList().stream().map(this::toAttributeClassificationEntity).toList(),</span>
+<span class="nc" id="L36">                new WifiSpotId(reviewCreateDto.getWifiSpotId()),</span>
+                new UserId(userUUID)
+        );
+    }
+
+    @Override
+    public ReviewAttributeClassification toAttributeClassificationEntity(ReviewAttributeClassificationDto reviewAttributeClassificationDto) {
+<span class="nc" id="L43">        return new ReviewAttributeClassification(</span>
+<span class="nc" id="L44">                reviewAttributeClassificationDto.getName(),</span>
+<span class="nc" id="L45">                reviewAttributeClassificationDto.getValue()</span>
+        );
+    }
+
+    @Override
+    public ReviewDto toDto(Review review) {
+
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        String reviewCommentValue = review.getReviewComment() == null ? &quot;&quot; : review.getReviewComment().getValue();</span>
+
+<span class="nc" id="L54">        return new ReviewDto(</span>
+<span class="nc" id="L55">                review.getReviewId().getValue(),</span>
+<span class="nc" id="L56">                review.getReviewCreateDateTime().getValue(),</span>
+                reviewCommentValue,
+<span class="nc" id="L58">                review.getReviewOverallClassification().getValue(),</span>
+<span class="nc" id="L59">                review.getReviewAttributeClassificationList().stream().map(this::toAttributeClassificationDto).toList(),</span>
+<span class="nc" id="L60">                review.getWifiSpotId().getValue(),</span>
+<span class="nc" id="L61">                review.getUserId().getValue(),</span>
+                null
+        );
+    }
+
+    @Override
+    public ReviewAttributeClassificationDto toAttributeClassificationDto(ReviewAttributeClassification reviewAttributeClassification) {
+<span class="nc" id="L68">        return new ReviewAttributeClassificationDto(</span>
+<span class="nc" id="L69">                reviewAttributeClassification.getName(),</span>
+<span class="nc" id="L70">                reviewAttributeClassification.getValue()</span>
+        );
+    }
+
+    @Override
+    public ReviewDetailedDto toDetailedDto(Review review) {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if(review == null){</span>
+<span class="nc" id="L77">            return null;</span>
+        }
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        String reviewCommentValue = review.getReviewComment() == null ? &quot;&quot; : review.getReviewComment().getValue();</span>
+
+<span class="nc" id="L81">        return new ReviewDetailedDto(</span>
+<span class="nc" id="L82">                review.getReviewId().getValue(),</span>
+<span class="nc" id="L83">                review.getReviewCreateDateTime().getValue(),</span>
+                reviewCommentValue,
+<span class="nc" id="L85">                review.getReviewOverallClassification().getValue(),</span>
+<span class="nc" id="L86">                review.getReviewAttributeClassificationList().stream().map(this::toAttributeClassificationDto).toList(),</span>
+<span class="nc" id="L87">                wifiSpotMapper.wifiSpotDomainToDto(review.getWifiSpot()),</span>
+<span class="nc" id="L88">                userMapper.toUserDto(review.getUser())</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

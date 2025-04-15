@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispot.model</a> &gt; <span class="el_source">WifiSpot.java</span></div><h1>WifiSpot.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispot.model;
+
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.UserId;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(force = true)
+@Entity
+@Table(name = &quot;wifi_spot&quot;, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {&quot;wifi_spot_latitude&quot;, &quot;wifi_spot_longitude&quot;, &quot;wifi_spot_name&quot;})
+})
+
+public class WifiSpot {
+
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_id&quot;))
+    })
+    private final WifiSpotId wifiSpotId;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_name&quot;, nullable = false))
+    })
+    private final WifiSpotName wifiSpotName;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_description&quot;, nullable = false))
+    })
+    private final WifiSpotDescription wifiSpotDescription;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;longitude&quot;, column = @Column(name = &quot;wifi_spot_longitude&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;latitude&quot;, column = @Column(name = &quot;wifi_spot_latitude&quot;, nullable = false))
+    })
+    private final WifiSpotCoordinates wifiSpotCoordinates;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_location_type&quot;, nullable = false))
+    })
+    private final WifiSpotLocationType wifiSpotLocationType;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;wifiQuality&quot;, column = @Column(name = &quot;wifi_spot_wifi_quality&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;signalStrength&quot;, column = @Column(name = &quot;wifi_spot_signal_strength&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;bandwithLimitations&quot;, column = @Column(name = &quot;wifi_spot_bandwith_limitations&quot;, nullable = false))
+    })
+    private final WifiSpotQualityIndicators wifiSpotQualityIndicators;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;crowded&quot;, column = @Column(name = &quot;wifi_spot_crowded&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;coveredArea&quot;, column = @Column(name = &quot;wifi_spot_covered_area&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;airConditioning&quot;, column = @Column(name = &quot;wifi_spot_air_conditioning&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;outdoorSeating&quot;, column = @Column(name = &quot;wifi_spot_outdoor_seating&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;goodView&quot;, column = @Column(name = &quot;wifi_spot_good_view&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;noiseLevel&quot;, column = @Column(name = &quot;wifi_spot_noise_level&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;petFriendly&quot;, column = @Column(name = &quot;wifi_spot_pet_friendly&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;childFriendly&quot;, column = @Column(name = &quot;wifi_spot_child_friendly&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;disabledAccess&quot;, column = @Column(name = &quot;wifi_spot_disabled_access&quot;, nullable = false))
+    })
+    private final WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;availablePowerOutlets&quot;, column = @Column(name = &quot;wifi_spot_available_power_outlets&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;chargingStations&quot;, column = @Column(name = &quot;wifi_spot_charging_stations&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;restroomsAvailable&quot;, column = @Column(name = &quot;wifi_spot_restrooms_available&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;parkingAvailability&quot;, column = @Column(name = &quot;wifi_spot_parking_availability&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;foodOptions&quot;, column = @Column(name = &quot;wifi_spot_food_options&quot;, nullable = false)),
+            @AttributeOverride(name = &quot;drinkOptions&quot;, column = @Column(name = &quot;wifi_spot_drink_options&quot;, nullable = false))
+    })
+    private final WifiSpotFacilities wifiSpotFacilities;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;openDuringRain&quot;, column = @Column(name = &quot;wifi_spot_open_during_rain&quot;)),
+            @AttributeOverride(name = &quot;openDuringHeat&quot;, column = @Column(name = &quot;wifi_spot_open_during_heat&quot;)),
+            @AttributeOverride(name = &quot;heatedInWinter&quot;, column = @Column(name = &quot;wifi_spot_heated_in_winter&quot;)),
+            @AttributeOverride(name = &quot;shadedAreas&quot;, column = @Column(name = &quot;wifi_spot_shaded_areas&quot;)),
+            @AttributeOverride(name = &quot;outdoorFans&quot;, column = @Column(name = &quot;wifi_spot_outdoor_fans&quot;))
+    })
+    private final WifiSpotWeatherFeatures wifiSpotWeatherFeatures;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = &quot;wifi_spot_address_id&quot;, referencedColumnName = &quot;wifi_spot_address_id&quot;, nullable = false)
+    private final WifiSpotAddress wifiSpotAddress;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_management&quot;, nullable = false))
+    })
+    private final WifiSpotManagement wifiSpotManagement;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_create_date_time&quot;, nullable = true))
+    })
+    private final WifiSpotCreateDateTime wifiSpotCreateDateTime;
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;wifi_spot_user_id&quot;))
+    })
+    private UserId userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;wifi_spot_user_id&quot;, insertable = false, updatable = false)
+    private User user;
+
+    public WifiSpot(
+            WifiSpotName wifiSpotName
+            , WifiSpotDescription wifiSpotDescription
+            , WifiSpotCoordinates wifiSpotCoordinates
+            , WifiSpotLocationType wifiSpotLocationType
+            , WifiSpotQualityIndicators wifiSpotQualityIndicators
+            , WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures
+            , WifiSpotFacilities wifiSpotFacilities
+            , WifiSpotWeatherFeatures wifiSpotWeatherFeatures
+            , WifiSpotAddress wifiSpotAddress
+            , WifiSpotManagement wifiSpotManagement
+            , UserId userId
+<span class="fc" id="L137">    ) {</span>
+<span class="fc" id="L138">        this.wifiSpotId = new WifiSpotId();</span>
+<span class="fc" id="L139">        this.wifiSpotName = wifiSpotName;</span>
+<span class="fc" id="L140">        this.wifiSpotDescription = wifiSpotDescription;</span>
+<span class="fc" id="L141">        this.wifiSpotCoordinates = wifiSpotCoordinates;</span>
+<span class="fc" id="L142">        this.wifiSpotLocationType = wifiSpotLocationType;</span>
+<span class="fc" id="L143">        this.wifiSpotQualityIndicators = wifiSpotQualityIndicators;</span>
+<span class="fc" id="L144">        this.wifiSpotEnvironmentalFeatures = wifiSpotEnvironmentalFeatures;</span>
+<span class="fc" id="L145">        this.wifiSpotFacilities = wifiSpotFacilities;</span>
+<span class="fc" id="L146">        this.wifiSpotWeatherFeatures = wifiSpotWeatherFeatures;</span>
+<span class="fc" id="L147">        this.wifiSpotAddress = wifiSpotAddress;</span>
+<span class="fc" id="L148">        this.wifiSpotManagement = wifiSpotManagement;</span>
+<span class="fc" id="L149">        this.userId = userId;</span>
+<span class="fc" id="L150">        this.wifiSpotCreateDateTime = new WifiSpotCreateDateTime();</span>
+<span class="fc" id="L151">    }</span>
+
+    public WifiSpot(
+            WifiSpotId wifiSpotId
+            , WifiSpotName wifiSpotName
+            , WifiSpotDescription wifiSpotDescription
+            , WifiSpotCoordinates wifiSpotCoordinates
+            , WifiSpotLocationType wifiSpotLocationType
+            , WifiSpotQualityIndicators wifiSpotQualityIndicators
+            , WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures
+            , WifiSpotFacilities wifiSpotFacilities
+            , WifiSpotWeatherFeatures wifiSpotWeatherFeatures
+            , WifiSpotAddress wifiSpotAddress
+            , WifiSpotManagement wifiSpotManagement
+            , UserId userId
+<span class="nc" id="L166">    ) {</span>
+<span class="nc" id="L167">        this.wifiSpotId = wifiSpotId;</span>
+<span class="nc" id="L168">        this.wifiSpotName = wifiSpotName;</span>
+<span class="nc" id="L169">        this.wifiSpotDescription = wifiSpotDescription;</span>
+<span class="nc" id="L170">        this.wifiSpotCoordinates = wifiSpotCoordinates;</span>
+<span class="nc" id="L171">        this.wifiSpotLocationType = wifiSpotLocationType;</span>
+<span class="nc" id="L172">        this.wifiSpotQualityIndicators = wifiSpotQualityIndicators;</span>
+<span class="nc" id="L173">        this.wifiSpotEnvironmentalFeatures = wifiSpotEnvironmentalFeatures;</span>
+<span class="nc" id="L174">        this.wifiSpotFacilities = wifiSpotFacilities;</span>
+<span class="nc" id="L175">        this.wifiSpotWeatherFeatures = wifiSpotWeatherFeatures;</span>
+<span class="nc" id="L176">        this.wifiSpotAddress = wifiSpotAddress;</span>
+<span class="nc" id="L177">        this.wifiSpotManagement = wifiSpotManagement;</span>
+<span class="nc" id="L178">        this.userId = userId;</span>
+<span class="nc" id="L179">        this.wifiSpotCreateDateTime = new WifiSpotCreateDateTime();</span>
+<span class="nc" id="L180">    }</span>
+
+    public WifiSpot update(
+        WifiSpotName wifiSpotName,
+        WifiSpotDescription wifiSpotDescription,
+        WifiSpotCoordinates wifiSpotCoordinates,
+        WifiSpotLocationType wifiSpotLocationType,
+        WifiSpotQualityIndicators wifiSpotQualityIndicators,
+        WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures,
+        WifiSpotFacilities wifiSpotFacilities,
+        WifiSpotWeatherFeatures wifiSpotWeatherFeatures,
+        WifiSpotAddress wifiSpotAddress,
+        WifiSpotManagement wifiSpotManagement
+    ) {
+<span class="nc" id="L194">        return new WifiSpot(</span>
+            this.wifiSpotId, // Retain the existing ID
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            wifiSpotName != null ? wifiSpotName : this.wifiSpotName,</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">            wifiSpotDescription != null ? wifiSpotDescription : this.wifiSpotDescription,</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            wifiSpotCoordinates != null ? wifiSpotCoordinates : this.wifiSpotCoordinates,</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            wifiSpotLocationType != null ? wifiSpotLocationType : this.wifiSpotLocationType,</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            wifiSpotQualityIndicators != null ? wifiSpotQualityIndicators : this.wifiSpotQualityIndicators,</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            wifiSpotEnvironmentalFeatures != null ? wifiSpotEnvironmentalFeatures : this.wifiSpotEnvironmentalFeatures,</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            wifiSpotFacilities != null ? wifiSpotFacilities : this.wifiSpotFacilities,</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">            wifiSpotWeatherFeatures != null ? wifiSpotWeatherFeatures : this.wifiSpotWeatherFeatures,</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">            wifiSpotAddress != null ? wifiSpotAddress : this.wifiSpotAddress,</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            wifiSpotManagement != null ? wifiSpotManagement : this.wifiSpotManagement,</span>
+            this.userId // Retain the existing user ID
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

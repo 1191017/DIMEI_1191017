@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotVisitMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispotvisit.mapper.impl</a> &gt; <span class="el_source">WifiSpotVisitMapperImpl.java</span></div><h1>WifiSpotVisitMapperImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispotvisit.mapper.impl;
+
+import com.netquest.domain.user.mapper.UserMapper;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDetailedDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
+import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitStartDateTime;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@AllArgsConstructor
+@Service
+public class WifiSpotVisitMapperImpl implements WifiSpotVisitMapper {
+
+    private final WifiSpotMapper wifiSpotMapper;
+    private final UserMapper userMapper;
+
+    @Override
+    public WifiSpotVisitDto toDto(WifiSpotVisit wifiSpotVisit) {
+
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (wifiSpotVisit == null) {</span>
+<span class="nc" id="L31">            return null;</span>
+        }
+
+<span class="nc" id="L34">        return new WifiSpotVisitDto(</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotVisitId() != null ? wifiSpotVisit.getWifiSpotVisitId().getValue() : null,</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotVisitStartDateTime() != null ? wifiSpotVisit.getWifiSpotVisitStartDateTime() .getValue() : null,</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotVisitEndDateTime() != null ? wifiSpotVisit.getWifiSpotVisitEndDateTime().getValue() : null,</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">                wifiSpotVisit.getUserId() != null ? wifiSpotVisit.getUserId().getValue() : null,</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotId() != null ? wifiSpotVisit.getWifiSpotId().getValue() : null);</span>
+    }
+
+    @Override
+    public WifiSpotVisitDetailedDto toDetailedDto(WifiSpotVisit wifiSpotVisit) {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (wifiSpotVisit == null) {</span>
+<span class="nc" id="L45">            return null;</span>
+        }
+
+<span class="nc" id="L48">        return new WifiSpotVisitDetailedDto(</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotVisitId() != null ? wifiSpotVisit.getWifiSpotVisitId().getValue() : null,</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotVisitStartDateTime() != null ? wifiSpotVisit.getWifiSpotVisitStartDateTime() .getValue() : null,</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">                wifiSpotVisit.getWifiSpotVisitEndDateTime() != null ? wifiSpotVisit.getWifiSpotVisitEndDateTime().getValue() : null,</span>
+<span class="nc" id="L52">                userMapper.toUserDto(wifiSpotVisit.getUser()),</span>
+<span class="nc" id="L53">                wifiSpotMapper.wifiSpotDomainToDto(wifiSpotVisit.getWifiSpot()));</span>
+    }
+
+    @Override
+    public WifiSpotVisit toNewEntity(UUID userUUID, WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
+<span class="nc" id="L58">        return new WifiSpotVisit(</span>
+<span class="nc" id="L59">                new WifiSpotVisitStartDateTime(wifiSpotVisitCreateDto.getStartDateTime()),</span>
+<span class="nc" id="L60">                new WifiSpotVisitEndDateTime(wifiSpotVisitCreateDto.getEndDateTime()),</span>
+<span class="nc" id="L61">                new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId()),</span>
+                new UserId(userUUID));
+    }
+
+    @Override
+    public WifiSpotVisitEndDateTime toEndDateTime(WifiSpotVisitUpdateDateTimeDto wifiSpotVisitUpdateDateTimeDto) {
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (wifiSpotVisitUpdateDateTimeDto == null) {</span>
+<span class="nc" id="L68">            return null;</span>
+        }
+<span class="nc" id="L70">        return new WifiSpotVisitEndDateTime(wifiSpotVisitUpdateDateTimeDto.getDateTime());</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewRepositoryCassandra.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.infrastructure.review</a> &gt; <span class="el_source">ReviewRepositoryCassandra.java</span></div><h1>ReviewRepositoryCassandra.java</h1><pre class="source lang-java linenums">package com.netquest.infrastructure.review;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.netquest.domain.review.dto.ReviewDto;
+import com.netquest.domain.review.dto.ReviewCreateDto;
+import com.netquest.domain.review.dto.ReviewFeedDto;
+import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
+import org.springframework.stereotype.Repository;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public class ReviewRepositoryCassandra {
+    private final CqlSession session;
+
+<span class="nc" id="L22">    public ReviewRepositoryCassandra(CqlSession session) {</span>
+<span class="nc" id="L23">        this.session = session;</span>
+<span class="nc" id="L24">    }</span>
+
+    // 5.3.1 - Insert a new review with attributes
+    public void insertReview(ReviewCreateDto reviewCreateDto, UUID userId) {
+<span class="nc" id="L28">        UUID reviewId = UUID.randomUUID();</span>
+<span class="nc" id="L29">        Instant timestamp = Instant.now();</span>
+
+<span class="nc" id="L31">        String reviewQuery = &quot;&quot;&quot;</span>
+            INSERT INTO reviews (wifi_spot_id, review_id, user_id, review_comment, review_create_date_time, review_overall_classification)
+            VALUES (?, ?, ?, ?, ?, ?)
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L36">        PreparedStatement reviewStmt = session.prepare(reviewQuery);</span>
+<span class="nc" id="L37">        session.execute(reviewStmt.bind(</span>
+<span class="nc" id="L38">                reviewCreateDto.getWifiSpotId(), reviewId, userId,</span>
+<span class="nc" id="L39">                reviewCreateDto.getReviewComment(), timestamp,</span>
+<span class="nc" id="L40">                reviewCreateDto.getReviewOverallClassification()</span>
+        ));
+
+        // Insert into review_attributes table
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (reviewCreateDto.getReviewAttributeClassificationDtoList() != null) {</span>
+<span class="nc" id="L45">            String attributeQuery = &quot;&quot;&quot;</span>
+                INSERT INTO review_attributes (review_id, attribute_name, attribute_value) VALUES (?, ?, ?)
+            &quot;&quot;&quot;;
+<span class="nc" id="L48">            PreparedStatement attrStmt = session.prepare(attributeQuery);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            for (var attr : reviewCreateDto.getReviewAttributeClassificationDtoList()) {</span>
+<span class="nc" id="L50">                session.execute(attrStmt.bind(reviewId, attr.getName(), attr.getValue()));</span>
+<span class="nc" id="L51">            }</span>
+        }
+<span class="nc" id="L53">    }</span>
+
+    // 5.3.3 - Delete a review and its attributes
+    public void deleteReview(UUID reviewId, UUID wifiSpotId) {
+        // Delete attributes first
+<span class="nc" id="L58">        String deleteAttributesQuery = &quot;DELETE FROM review_attributes WHERE review_id = ?&quot;;</span>
+<span class="nc" id="L59">        session.execute(session.prepare(deleteAttributesQuery).bind(reviewId));</span>
+
+        // Delete review
+<span class="nc" id="L62">        String deleteReviewQuery = &quot;DELETE FROM reviews WHERE wifi_spot_id = ? AND review_create_date_time = ?&quot;;</span>
+<span class="nc" id="L63">        session.execute(session.prepare(deleteReviewQuery).bind(wifiSpotId, Instant.now()));</span>
+<span class="nc" id="L64">    }</span>
+
+    // 5.3.4 - Get all reviews for a Wi-Fi spot (ordered by oldest first)
+    public List&lt;ReviewDto&gt; getReviewsForWifiSpot(UUID wifiSpotId) {
+<span class="nc" id="L68">        String reviewQuery = &quot;&quot;&quot;</span>
+            SELECT review_id, review_create_date_time, review_comment, review_overall_classification, user_id
+            FROM reviews WHERE wifi_spot_id = ? ORDER BY review_create_date_time ASC
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L73">        PreparedStatement reviewStmt = session.prepare(reviewQuery);</span>
+<span class="nc" id="L74">        ResultSet rs = session.execute(reviewStmt.bind(wifiSpotId));</span>
+
+<span class="nc" id="L76">        List&lt;ReviewDto&gt; reviews = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        for (Row row : rs) {</span>
+<span class="nc" id="L78">            UUID reviewId = row.getUuid(&quot;review_id&quot;);</span>
+
+            // Fetch attributes for each review
+<span class="nc" id="L81">            List&lt;ReviewAttributeClassificationDto&gt; attributes = getReviewAttributes(reviewId);</span>
+
+<span class="nc" id="L83">            reviews.add(new ReviewDto(</span>
+                    reviewId,
+<span class="nc" id="L85">                    row.getInstant(&quot;review_create_date_time&quot;).atZone(java.time.ZoneId.systemDefault()).toLocalDateTime(),</span>
+<span class="nc" id="L86">                    row.getString(&quot;review_comment&quot;),</span>
+<span class="nc" id="L87">                    row.getInt(&quot;review_overall_classification&quot;),</span>
+                    attributes,
+                    wifiSpotId,
+<span class="nc" id="L90">                    row.getUuid(&quot;user_id&quot;),</span>
+                    &quot;Unknown&quot;
+            ));
+<span class="nc" id="L93">        }</span>
+<span class="nc" id="L94">        return reviews;</span>
+    }
+
+    // 5.3.5 - Get review feed (fetch reviews first, attributes separately)
+    public List&lt;ReviewFeedDto&gt; getReviewFeed() {
+<span class="nc" id="L99">        String reviewQuery = &quot;&quot;&quot;</span>
+            SELECT wifi_spot_id, review_id, review_create_date_time, review_comment, review_overall_classification, user_id
+            FROM reviews ORDER BY review_create_date_time DESC
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L104">        ResultSet rs = session.execute(session.prepare(reviewQuery).bind());</span>
+
+<span class="nc" id="L106">        List&lt;ReviewFeedDto&gt; reviewFeed = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        for (Row row : rs) {</span>
+<span class="nc" id="L108">            UUID reviewId = row.getUuid(&quot;review_id&quot;);</span>
+
+<span class="nc" id="L110">            reviewFeed.add(new ReviewFeedDto(</span>
+                    reviewId,
+<span class="nc" id="L112">                    row.getInstant(&quot;review_create_date_time&quot;).atZone(java.time.ZoneId.systemDefault()).toLocalDateTime(),</span>
+<span class="nc" id="L113">                    row.getString(&quot;review_comment&quot;),</span>
+<span class="nc" id="L114">                    row.getInt(&quot;review_overall_classification&quot;),</span>
+<span class="nc" id="L115">                    row.getUuid(&quot;user_id&quot;),</span>
+                    &quot;Unknown&quot;,
+                    &quot;Unknown&quot;,
+<span class="nc" id="L118">                    row.getUuid(&quot;wifi_spot_id&quot;),</span>
+                    &quot;Unknown&quot;,
+                    &quot;Unknown&quot;
+            ));
+<span class="nc" id="L122">        }</span>
+<span class="nc" id="L123">        return reviewFeed;</span>
+    }
+
+    // Fetch review attributes separately
+    private List&lt;ReviewAttributeClassificationDto&gt; getReviewAttributes(UUID reviewId) {
+<span class="nc" id="L128">        String attributeQuery = &quot;SELECT attribute_name, attribute_value FROM review_attributes WHERE review_id = ?&quot;;</span>
+<span class="nc" id="L129">        PreparedStatement stmt = session.prepare(attributeQuery);</span>
+<span class="nc" id="L130">        ResultSet rs = session.execute(stmt.bind(reviewId));</span>
+
+<span class="nc" id="L132">        List&lt;ReviewAttributeClassificationDto&gt; attributes = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        for (Row row : rs) {</span>
+<span class="nc" id="L134">            attributes.add(new ReviewAttributeClassificationDto(</span>
+<span class="nc" id="L135">                    row.getString(&quot;attribute_name&quot;),</span>
+<span class="nc" id="L136">                    row.getString(&quot;attribute_value&quot;)</span>
+            ));
+<span class="nc" id="L138">        }</span>
+<span class="nc" id="L139">        return attributes;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

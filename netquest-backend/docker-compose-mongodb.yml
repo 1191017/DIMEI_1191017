@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: netQuest
+      MONGO_INITDB_ROOT_PASSWORD: netQuestLocal
+      MONGO_INITDB_DATABASE: netQuest
+    ports:
+      - "27017:27017"
+    volumes:
+      - my-db:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+
+volumes:
+  my-db:

@@ -1,0 +1,9 @@
+package com.netquest.domain.wifispotvisit.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class WifiSpotVisitNotFoundException extends RuntimeException {
+    public WifiSpotVisitNotFoundException(String message) {super(message);}
+}

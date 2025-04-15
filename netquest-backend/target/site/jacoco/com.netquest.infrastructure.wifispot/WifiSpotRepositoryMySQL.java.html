@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotRepositoryMySQL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.infrastructure.wifispot</a> &gt; <span class="el_source">WifiSpotRepositoryMySQL.java</span></div><h1>WifiSpotRepositoryMySQL.java</h1><pre class="source lang-java linenums">package com.netquest.infrastructure.wifispot;
+
+import org.springframework.stereotype.Repository;
+import java.sql.*;
+
+import java.util.UUID;
+
+@Repository
+public class WifiSpotRepositoryMySQL {
+<span class="nc" id="L10">    private final String url = &quot;jdbc:mysql://localhost:3306/netQuest&quot;;</span>
+<span class="nc" id="L11">    private final String username = &quot;netQuest&quot;;</span>
+<span class="nc" id="L12">    private final String password = &quot;netQuestLocal&quot;;</span>
+
+<span class="nc" id="L14">    public WifiSpotRepositoryMySQL() {}</span>
+
+    // 5.3.2 - Update a Wi-Fi spot description
+    public int updateWifiSpotDescription(UUID wifiSpotId, String newDescription) {
+<span class="nc" id="L18">        String sql = &quot;UPDATE wifi_spot SET wifi_spot_description = ? WHERE wifi_spot_id = UUID_TO_BIN(?)&quot;;</span>
+
+<span class="nc" id="L20">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L21">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+
+<span class="nc" id="L23">            stmt.setString(1, newDescription);</span>
+<span class="nc" id="L24">            stmt.setString(2, wifiSpotId.toString());</span>
+<span class="nc" id="L25">            return stmt.executeUpdate();</span>
+<span class="nc" id="L26">        } catch (SQLException e) {</span>
+<span class="nc" id="L27">            throw new RuntimeException(&quot;Error updating Wi-Fi spot description&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

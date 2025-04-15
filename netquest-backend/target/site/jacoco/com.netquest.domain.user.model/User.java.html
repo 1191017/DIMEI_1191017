@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.user.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.netquest.domain.user.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = &quot;users&quot;, uniqueConstraints = {
+        @UniqueConstraint(columnNames = &quot;username&quot;),
+        @UniqueConstraint(columnNames = &quot;email&quot;)
+})
+public class User {
+
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = &quot;value&quot;, column = @Column(name = &quot;user_id&quot;))
+    })
+    private UserId userId;
+
+    @Embedded
+    private UserFirstName firstName;
+
+    @Embedded
+    private UserLastName lastName;
+
+    @Enumerated(EnumType.STRING)
+    private UserGender gender;
+
+    @Embedded
+    private Username username;
+
+    @Embedded
+    private UserMail email;
+
+    @Embedded
+    private UserPassword password;
+
+    @Embedded
+    private UserBirthDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Embedded
+    private UserAddress address;
+
+    @Embedded
+    private UserVATNumber vatNumber;
+
+    public User(UserFirstName firstName, UserLastName lastName, UserGender gender, Username username,
+                UserPassword password, UserMail email, UserBirthDate birthDate, UserRole role,
+<span class="fc" id="L54">                UserAddress address, UserVATNumber vatNumber) {</span>
+<span class="fc" id="L55">        this.userId = new UserId();</span>
+<span class="fc" id="L56">        this.firstName = firstName;</span>
+<span class="fc" id="L57">        this.lastName = lastName;</span>
+<span class="fc" id="L58">        this.gender = gender;</span>
+<span class="fc" id="L59">        this.username = username;</span>
+<span class="fc" id="L60">        this.password = password;</span>
+<span class="fc" id="L61">        this.email = email;</span>
+<span class="fc" id="L62">        this.birthDate = birthDate;</span>
+<span class="fc" id="L63">        this.role = role;</span>
+<span class="fc" id="L64">        this.address = address;</span>
+<span class="fc" id="L65">        this.vatNumber = vatNumber;</span>
+<span class="fc" id="L66">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

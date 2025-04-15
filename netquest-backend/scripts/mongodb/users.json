@@ -1,0 +1,21 @@
+[
+  {
+    "_id": "9ae0c834-28d8-40a1-a10c-8bc96cc12b9f",
+    "first_name": "K\u00e9vim",
+    "last_name": "Amaral",
+    "user_name": "catarinagarcia",
+    "mail": "fabio51@example.net",
+    "birthdate": "1947-12-26",
+    "gender": "MALE",
+    "role": "USER_PREMIUM",
+    "vat_number": "243488887",
+    "address": {
+      "line1": "Avenida do Falc\u00e3o, 8",
+      "line2": "",
+      "city": "Trancoso",
+      "district": "Faro",
+      "country": "Cro\u00e1cia",
+      "zip_code": "1349-036"
+    }
+  }
+]

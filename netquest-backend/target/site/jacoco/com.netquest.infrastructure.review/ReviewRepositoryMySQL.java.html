@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewRepositoryMySQL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.infrastructure.review</a> &gt; <span class="el_source">ReviewRepositoryMySQL.java</span></div><h1>ReviewRepositoryMySQL.java</h1><pre class="source lang-java linenums">package com.netquest.infrastructure.review;
+
+import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
+import com.netquest.domain.review.dto.ReviewCreateDto;
+import com.netquest.domain.review.dto.ReviewDto;
+import com.netquest.domain.review.dto.ReviewFeedDto;
+import com.netquest.domain.review.mapper.ReviewMapper;
+
+import org.springframework.stereotype.Repository;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public class ReviewRepositoryMySQL {
+<span class="nc" id="L18">    private final String url = &quot;jdbc:mysql://localhost:3306/netQuest&quot;;</span>
+<span class="nc" id="L19">    private final String username = &quot;netQuest&quot;;</span>
+<span class="nc" id="L20">    private final String password = &quot;netQuestLocal&quot;;</span>
+
+<span class="nc" id="L22">    public ReviewRepositoryMySQL() {}</span>
+
+    // 5.3.1 - Insert a new review with attributes
+    public int insertReview(ReviewCreateDto reviewCreateDto, UUID userId) {
+<span class="nc" id="L26">        UUID reviewId = UUID.randomUUID();</span>
+<span class="nc" id="L27">        String reviewSql = &quot;&quot;&quot;</span>
+            INSERT INTO review (review_id, review_comment, review_create_date_time, review_overall_classification, review_user_id, review_wifi_spot_id)
+            VALUES (UUID_TO_BIN(?), ?, NOW(), ?, UUID_TO_BIN(?), UUID_TO_BIN(?))
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L32">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L33">             PreparedStatement reviewStmt = connection.prepareStatement(reviewSql)) {</span>
+
+<span class="nc" id="L35">            reviewStmt.setString(1, reviewId.toString());</span>
+<span class="nc" id="L36">            reviewStmt.setString(2, reviewCreateDto.getReviewComment());</span>
+<span class="nc" id="L37">            reviewStmt.setInt(3, reviewCreateDto.getReviewOverallClassification());</span>
+<span class="nc" id="L38">            reviewStmt.setString(4, userId.toString());</span>
+<span class="nc" id="L39">            reviewStmt.setString(5, reviewCreateDto.getWifiSpotId().toString());</span>
+
+<span class="nc" id="L41">            int rowsAffected = reviewStmt.executeUpdate();</span>
+
+            // Insert attributes if they exist
+<span class="nc bnc" id="L44" title="All 2 branches missed.">            if (reviewCreateDto.getReviewAttributeClassificationDtoList() != null) {</span>
+<span class="nc" id="L45">                String attributeSql = &quot;&quot;&quot;</span>
+                    INSERT INTO review_attribute_classification (review_id, review_attribute_classification_name, review_attribute_classification_value)
+                    VALUES (UUID_TO_BIN(?), ?, ?)
+                &quot;&quot;&quot;;
+<span class="nc" id="L49">                try (PreparedStatement attributeStmt = connection.prepareStatement(attributeSql)) {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                    for (ReviewAttributeClassificationDto attr : reviewCreateDto.getReviewAttributeClassificationDtoList()) {</span>
+<span class="nc" id="L51">                        attributeStmt.setString(1, reviewId.toString());</span>
+<span class="nc" id="L52">                        attributeStmt.setString(2, attr.getName());</span>
+<span class="nc" id="L53">                        attributeStmt.setString(3, attr.getValue());</span>
+<span class="nc" id="L54">                        attributeStmt.executeUpdate();</span>
+<span class="nc" id="L55">                    }</span>
+                }
+            }
+
+<span class="nc" id="L59">            return rowsAffected;</span>
+<span class="nc" id="L60">        } catch (SQLException e) {</span>
+<span class="nc" id="L61">            throw new RuntimeException(&quot;Error inserting review&quot;, e);</span>
+        }
+    }
+
+    // 5.3.3 - Delete a review and its attributes
+    public int deleteReview(UUID reviewId) {
+<span class="nc" id="L67">        String deleteAttributesSql = &quot;DELETE FROM review_attribute_classification WHERE review_id = UUID_TO_BIN(?)&quot;;</span>
+<span class="nc" id="L68">        String deleteReviewSql = &quot;DELETE FROM review WHERE review_id = UUID_TO_BIN(?)&quot;;</span>
+
+<span class="nc" id="L70">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L71">             PreparedStatement attrStmt = connection.prepareStatement(deleteAttributesSql);</span>
+<span class="nc" id="L72">             PreparedStatement reviewStmt = connection.prepareStatement(deleteReviewSql)) {</span>
+
+<span class="nc" id="L74">            attrStmt.setString(1, reviewId.toString());</span>
+<span class="nc" id="L75">            attrStmt.executeUpdate();</span>
+
+<span class="nc" id="L77">            reviewStmt.setString(1, reviewId.toString());</span>
+<span class="nc" id="L78">            return reviewStmt.executeUpdate();</span>
+<span class="nc" id="L79">        } catch (SQLException e) {</span>
+<span class="nc" id="L80">            throw new RuntimeException(&quot;Error deleting review&quot;, e);</span>
+        }
+    }
+
+    // 5.3.4 - Get all reviews for a Wi-Fi spot, ordered by oldest first
+    public List&lt;ReviewDto&gt; getReviewsForWifiSpot(UUID wifiSpotId) {
+<span class="nc" id="L86">        String sql = &quot;&quot;&quot;</span>
+        SELECT 
+            BIN_TO_UUID(r.review_id) AS review_id, r.review_comment, r.review_create_date_time, r.review_overall_classification,
+            BIN_TO_UUID(r.review_wifi_spot_id) AS wifi_spot_id, BIN_TO_UUID(r.review_user_id) AS user_id, u.user_name
+        FROM review r
+        JOIN users u ON r.review_user_id = u.user_id
+        WHERE r.review_wifi_spot_id = UUID_TO_BIN(?)
+        ORDER BY r.review_create_date_time ASC
+    &quot;&quot;&quot;;
+
+<span class="nc" id="L96">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L97">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+
+<span class="nc" id="L99">            stmt.setString(1, wifiSpotId.toString());</span>
+<span class="nc" id="L100">            ResultSet rs = stmt.executeQuery();</span>
+
+<span class="nc" id="L102">            List&lt;ReviewDto&gt; reviews = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L104">                reviews.add(new ReviewDto(</span>
+<span class="nc" id="L105">                        UUID.fromString(rs.getString(&quot;review_id&quot;)),</span>
+<span class="nc" id="L106">                        rs.getTimestamp(&quot;review_create_date_time&quot;).toLocalDateTime(),</span>
+<span class="nc" id="L107">                        rs.getString(&quot;review_comment&quot;),</span>
+<span class="nc" id="L108">                        rs.getInt(&quot;review_overall_classification&quot;),</span>
+                        new ArrayList&lt;&gt;(), // Empty attribute list for now
+<span class="nc" id="L110">                        UUID.fromString(rs.getString(&quot;wifi_spot_id&quot;)),</span>
+<span class="nc" id="L111">                        UUID.fromString(rs.getString(&quot;user_id&quot;)),</span>
+<span class="nc" id="L112">                        rs.getString(&quot;user_name&quot;)</span>
+                ));
+            }
+<span class="nc" id="L115">            return reviews;</span>
+<span class="nc" id="L116">        } catch (SQLException e) {</span>
+<span class="nc" id="L117">            throw new RuntimeException(&quot;Error fetching reviews&quot;, e);</span>
+        }
+    }
+
+    // 5.3.5 - Complex Select: Get review feed with user and Wi-Fi Spot info
+    public List&lt;ReviewFeedDto&gt; getReviewFeed() {
+<span class="nc" id="L123">        String sql = &quot;&quot;&quot;</span>
+        SELECT 
+            BIN_TO_UUID(r.review_id) AS review_id, r.review_comment, r.review_create_date_time, r.review_overall_classification,
+            BIN_TO_UUID(u.user_id) AS user_id, u.user_name, u.mail,
+            BIN_TO_UUID(w.wifi_spot_id) AS wifi_spot_id, w.wifi_spot_name, w.wifi_spot_description
+        FROM review r
+        JOIN users u ON r.review_user_id = u.user_id
+        JOIN wifi_spot w ON r.review_wifi_spot_id = w.wifi_spot_id
+        ORDER BY r.review_create_date_time DESC
+    &quot;&quot;&quot;;
+
+<span class="nc" id="L134">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L135">             PreparedStatement stmt = connection.prepareStatement(sql);</span>
+<span class="nc" id="L136">             ResultSet rs = stmt.executeQuery()) {</span>
+
+<span class="nc" id="L138">            List&lt;ReviewFeedDto&gt; feed = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L140">                feed.add(new ReviewFeedDto(</span>
+<span class="nc" id="L141">                        UUID.fromString(rs.getString(&quot;review_id&quot;)),</span>
+<span class="nc" id="L142">                        rs.getTimestamp(&quot;review_create_date_time&quot;).toLocalDateTime(),</span>
+<span class="nc" id="L143">                        rs.getString(&quot;review_comment&quot;),</span>
+<span class="nc" id="L144">                        rs.getInt(&quot;review_overall_classification&quot;),</span>
+<span class="nc" id="L145">                        UUID.fromString(rs.getString(&quot;user_id&quot;)),</span>
+<span class="nc" id="L146">                        rs.getString(&quot;user_name&quot;),</span>
+<span class="nc" id="L147">                        rs.getString(&quot;mail&quot;),</span>
+<span class="nc" id="L148">                        UUID.fromString(rs.getString(&quot;wifi_spot_id&quot;)),</span>
+<span class="nc" id="L149">                        rs.getString(&quot;wifi_spot_name&quot;),</span>
+<span class="nc" id="L150">                        rs.getString(&quot;wifi_spot_description&quot;)</span>
+                ));
+            }
+<span class="nc" id="L153">            return feed;</span>
+<span class="nc" id="L154">        } catch (SQLException e) {</span>
+<span class="nc" id="L155">            throw new RuntimeException(&quot;Error fetching review feed&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

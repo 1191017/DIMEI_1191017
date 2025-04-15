@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NetquestBackendApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest</a> &gt; <span class="el_source">NetquestBackendApplication.java</span></div><h1>NetquestBackendApplication.java</h1><pre class="source lang-java linenums">package com.netquest;
+
+import com.mongodb.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+import org.bson.BsonDocument;
+import org.bson.BsonInt64;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+<span class="nc" id="L15">public class NetquestBackendApplication {</span>
+
+    public static void main(String[] args) {
+        // Replace the placeholder with your Atlas connection string
+<span class="nc" id="L19">        String uri = &quot;mongodb://netQuest:netQuestLocal@localhost:27017&quot;;</span>
+        // Construct a ServerApi instance using the ServerApi.builder() method
+<span class="nc" id="L21">        ServerApi serverApi = ServerApi.builder()</span>
+<span class="nc" id="L22">                .version(ServerApiVersion.V1)</span>
+<span class="nc" id="L23">                .build();</span>
+<span class="nc" id="L24">        MongoClientSettings settings = MongoClientSettings.builder()</span>
+<span class="nc" id="L25">                .applyConnectionString(new ConnectionString(uri))</span>
+<span class="nc" id="L26">                .serverApi(serverApi)</span>
+<span class="nc" id="L27">                .build();</span>
+        // Create a new client and connect to the server
+<span class="nc" id="L29">        try (MongoClient mongoClient = MongoClients.create(settings)) {</span>
+<span class="nc" id="L30">            MongoDatabase database = mongoClient.getDatabase(&quot;netQuest&quot;);</span>
+            try {
+                // Send a ping to confirm a successful connection
+<span class="nc" id="L33">                Bson command = new BsonDocument(&quot;ping&quot;, new BsonInt64(1));</span>
+<span class="nc" id="L34">                Document commandResult = database.runCommand(command);</span>
+<span class="nc" id="L35">                System.out.println(&quot;Pinged your deployment. You successfully connected to MongoDB!&quot;);</span>
+<span class="nc" id="L36">            } catch (MongoException me) {</span>
+<span class="nc" id="L37">                System.err.println(me);</span>
+<span class="nc" id="L38">            }</span>
+        }
+        //SpringApplication.run(NetquestBackendApplication.class, args);
+<span class="nc" id="L41">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

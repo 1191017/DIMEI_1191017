@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PointsEarnTransactionServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.pointsearntransaction.service.impl</a> &gt; <span class="el_source">PointsEarnTransactionServiceImpl.java</span></div><h1>PointsEarnTransactionServiceImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.pointsearntransaction.service.impl;
+
+import com.netquest.domain.pointsearntransaction.dto.*;
+import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
+import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
+import com.netquest.domain.user.exception.UserNotFoundException;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.user.service.UserService;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.infrastructure.pointsearntransaction.PointsEarnTransactionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+@RequiredArgsConstructor
+@Service
+public class PointsEarnTransactionServiceImpl implements PointsEarnTransactionService {
+    private final PointsEarnTransactionRepository pointsEarnTransactionRepository;
+    private final PointsEarnTransactionMapper pointsEarnTransactionMapper;
+    private final UserService userService;
+
+    @Override
+    public PointsEarnTransactionDto savePointsEarnTransactionByMyVisit(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto) {
+<span class="fc" id="L31">        PointsEarnTransaction pointsEarnTransaction = pointsEarnTransactionMapper</span>
+<span class="fc" id="L32">                .toNewEntityByVisit(pointsEarnTransactionCreateByVisitDto);</span>
+
+<span class="fc" id="L34">        return pointsEarnTransactionMapper.toDto(pointsEarnTransactionRepository.save(pointsEarnTransaction));</span>
+    }
+    @Override
+    public void savePointsEarnTransactionByVisitMySpot(PointsEarnTransactionCreateByVisitMySpotDto pointsEarnTransactionCreateByVisitMySpotDto) {
+<span class="nc" id="L38">        PointsEarnTransaction pointsEarnTransaction = pointsEarnTransactionMapper.toNewEntityByVisitMySpot(pointsEarnTransactionCreateByVisitMySpotDto);</span>
+<span class="nc" id="L39">        pointsEarnTransactionRepository.save(pointsEarnTransaction);</span>
+<span class="nc" id="L40">    }</span>
+
+
+    @Override
+    public PointsEarnTransactionDto savePointsEarnTransactionByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto) {
+<span class="nc" id="L45">        PointsEarnTransaction pointsEarnTransaction = pointsEarnTransactionMapper</span>
+<span class="nc" id="L46">                .toNewEntityByWifiSpotCreation(pointsEarnTransactionCreateByWifiSpotCreationDto);</span>
+<span class="nc" id="L47">        return pointsEarnTransactionMapper.toDto(pointsEarnTransactionRepository.save(pointsEarnTransaction));</span>
+    }
+
+    @Override
+    public PointsEarnTransactionDto savePointsEarnTransactionByReview(PointsEarnTransactionCreateByReviewDto PointsEarnTransactionCreateByReviewDto) {
+<span class="nc" id="L52">        UserId userId = new UserId(PointsEarnTransactionCreateByReviewDto.getUserUUID());</span>
+<span class="nc" id="L53">        WifiSpotId wifiSpotId = new WifiSpotId(PointsEarnTransactionCreateByReviewDto.getWifiSpotUUID());</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if(pointsEarnTransactionRepository.existsPointsEarnTransactionByUserIdAndWifiSpotId(userId,wifiSpotId)){</span>
+<span class="nc" id="L55">            return null;</span>
+        }
+<span class="nc" id="L57">        PointsEarnTransaction pointsEarnTransaction = pointsEarnTransactionMapper.toNewEntityByReview(PointsEarnTransactionCreateByReviewDto);</span>
+<span class="nc" id="L58">        return pointsEarnTransactionMapper.toDto(pointsEarnTransactionRepository.save(pointsEarnTransaction));</span>
+    }
+
+    @Override
+    public Page&lt;LeaderboardEntryDto&gt; getLeaderboard(Pageable pageable) {
+
+
+<span class="fc" id="L65">        Page&lt;TotalPointsEarnByUserDto&gt; totalPointsEarnByUserDtosPage = pointsEarnTransactionRepository.getLeaderboard(pageable);</span>
+<span class="fc" id="L66">        AtomicInteger startRank = new AtomicInteger(pageable.getPageNumber() * pageable.getPageSize() + 1);</span>
+
+<span class="fc" id="L68">        List&lt;LeaderboardEntryDto&gt; leaderboardList = totalPointsEarnByUserDtosPage.getContent().stream()</span>
+<span class="fc" id="L69">                .map(item -&gt; new LeaderboardEntryDto(</span>
+<span class="fc" id="L70">                        startRank.getAndIncrement(),</span>
+<span class="fc" id="L71">                        item.getUserId(),</span>
+<span class="fc" id="L72">                        item.getPoints()</span>
+                ))
+<span class="fc" id="L74">                .toList();</span>
+
+        // Return a new Page with ranks
+<span class="fc" id="L77">        return new PageImpl&lt;&gt;(leaderboardList, pageable, totalPointsEarnByUserDtosPage.getTotalElements());</span>
+    }
+
+    @Override
+    public Page&lt;PointsEarnTransactionDetailedDto&gt; getPointsEarnTransactionsByUserId(UUID userUUID, Pageable pageable) {
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if(!userService.existsById(userUUID)){</span>
+<span class="fc" id="L84">            throw new UserNotFoundException(&quot;User not found&quot;);</span>
+        }
+
+<span class="fc" id="L87">        UserId userId = new UserId(userUUID);</span>
+
+<span class="fc" id="L89">        return pointsEarnTransactionRepository.findByUserIdOrderByPointsEarnTransactionDateTimeDesc(userId,pageable).map(pointsEarnTransactionMapper::toDetailedDto);</span>
+    }
+
+    @Override
+    public Long getTotalPointsEarnTransactionByUserId(UUID userUUID) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if(!userService.existsById(userUUID)){</span>
+<span class="fc" id="L95">            throw new UserNotFoundException(&quot;User not found&quot;);</span>
+        }
+
+<span class="fc" id="L98">        UserId userId = new UserId(userUUID);</span>
+
+<span class="fc" id="L100">        Long total = pointsEarnTransactionRepository.getSumAmountByUserId(userId);</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if(total == null){</span>
+<span class="nc" id="L102">            total = 0L;</span>
+        }
+
+<span class="fc" id="L105">        return total;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

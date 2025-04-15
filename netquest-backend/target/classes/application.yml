@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: netquest-backend
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3306/netQuest
+    username: netQuest
+    password: netQuestLocal
+  cassandra:
+    keyspace-name: netquest
+    contact-points: 127.0.0.1
+    port: 9042
+    local-datacenter: datacenter1
+    username: netQuest
+    password: netQuestLocal
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000, https://netquest-dev-environment.onrender.com, https://netquest-labdsof-prod.onrender.com
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    # org.hibernate.SQL: DEBUG
+
+netquestaiurl: http://localhost:8000/generate-sql
+
+
+

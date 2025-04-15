@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotVisitController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.controller.wifispotvisit</a> &gt; <span class="el_source">WifiSpotVisitController.java</span></div><h1>WifiSpotVisitController.java</h1><pre class="source lang-java linenums">package com.netquest.controller.wifispotvisit;
+
+
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
+import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
+import com.netquest.security.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(&quot;api/wifi-spot-visit&quot;)
+public class WifiSpotVisitController {
+    private final WifiSpotVisitService wifiSpotVisitService;
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(&quot;/start/{wifi-spot-id}&quot;)
+    public WifiSpotVisitDto startVisit(@PathVariable(name = &quot;wifi-spot-id&quot;) UUID wifiSpotUUID) {
+<span class="nc" id="L34">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L35">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L36">        return wifiSpotVisitService.startVisit(userDetails.getId(),wifiSpotUUID);</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(&quot;/finish/{id}&quot;)
+    public WifiSpotVisitDto finishVisit(
+            @PathVariable(name = &quot;id&quot;) UUID wifiSpotVisitUUID) {
+<span class="nc" id="L44">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L45">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L46">        return wifiSpotVisitService.finishVisit(userDetails.getId() ,wifiSpotVisitUUID);</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(&quot;/ongoing&quot;)
+    public WifiSpotVisitDto getWifiSpotVisitOngoing() {
+<span class="nc" id="L53">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L54">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L55">        return wifiSpotVisitService.getWifiSpotVisitOngoing(userDetails.getId());</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(&quot;/my-visits&quot;)
+    public List&lt;WifiSpotVisitHistoryDto&gt; getMyWifiSpotsVisits(
+            @RequestParam(required = false) String wifiSpotName,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate
+    ) {
+<span class="nc" id="L66">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L67">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+
+<span class="nc" id="L69">        return wifiSpotVisitService.getMyWifiSpotsVisits(userDetails.getId(), wifiSpotName, startDate, endDate);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

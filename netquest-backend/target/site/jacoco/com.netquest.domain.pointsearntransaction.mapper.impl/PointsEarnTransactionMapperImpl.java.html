@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PointsEarnTransactionMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.pointsearntransaction.mapper.impl</a> &gt; <span class="el_source">PointsEarnTransactionMapperImpl.java</span></div><h1>PointsEarnTransactionMapperImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.pointsearntransaction.mapper.impl;
+
+import com.netquest.domain.pointsearntransaction.dto.*;
+import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
+import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
+import com.netquest.domain.review.mapper.ReviewMapper;
+import com.netquest.domain.review.model.ReviewId;
+import com.netquest.domain.user.mapper.UserMapper;
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@Service
+public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMapper {
+
+    private final UserMapper userMapper;
+    private final WifiSpotMapper wifiSpotMapper;
+    private final WifiSpotVisitMapper wifiSpotVisitMapper;
+    private final ReviewMapper reviewMapper;
+
+    @Override
+    public PointsEarnTransactionDto toDto(PointsEarnTransaction pointsEarnTransaction) {
+
+
+<span class="nc" id="L33">        UUID id = pointsEarnTransaction.getPointsEarnTransactionId().getValue();</span>
+<span class="nc" id="L34">        LocalDateTime dateTime = pointsEarnTransaction.getPointsEarnTransactionDateTime().getValue();</span>
+<span class="nc" id="L35">        long amount = pointsEarnTransaction.getPointsEarnTransactionAmount().getValue();</span>
+<span class="nc" id="L36">        UUID userId = pointsEarnTransaction.getUserId().getValue();</span>
+
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        UUID wifiSpotId = pointsEarnTransaction.getWifiSpotId() == null ? null : pointsEarnTransaction.getWifiSpotId().getValue();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        UUID wifiSpotVisitId = pointsEarnTransaction.getWifiSpotVisitId() == null ? null : pointsEarnTransaction.getWifiSpotVisitId().getValue();</span>
+
+
+<span class="nc" id="L42">        return new PointsEarnTransactionDto(</span>
+                id,dateTime,amount,userId,wifiSpotId,wifiSpotVisitId
+        );
+    }
+
+    @Override
+    public PointsEarnTransactionDetailedDto toDetailedDto(PointsEarnTransaction pointsEarnTransaction) {
+<span class="nc" id="L49">        UUID id = pointsEarnTransaction.getPointsEarnTransactionId().getValue();</span>
+<span class="nc" id="L50">        LocalDateTime dateTime = pointsEarnTransaction.getPointsEarnTransactionDateTime().getValue();</span>
+<span class="nc" id="L51">        long amount = pointsEarnTransaction.getPointsEarnTransactionAmount().getValue();</span>
+
+<span class="nc" id="L53">        return new PointsEarnTransactionDetailedDto(</span>
+                id,
+                dateTime,
+                amount,
+<span class="nc" id="L57">                userMapper.toUserDto(pointsEarnTransaction.getUser()),</span>
+<span class="nc" id="L58">                wifiSpotMapper.wifiSpotDomainToDto(pointsEarnTransaction.getWifiSpot()),</span>
+<span class="nc" id="L59">                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisit()),</span>
+<span class="nc" id="L60">                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisitMySpot()),</span>
+<span class="nc" id="L61">                reviewMapper.toDetailedDto(pointsEarnTransaction.getReview())</span>
+        );
+
+    }
+
+    @Override
+    public PointsEarnTransaction toNewEntityByVisit(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto) {
+<span class="nc" id="L68">        return PointsEarnTransaction.createPointsEarnTransactionBasedOnMyVisit(</span>
+<span class="nc" id="L69">                new UserId(pointsEarnTransactionCreateByVisitDto.getUserId()),</span>
+<span class="nc" id="L70">                new WifiSpotVisitId(pointsEarnTransactionCreateByVisitDto.getWifiSpotVisitId()),</span>
+<span class="nc" id="L71">                pointsEarnTransactionCreateByVisitDto.getStartDateTime(),</span>
+<span class="nc" id="L72">                pointsEarnTransactionCreateByVisitDto.getEndDateTime()</span>
+        );
+    }
+
+    @Override
+    public PointsEarnTransaction toNewEntityByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto) {
+<span class="nc" id="L78">        return PointsEarnTransaction.createPointsEarnTransactionBasedOnSpotCreation(</span>
+<span class="nc" id="L79">                new UserId(pointsEarnTransactionCreateByWifiSpotCreationDto.getUserId()),</span>
+<span class="nc" id="L80">                new WifiSpotId(pointsEarnTransactionCreateByWifiSpotCreationDto.getWifiSpotId())</span>
+        );
+    }
+
+    @Override
+    public PointsEarnTransaction toNewEntityByVisitMySpot(PointsEarnTransactionCreateByVisitMySpotDto pointsEarnTransactionCreateByVisitMySpotDto) {
+<span class="nc" id="L86">        return PointsEarnTransaction.createPointsEarnTransactionBasedOnVisitingMySpot(</span>
+<span class="nc" id="L87">                new UserId(pointsEarnTransactionCreateByVisitMySpotDto.getUserId()),</span>
+<span class="nc" id="L88">                new WifiSpotVisitId(pointsEarnTransactionCreateByVisitMySpotDto.getWifiSpotVisitId()),</span>
+<span class="nc" id="L89">                pointsEarnTransactionCreateByVisitMySpotDto.getStartDateTime(),</span>
+<span class="nc" id="L90">                pointsEarnTransactionCreateByVisitMySpotDto.getEndDateTime()</span>
+        );
+    }
+
+    @Override
+    public PointsEarnTransaction toNewEntityByReview(PointsEarnTransactionCreateByReviewDto pointsEarnTransactionCreateByReviewDto) {
+<span class="nc" id="L96">        return PointsEarnTransaction.createPointsEarnTransactionBasedOnReview(</span>
+<span class="nc" id="L97">                new UserId(pointsEarnTransactionCreateByReviewDto.getUserUUID()),</span>
+<span class="nc" id="L98">                new ReviewId(pointsEarnTransactionCreateByReviewDto.getReviewUUID())</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

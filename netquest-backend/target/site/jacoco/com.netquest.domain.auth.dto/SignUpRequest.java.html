@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SignUpRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.auth.dto</a> &gt; <span class="el_source">SignUpRequest.java</span></div><h1>SignUpRequest.java</h1><pre class="source lang-java linenums">package com.netquest.domain.auth.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.time.LocalDate;
+
+<span class="nc" id="L10">public class SignUpRequest {</span>
+
+    @Schema(example = &quot;user3&quot;)
+    @NotBlank
+    private String username;
+
+    @Schema(example = &quot;user3&quot;)
+    @NotBlank
+    private String password;
+
+    @Schema(example = &quot;John&quot;)
+    @NotBlank
+    private String firstName;
+
+    @Schema(example = &quot;Doe&quot;)
+    @NotBlank
+    private String lastName;
+
+    @Schema(example = &quot;MALE&quot;)
+    @NotBlank
+    private String gender; // Enum: MALE, FEMALE, OTHER
+
+    @Schema(example = &quot;user3@mycompany.com&quot;)
+    @Email
+    private String email;
+
+    @Schema(example = &quot;USER&quot;)
+    @NotBlank
+    private String role; // Enum: ADMIN, OFFER_MANAGER, USER, USER_PREMIUM
+
+    @Schema(example = &quot;1990-01-01&quot;)
+    @NotBlank
+    private String birthDate;
+
+    @Schema(example = &quot;123456789&quot;)
+    private String vatNumber;
+
+    @Schema(example = &quot;123 Main St&quot;)
+    private String addressLine1;
+
+    @Schema(example = &quot;Apt 4B&quot;)
+    private String addressLine2;
+
+    @Schema(example = &quot;New York&quot;)
+    private String city;
+
+    @Schema(example = &quot;New York County&quot;)
+    private String district;
+
+    @Schema(example = &quot;USA&quot;)
+    private String country;
+
+    @Schema(example = &quot;10001&quot;)
+    private String zipCode;
+
+
+    public String getUsername() {
+<span class="nc" id="L67">        return username;</span>
+    }
+
+    public String getPassword() {
+<span class="nc" id="L71">        return password;</span>
+    }
+
+    public String getFirstName() {
+<span class="nc" id="L75">        return firstName;</span>
+    }
+
+    public String getLastName() {
+<span class="nc" id="L79">        return lastName;</span>
+    }
+
+    public String getGender() {
+<span class="nc" id="L83">        return gender;</span>
+    }
+
+    public String getEmail() {
+<span class="nc" id="L87">        return email;</span>
+    }
+
+    public String getRole() {
+<span class="nc" id="L91">        return role;</span>
+    }
+
+    public String getBirthDate() {
+<span class="nc" id="L95">        return birthDate;</span>
+    }
+
+    public String getVatNumber() {
+<span class="nc" id="L99">        return vatNumber;</span>
+    }
+
+    public String getAddressLine1() {
+<span class="nc" id="L103">        return addressLine1;</span>
+    }
+
+    public String getAddressLine2() {
+<span class="nc" id="L107">        return addressLine2;</span>
+    }
+
+    public String getCity() {
+<span class="nc" id="L111">        return city;</span>
+    }
+
+    public String getDistrict() {
+<span class="nc" id="L115">        return district;</span>
+    }
+
+    public String getCountry() {
+<span class="nc" id="L119">        return country;</span>
+    }
+
+    public String getZipCode() {
+<span class="nc" id="L123">        return zipCode;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

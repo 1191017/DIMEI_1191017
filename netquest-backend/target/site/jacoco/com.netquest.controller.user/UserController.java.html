@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.controller.user</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.netquest.controller.user;
+
+import com.netquest.domain.user.dto.UserDto;
+import com.netquest.domain.user.mapper.UserMapper;
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.service.UserService;
+import com.netquest.security.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
+
+<span class="nc" id="L23">@Slf4j</span>
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(&quot;/api/users&quot;)
+public class UserController {
+
+    private final UserService userService;
+    private final UserMapper userMapper;
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @GetMapping(&quot;/me&quot;)
+    public UserDto getCurrentUser(@AuthenticationPrincipal CustomUserDetails currentUser) {
+<span class="nc" id="L35">        return userMapper.toUserDto(userService.validateAndGetUserByUsername(currentUser.getUsername()));</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @GetMapping
+    public List&lt;UserDto&gt; getUsers() {
+<span class="nc" id="L41">        return userService.getUsers().stream()</span>
+<span class="nc" id="L42">                .map(userMapper::toUserDto)</span>
+<span class="nc" id="L43">                .collect(Collectors.toList());</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @GetMapping(&quot;/{username}&quot;)
+    public UserDto getUser(@PathVariable String username) {
+<span class="nc" id="L49">        return userMapper.toUserDto(userService.validateAndGetUserByUsername(username));</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @DeleteMapping(&quot;/{username}&quot;)
+    public UserDto deleteUser(@PathVariable String username) {
+<span class="nc" id="L55">        User user = userService.validateAndGetUserByUsername(username);</span>
+<span class="nc" id="L56">        userService.deleteUser(user);</span>
+<span class="nc" id="L57">        return userMapper.toUserDto(user);</span>
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @PutMapping(&quot;/edit&quot;)
+    public void editUser(@Valid @RequestBody UserDto userDto) {
+<span class="nc" id="L63">        userService.updateUserDetails(userDto);</span>
+<span class="nc" id="L64">    }</span>
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @DeleteMapping(&quot;/deleteMyAccount&quot;)
+    public UserDto deleteMyAccount() {
+<span class="nc" id="L69">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L70">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L71">        User user = userService.getUserById(userDetails.getId());</span>
+<span class="nc" id="L72">        userService.deleteUserById(userDetails.getId());</span>
+<span class="nc" id="L73">        return userMapper.toUserDto(user);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
