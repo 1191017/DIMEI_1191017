@@ -7,4 +7,9 @@ import java.util.UUID;
 
 public interface WifiSpotService {
     void updateAllWifiSpotNames(List<Pair<UUID, String>> updates, boolean mysql, boolean mongodb, boolean cassandra);
+
+    void importFromCsv();
+
+    void importFromCsvMongodb();
+    void importFromCsvCassandra();
 }

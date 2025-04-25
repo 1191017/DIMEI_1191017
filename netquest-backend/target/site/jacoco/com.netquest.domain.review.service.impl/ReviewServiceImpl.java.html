@@ -83,8 +83,8 @@ public class ReviewServiceImpl implements ReviewService {
 <span class="nc" id="L83">    }</span>
 
     @Override
-    public void deleteReviewCassandra(UUID reviewId, UUID wifiSpotId) {
-<span class="nc" id="L87">        reviewRepositoryCassandra.deleteReview(reviewId, wifiSpotId);</span>
+    public void deleteReviewCassandra(UUID reviewId) {
+<span class="nc" id="L87">        reviewRepositoryCassandra.deleteReview(reviewId);</span>
 <span class="nc" id="L88">    }</span>
 
     @Override

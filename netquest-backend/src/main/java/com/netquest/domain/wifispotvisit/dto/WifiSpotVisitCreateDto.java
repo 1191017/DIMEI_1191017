@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Data
 public class WifiSpotVisitCreateDto {
+    private UUID wifiSpotVisitId;
 
     @NotNull
     private LocalDateTime startDateTime;

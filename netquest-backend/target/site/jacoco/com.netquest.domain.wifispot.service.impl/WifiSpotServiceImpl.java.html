@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.domain.wifispot.service.impl</a> &gt; <span class="el_source">WifiSpotServiceImpl.java</span></div><h1>WifiSpotServiceImpl.java</h1><pre class="source lang-java linenums">package com.netquest.domain.wifispot.service.impl;
 
 
-import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
-import com.netquest.domain.user.service.UserService;
-import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotAddress;
 import com.netquest.domain.wifispot.service.WifiSpotService;
-import com.netquest.infrastructure.user.UserRepository;
 import com.netquest.infrastructure.wifispot.WifiSpotRepositoryCassandra;
 import com.netquest.infrastructure.wifispot.WifiSpotRepositoryMongoDB;
 import com.netquest.infrastructure.wifispot.WifiSpotRepositoryMySQL;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 @RequiredArgsConstructor
 @Service
@@ -24,18 +34,196 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotRepositoryCassandra wifiSpotRepositoryCassandra;
 
     // 5.3.2 - Update Wi-Fi spot description
-    public int updateWifiSpotDescription(UUID wifiSpotId, String newDescription, boolean mysql, boolean mongodb, boolean cassandra) {
-<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (mysql)</span>
-<span class="nc" id="L29">            return wifiSpotRepositoryMySQL.updateWifiSpotDescription(wifiSpotId, newDescription);</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">        else if (mongodb) {</span>
-<span class="nc" id="L31">            wifiSpotRepositoryMongoDB.updateWifiSpotDescription(wifiSpotId.toString(), newDescription);</span>
-<span class="nc" id="L32">            return 1;</span>
+    private void updateWifiSpotName(UUID wifiSpotId, String newName, boolean mysql, boolean mongodb, boolean cassandra) {
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        if (mysql) {</span>
+<span class="nc" id="L39">            wifiSpotRepositoryMySQL.updateWifiSpotName(wifiSpotId, newName);</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        } else if (mongodb) {</span>
+<span class="nc" id="L41">            wifiSpotRepositoryMongoDB.updateWifiSpotName(wifiSpotId, newName);</span>
         }
-<span class="nc bnc" id="L34" title="All 2 branches missed.">        else if(cassandra){</span>
-<span class="nc" id="L35">            wifiSpotRepositoryCassandra.updateWifiSpotDescription(wifiSpotId, newDescription);</span>
-<span class="nc" id="L36">            return 1;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        else if(cassandra){</span>
+<span class="nc" id="L44">            wifiSpotRepositoryCassandra.updateWifiSpotName(wifiSpotId, newName);</span>
         }
-<span class="nc" id="L38">        return 0;</span>
+<span class="nc" id="L46">    }</span>
+
+    @Override
+    public void updateAllWifiSpotNames(List&lt;Pair&lt;UUID, String&gt;&gt; updates, boolean mysql, boolean mongodb, boolean cassandra) {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        for (Pair&lt;UUID, String&gt; entry : updates) {</span>
+<span class="nc" id="L51">            updateWifiSpotName(entry.getLeft(), entry.getRight(), mysql, mongodb, cassandra);</span>
+<span class="nc" id="L52">        }</span>
+<span class="nc" id="L53">    }</span>
+
+    public void importFromCsv() {
+<span class="nc" id="L56">        try (BufferedReader reader = new BufferedReader(new FileReader(&quot;scripts/mysql/wifi_spot.csv&quot;, StandardCharsets.UTF_8))) {</span>
+
+<span class="nc" id="L58">            String header = reader.readLine(); // skip header</span>
+            String line;
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            while ((line = reader.readLine()) != null) {</span>
+<span class="nc" id="L61">                String[] cols = line.split(&quot;,&quot;);</span>
+
+<span class="nc" id="L63">                WifiSpotAddressCreateDto addressDto = new WifiSpotAddressCreateDto(</span>
+                        cols[34], cols[2], cols[6], cols[4], cols[5], cols[3], cols[1]
+                );
+
+<span class="nc" id="L67">                WifiSpotCreateDto spotDto = new WifiSpotCreateDto(</span>
+<span class="nc" id="L68">                        UUID.fromString(cols[0]), cols[2], cols[3], Double.parseDouble(cols[4]), Double.parseDouble(cols[5]),</span>
+                        null,
+                        null,
+                        null,
+                        null,
+<span class="nc" id="L73">                        LocalTime.parse(cols[25]), LocalTime.parse(cols[26]),</span>
+<span class="nc" id="L74">                        parseBoolean(cols[10]), parseBoolean(cols[9]), parseBoolean(cols[7]), parseBoolean(cols[12]),</span>
+<span class="nc" id="L75">                        parseBoolean(cols[11]), null, parseBoolean(cols[14]),</span>
+<span class="nc" id="L76">                        parseBoolean(cols[8]), parseBoolean(cols[6]), parseBoolean(cols[15]), parseBoolean(cols[16]),</span>
+<span class="nc" id="L77">                        parseBoolean(cols[20]), parseBoolean(cols[19]), parseBoolean(cols[18]), parseBoolean(cols[17]),</span>
+<span class="nc" id="L78">                        parseBoolean(cols[24]), parseBoolean(cols[23]), parseBoolean(cols[30]),</span>
+<span class="nc" id="L79">                        parseBoolean(cols[31]), parseBoolean(cols[32]),</span>
+                        addressDto, null
+                );
+
+<span class="nc" id="L83">                wifiSpotRepositoryMySQL.createWifiSpot(UUID.fromString(cols[1]), spotDto);</span>
+<span class="nc" id="L84">            }</span>
+
+<span class="nc" id="L86">        } catch (Exception e) {</span>
+<span class="nc" id="L87">            throw new RuntimeException(&quot;Erro a importar CSV: &quot; + e.getMessage(), e);</span>
+<span class="nc" id="L88">        }</span>
+<span class="nc" id="L89">    }</span>
+
+    private boolean parseBoolean(String s) {
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        return s.trim().equals(&quot;1&quot;) || s.equalsIgnoreCase(&quot;true&quot;);</span>
+    }
+
+    public void importFromCsvMongodb() {
+<span class="nc" id="L96">        ObjectMapper objectMapper = new ObjectMapper();</span>
+        try {
+<span class="nc" id="L98">            List&lt;Map&lt;String, Object&gt;&gt; rawSpots = objectMapper.readValue(</span>
+<span class="nc" id="L99">                    new File(&quot;scripts/mongodb/wifi_spot.json&quot;), new TypeReference&lt;&gt;() {</span>
+                    });
+
+<span class="nc bnc" id="L102" title="All 2 branches missed.">            for (Map&lt;String, Object&gt; rawSpot : rawSpots) {</span>
+<span class="nc" id="L103">                UUID id = UUID.fromString((String) rawSpot.get(&quot;_id&quot;));</span>
+<span class="nc" id="L104">                UUID userId = UUID.fromString((String) rawSpot.get(&quot;user_id&quot;));</span>
+<span class="nc" id="L105">                String name = (String) rawSpot.get(&quot;name&quot;);</span>
+<span class="nc" id="L106">                String description = (String) rawSpot.get(&quot;description&quot;);</span>
+<span class="nc" id="L107">                double latitude = ((Number) rawSpot.get(&quot;latitude&quot;)).doubleValue();</span>
+<span class="nc" id="L108">                double longitude = ((Number) rawSpot.get(&quot;longitude&quot;)).doubleValue();</span>
+
+<span class="nc" id="L110">                Map&lt;String, Object&gt; features = (Map&lt;String, Object&gt;) rawSpot.get(&quot;features&quot;);</span>
+
+<span class="nc" id="L112">                WifiSpotCreateDto spotDto = new WifiSpotCreateDto(</span>
+                        id,
+                        name,
+                        description,
+                        latitude,
+                        longitude,
+                        null,
+                        null,
+                        null,
+                        null,
+<span class="nc" id="L122">                        LocalTime.of(9, 0),</span>
+<span class="nc" id="L123">                        LocalTime.of(18, 0),</span>
+<span class="nc" id="L124">                        (Boolean) features.get(&quot;crowded&quot;),</span>
+<span class="nc" id="L125">                        (Boolean) features.get(&quot;covered_area&quot;),</span>
+<span class="nc" id="L126">                        (Boolean) features.get(&quot;air_conditioning&quot;),</span>
+                        false,
+                        false,
+                        null,
+<span class="nc" id="L130">                        (Boolean) features.get(&quot;pet_friendly&quot;),</span>
+<span class="nc" id="L131">                        (Boolean) features.get(&quot;child_friendly&quot;),</span>
+<span class="nc" id="L132">                        (Boolean) features.get(&quot;disabled_access&quot;),</span>
+<span class="nc" id="L133">                        (Boolean) features.get(&quot;available_power_outlets&quot;),</span>
+<span class="nc" id="L134">                        (Boolean) features.get(&quot;charging_stations&quot;),</span>
+<span class="nc" id="L135">                        (Boolean) features.get(&quot;restrooms_available&quot;),</span>
+<span class="nc" id="L136">                        (Boolean) features.get(&quot;parking_availability&quot;),</span>
+<span class="nc" id="L137">                        (Boolean) features.get(&quot;food_options&quot;),</span>
+<span class="nc" id="L138">                        (Boolean) features.get(&quot;drink_options&quot;),</span>
+<span class="nc" id="L139">                        (Boolean) features.get(&quot;open_during_rain&quot;),</span>
+<span class="nc" id="L140">                        (Boolean) features.get(&quot;open_during_heat&quot;),</span>
+<span class="nc" id="L141">                        (Boolean) features.get(&quot;heated_in_winter&quot;),</span>
+<span class="nc" id="L142">                        (Boolean) features.get(&quot;shaded_areas&quot;),</span>
+<span class="nc" id="L143">                        (Boolean) features.get(&quot;outdoor_fans&quot;),</span>
+<span class="nc" id="L144">                        parseAddressDto(rawSpot),</span>
+                        null
+                );
+
+<span class="nc" id="L148">                wifiSpotRepositoryMongoDB.createWifiSpot(spotDto);</span>
+<span class="nc" id="L149">            }</span>
+
+<span class="nc" id="L151">        } catch (Exception e) {</span>
+<span class="nc" id="L152">            throw new RuntimeException(&quot;Erro ao importar JSON: &quot; + e.getMessage(), e);</span>
+<span class="nc" id="L153">        }</span>
+<span class="nc" id="L154">    }</span>
+
+    private WifiSpotAddressCreateDto parseAddressDto(Map&lt;String, Object&gt; rawSpot) {
+<span class="nc" id="L157">        Map&lt;String, Object&gt; addr = (Map&lt;String, Object&gt;) rawSpot.get(&quot;address&quot;);</span>
+<span class="nc" id="L158">        return new WifiSpotAddressCreateDto(</span>
+<span class="nc" id="L159">                UUID.randomUUID().toString(),</span>
+<span class="nc" id="L160">                (String) addr.get(&quot;country&quot;),</span>
+<span class="nc" id="L161">                (String) addr.get(&quot;zip_code&quot;),</span>
+<span class="nc" id="L162">                (String) addr.get(&quot;line1&quot;),</span>
+<span class="nc" id="L163">                (String) addr.get(&quot;line2&quot;),</span>
+<span class="nc" id="L164">                (String) addr.get(&quot;city&quot;),</span>
+<span class="nc" id="L165">                (String) addr.get(&quot;district&quot;)</span>
+        );
+    }
+
+    public void importFromCsvCassandra() {
+<span class="nc" id="L170">        try (BufferedReader reader = new BufferedReader(new FileReader(&quot;scripts/cassandra/cassandra_wifi_spot.csv&quot;, StandardCharsets.UTF_8))) {</span>
+
+<span class="nc" id="L172">            String header = reader.readLine(); // skip header</span>
+            String line;
+
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            while ((line = reader.readLine()) != null) {</span>
+<span class="nc" id="L176">                String[] c = line.split(&quot;,&quot;, -1); // keep empty values</span>
+
+<span class="nc" id="L178">                UUID spotId = UUID.fromString(c[0]);</span>
+<span class="nc" id="L179">                UUID userId = UUID.fromString(c[24]);</span>
+<span class="nc" id="L180">                UUID addressId = UUID.randomUUID(); // ou determinístico se quiseres</span>
+
+<span class="nc" id="L182">                WifiSpotAddressCreateDto addressDto = new WifiSpotAddressCreateDto(</span>
+<span class="nc" id="L183">                        addressId.toString(),</span>
+                        c[31], // country
+                        c[32], // zip
+                        c[25], // address_line_1
+                        c[26], // address_line_2
+                        c[27], // city
+                        c[28]  // district
+                );
+
+<span class="nc" id="L192">                WifiSpotCreateDto spotDto = new WifiSpotCreateDto(</span>
+                        spotId,
+                        c[1],  // name
+                        c[4],  // description
+<span class="nc" id="L196">                        Double.parseDouble(c[2]),</span>
+<span class="nc" id="L197">                        Double.parseDouble(c[3]),</span>
+                        null,
+                        null,
+                        null,
+                        null,
+<span class="nc" id="L202">                        LocalTime.of(9, 0),</span>
+<span class="nc" id="L203">                        LocalTime.of(18, 0),</span>
+<span class="nc" id="L204">                        toBool(c[5]), toBool(c[6]), toBool(c[7]), toBool(c[10]),</span>
+<span class="nc" id="L205">                        toBool(c[9]), null, toBool(c[19]),</span>
+<span class="nc" id="L206">                        toBool(c[8]), toBool(c[18]), toBool(c[17]), toBool(c[16]),</span>
+<span class="nc" id="L207">                        toBool(c[21]), toBool(c[20]), toBool(c[22]), toBool(c[23]),</span>
+                        false, false, false, false, false, // campos adicionais opcionais
+                        addressDto,
+                        null // ou outro índice se necessário
+                );
+
+<span class="nc" id="L213">                wifiSpotRepositoryCassandra.createWifiSpot(spotDto);</span>
+<span class="nc" id="L214">            }</span>
+
+<span class="nc" id="L216">        } catch (Exception e) {</span>
+<span class="nc" id="L217">            throw new RuntimeException(&quot;Erro ao importar CSV: &quot; + e.getMessage(), e);</span>
+<span class="nc" id="L218">        }</span>
+<span class="nc" id="L219">    }</span>
+
+    private boolean toBool(String s) {
+<span class="nc bnc" id="L222" title="All 4 branches missed.">        return s.trim().equalsIgnoreCase(&quot;true&quot;) || s.trim().equals(&quot;1&quot;);</span>
+    }
+
+    private int toBit(String s) {
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        return toBool(s) ? 1 : 0;</span>
     }
 }
 

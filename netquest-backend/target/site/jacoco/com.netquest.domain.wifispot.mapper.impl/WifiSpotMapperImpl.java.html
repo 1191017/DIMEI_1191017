@@ -187,24 +187,25 @@ import java.util.UUID;
     @Override
     public WifiSpotAddressCreateDto wifiSpotAddressDomainToCreateDto(WifiSpotAddress wifiSpotAddress) {
 <span class="nc" id="L189">        return new WifiSpotAddressCreateDto(</span>
-<span class="nc" id="L190">                wifiSpotAddress.getWifiSpotAddressCountry().getValue(),</span>
-<span class="nc" id="L191">                wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),</span>
-<span class="nc" id="L192">                wifiSpotAddress.getWifiSpotAddressLine1().getValue(),</span>
-<span class="nc bnc" id="L193" title="All 2 branches missed.">                wifiSpotAddress.getWifiSpotAddressLine2() != null ? wifiSpotAddress.getWifiSpotAddressLine2().getValue() : null,</span>
-<span class="nc" id="L194">                wifiSpotAddress.getWifiSpotAddressCity().getValue(),</span>
-<span class="nc" id="L195">                wifiSpotAddress.getWifiSpotAddressDistrict().getValue()</span>
+                null,
+<span class="nc" id="L191">                wifiSpotAddress.getWifiSpotAddressCountry().getValue(),</span>
+<span class="nc" id="L192">                wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),</span>
+<span class="nc" id="L193">                wifiSpotAddress.getWifiSpotAddressLine1().getValue(),</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">                wifiSpotAddress.getWifiSpotAddressLine2() != null ? wifiSpotAddress.getWifiSpotAddressLine2().getValue() : null,</span>
+<span class="nc" id="L195">                wifiSpotAddress.getWifiSpotAddressCity().getValue(),</span>
+<span class="nc" id="L196">                wifiSpotAddress.getWifiSpotAddressDistrict().getValue()</span>
         );
     }
 
     @Override
     public WifiSpotAddress wifiSpotAddressCreateDtoToDomain(WifiSpotAddressCreateDto wifiSpotAddressDto) {
-<span class="nc" id="L201">        return new WifiSpotAddress(</span>
-<span class="nc" id="L202">                new WifiSpotAddressCountry(wifiSpotAddressDto.country()),</span>
-<span class="nc" id="L203">                new WifiSpotAddressZipCode(wifiSpotAddressDto.zipCode()),</span>
-<span class="nc" id="L204">                new WifiSpotAddressLine1(wifiSpotAddressDto.addressLine1()),</span>
-<span class="nc" id="L205">                new WifiSpotAddressLine2(wifiSpotAddressDto.addressLine2()),</span>
-<span class="nc" id="L206">                new WifiSpotAddressCity(wifiSpotAddressDto.city()),</span>
-<span class="nc" id="L207">                new WifiSpotAddressDistrict(wifiSpotAddressDto.district())</span>
+<span class="nc" id="L202">        return new WifiSpotAddress(</span>
+<span class="nc" id="L203">                new WifiSpotAddressCountry(wifiSpotAddressDto.country()),</span>
+<span class="nc" id="L204">                new WifiSpotAddressZipCode(wifiSpotAddressDto.zipCode()),</span>
+<span class="nc" id="L205">                new WifiSpotAddressLine1(wifiSpotAddressDto.addressLine1()),</span>
+<span class="nc" id="L206">                new WifiSpotAddressLine2(wifiSpotAddressDto.addressLine2()),</span>
+<span class="nc" id="L207">                new WifiSpotAddressCity(wifiSpotAddressDto.city()),</span>
+<span class="nc" id="L208">                new WifiSpotAddressDistrict(wifiSpotAddressDto.district())</span>
         );
     }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotVisitRepositoryMongoDB.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.infrastructure.wifispotvisit</a> &gt; <span class="el_source">WifiSpotVisitRepositoryMongoDB.java</span></div><h1>WifiSpotVisitRepositoryMongoDB.java</h1><pre class="source lang-java linenums">package com.netquest.infrastructure.wifispotvisit;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
+import org.bson.Document;
+import org.springframework.stereotype.Repository;
+
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.UUID;
+
+@Repository
+public class WifiSpotVisitRepositoryMongoDB {
+    private final MongoCollection&lt;Document&gt; wifiSpotVisitCollection;
+    private final MongoCollection&lt;Document&gt; wifiSpotCollection;
+
+<span class="nc" id="L24">    public WifiSpotVisitRepositoryMongoDB(MongoClient mongoClient) {</span>
+<span class="nc" id="L25">        MongoDatabase database = mongoClient.getDatabase(&quot;netQuest&quot;);</span>
+<span class="nc" id="L26">        this.wifiSpotVisitCollection = database.getCollection(&quot;wifi_spot_visit&quot;);</span>
+<span class="nc" id="L27">        this.wifiSpotCollection = database.getCollection(&quot;wifi_spot&quot;);</span>
+<span class="nc" id="L28">    }</span>
+
+    public void createWifiSpotVisit(UUID userId, WifiSpotVisitCreateDto dto) {
+        // Obter o Wi-Fi spot referenciado (name + location) — mínimo necessário para embutir
+<span class="nc" id="L32">        Document wifiSpot = wifiSpotCollection.find(new Document(&quot;_id&quot;, dto.getWifiSpotId())).first();</span>
+
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (wifiSpot == null) {</span>
+<span class="nc" id="L35">            throw new IllegalArgumentException(&quot;Wi-Fi spot not found with ID: &quot; + dto.getWifiSpotId());</span>
+        }
+
+        // Extrair nome e local (podes adaptar este campo 'location' conforme o design real)
+<span class="nc" id="L39">        String spotName = wifiSpot.getString(&quot;name&quot;);</span>
+<span class="nc" id="L40">        Document address = (Document) wifiSpot.get(&quot;address&quot;);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        String location = address != null</span>
+<span class="nc" id="L42">                ? address.getString(&quot;line1&quot;) + &quot;, &quot; + address.getString(&quot;city&quot;)</span>
+<span class="nc" id="L43">                : &quot;Unknown Location&quot;;</span>
+
+<span class="nc" id="L45">        Document embeddedWifiSpot = new Document()</span>
+<span class="nc" id="L46">                .append(&quot;_id&quot;, dto.getWifiSpotId())</span>
+<span class="nc" id="L47">                .append(&quot;name&quot;, spotName)</span>
+<span class="nc" id="L48">                .append(&quot;location&quot;, location);</span>
+
+<span class="nc" id="L50">        Document visit = new Document()</span>
+<span class="nc" id="L51">                .append(&quot;_id&quot;, dto.getWifiSpotVisitId())</span>
+<span class="nc" id="L52">                .append(&quot;user_id&quot;, userId)</span>
+<span class="nc" id="L53">                .append(&quot;wifi_spot&quot;, embeddedWifiSpot)</span>
+<span class="nc" id="L54">                .append(&quot;start_time&quot;, Date.from(dto.getStartDateTime().atZone(ZoneOffset.UTC).toInstant()))</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">                .append(&quot;end_time&quot;, dto.getEndDateTime() != null</span>
+<span class="nc" id="L56">                        ? Date.from(dto.getEndDateTime().atZone(ZoneOffset.UTC).toInstant())</span>
+<span class="nc" id="L57">                        : null);</span>
+
+<span class="nc" id="L59">        wifiSpotVisitCollection.insertOne(visit);</span>
+<span class="nc" id="L60">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

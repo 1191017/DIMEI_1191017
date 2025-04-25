@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -31,8 +32,10 @@ public class ReviewController {
     @PostMapping("/mongodb/file-create")
     public ResponseEntity<String> createReviewsMongoDBFromFile() {
         try {
-            File file = new File("scripts/mongodb/review.json");
-            List<Map<String, Object>> reviews = objectMapper.readValue(file, new TypeReference<>() {});
+            Path path = Paths.get("/app/scripts/mongodb/review.json");
+
+            String jsonContent = Files.readString(path);
+            List<Map<String, Object>> reviews = objectMapper.readValue(jsonContent, new TypeReference<>() {});
             List<ReviewCreateDto> dtos = new ArrayList<>();
 
             for (Map<String, Object> review : reviews) {
@@ -64,8 +67,11 @@ public class ReviewController {
     @DeleteMapping("/mongodb/file-delete")
     public ResponseEntity<String> deleteReviewsMongoDBFromFile() {
         try {
-            File file = new File("scripts/mongodb/review.json");
-            List<Map<String, Object>> reviews = objectMapper.readValue(file, new TypeReference<>() {});
+            Path path = Paths.get("/app/scripts/mongodb/review.json");
+
+            // Read file content into a String
+            String jsonContent = Files.readString(path);
+            List<Map<String, Object>> reviews = objectMapper.readValue(jsonContent, new TypeReference<>() {});
             List<String> ids = reviews.stream()
                     .map(r -> (String) r.get("_id"))
                     .collect(Collectors.toList());
@@ -95,7 +101,7 @@ public class ReviewController {
     @PostMapping("/mysql/file-create")
     public ResponseEntity<String> createReviewsMySQLFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/mysql/review.csv"));
             lines.remove(0);
 
             Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/mysql/review_attribute_classification.csv"))
@@ -118,16 +124,16 @@ public class ReviewController {
 
                 ReviewCreateDto dto = new ReviewCreateDto();
                 dto.setReviewId(UUID.fromString(reviewId));
-                dto.setWifiSpotId(UUID.fromString(parts[1]));
-                dto.setReviewComment(parts[3]);
-                dto.setReviewOverallClassification(Integer.parseInt(parts[4]));
+                dto.setWifiSpotId(UUID.fromString(parts[5]));
+                dto.setReviewComment(parts[2]);
+                dto.setReviewOverallClassification(Integer.parseInt(parts[3]));
                 dto.setReviewAttributeClassificationDtoList(attrList);
 
                 dtos.add(dto);
             }
 
             for (ReviewCreateDto dto : dtos) {
-                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(",")[2]));
+                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(",")[4]));
             }
 
             return ResponseEntity.ok("Created " + dtos.size() + " reviews in MySQL.");
@@ -139,7 +145,7 @@ public class ReviewController {
     @DeleteMapping("/mysql/file-delete")
     public ResponseEntity<String> deleteReviewsMySQLFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/mysql/review.csv"));
             lines.remove(0);
             List<UUID> ids = lines.stream()
                     .map(l -> UUID.fromString(l.split(",")[0]))
@@ -170,7 +176,7 @@ public class ReviewController {
     @PostMapping("/cassandra/file-create")
     public ResponseEntity<String> createReviewsCassandraFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/cassandra_review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/cassandra/cassandra_review.csv"));
             lines.remove(0);
 
             Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/cassandra/cassandra_review_attribute_classification.csv"))
@@ -188,14 +194,14 @@ public class ReviewController {
             List<ReviewCreateDto> dtos = new ArrayList<>();
             for (String line : lines) {
                 String[] parts = line.split(",");
-                String reviewId = parts[0];
+                String reviewId = parts[1];
                 List<ReviewAttributeClassificationDto> attrList = attributesMap.getOrDefault(reviewId, new ArrayList<>());
 
                 ReviewCreateDto dto = new ReviewCreateDto();
                 dto.setReviewId(UUID.fromString(reviewId));
-                dto.setWifiSpotId(UUID.fromString(parts[1]));
+                dto.setWifiSpotId(UUID.fromString(parts[0]));
                 dto.setReviewComment(parts[3]);
-                dto.setReviewOverallClassification(Integer.parseInt(parts[4]));
+                dto.setReviewOverallClassification(Integer.parseInt(parts[5]));
                 dto.setReviewAttributeClassificationDtoList(attrList);
 
                 dtos.add(dto);
@@ -214,10 +220,10 @@ public class ReviewController {
     @DeleteMapping("/cassandra/file-delete")
     public ResponseEntity<String> deleteReviewsCassandraFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/cassandra_review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/cassandra/cassandra_review.csv"));
             lines.remove(0);
             List<UUID> ids = lines.stream()
-                    .map(l -> UUID.fromString(l.split(",")[0]))
+                    .map(l -> UUID.fromString(l.split(",")[1]))
                     .collect(Collectors.toList());
 
             for (UUID id : ids) {

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +28,31 @@ import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
 public class WifiSpotVisitController {
     private final WifiSpotVisitService wifiSpotVisitService;
 
+    @PostMapping(&quot;/mysql/create&quot;)
+    public ResponseEntity&lt;String&gt; importCsv() {
+<span class="nc" id="L33">        wifiSpotVisitService.importFromCsv();</span>
+<span class="nc" id="L34">        return ResponseEntity.ok(&quot;Wi-Fi spots visits importados com sucesso!&quot;);</span>
+    }
+
+    @PostMapping(&quot;/mongodb/create&quot;)
+    public ResponseEntity&lt;String&gt; importCsvMongodb() {
+<span class="nc" id="L39">        wifiSpotVisitService.importFromJsonMongodb();</span>
+<span class="nc" id="L40">        return ResponseEntity.ok(&quot;Wi-Fi spots visits importados com sucesso!&quot;);</span>
+    }
+
+    @PostMapping(&quot;/cassandra/create&quot;)
+    public ResponseEntity&lt;String&gt; importCsvCassandra() {
+<span class="nc" id="L45">        wifiSpotVisitService.importFromCsvCassandra();</span>
+<span class="nc" id="L46">        return ResponseEntity.ok(&quot;Wi-Fi spots visits importados com sucesso!&quot;);</span>
+    }
+
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(&quot;/start/{wifi-spot-id}&quot;)
     public WifiSpotVisitDto startVisit(@PathVariable(name = &quot;wifi-spot-id&quot;) UUID wifiSpotUUID) {
-<span class="nc" id="L34">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="nc" id="L35">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
-<span class="nc" id="L36">        return wifiSpotVisitService.startVisit(userDetails.getId(),wifiSpotUUID);</span>
+<span class="nc" id="L53">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L54">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L55">        return wifiSpotVisitService.startVisit(userDetails.getId(),wifiSpotUUID);</span>
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
@@ -41,18 +60,18 @@ public class WifiSpotVisitController {
     @PostMapping(&quot;/finish/{id}&quot;)
     public WifiSpotVisitDto finishVisit(
             @PathVariable(name = &quot;id&quot;) UUID wifiSpotVisitUUID) {
-<span class="nc" id="L44">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="nc" id="L45">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
-<span class="nc" id="L46">        return wifiSpotVisitService.finishVisit(userDetails.getId() ,wifiSpotVisitUUID);</span>
+<span class="nc" id="L63">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L64">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L65">        return wifiSpotVisitService.finishVisit(userDetails.getId() ,wifiSpotVisitUUID);</span>
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(&quot;/ongoing&quot;)
     public WifiSpotVisitDto getWifiSpotVisitOngoing() {
-<span class="nc" id="L53">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="nc" id="L54">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
-<span class="nc" id="L55">        return wifiSpotVisitService.getWifiSpotVisitOngoing(userDetails.getId());</span>
+<span class="nc" id="L72">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L73">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L74">        return wifiSpotVisitService.getWifiSpotVisitOngoing(userDetails.getId());</span>
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
@@ -63,10 +82,10 @@ public class WifiSpotVisitController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate
     ) {
-<span class="nc" id="L66">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="nc" id="L67">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L85">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc" id="L86">        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();</span>
 
-<span class="nc" id="L69">        return wifiSpotVisitService.getMyWifiSpotsVisits(userDetails.getId(), wifiSpotName, startDate, endDate);</span>
+<span class="nc" id="L88">        return wifiSpotVisitService.getMyWifiSpotsVisits(userDetails.getId(), wifiSpotName, startDate, endDate);</span>
     }
 
 }

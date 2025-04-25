@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,24 @@ import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
 @RequestMapping("api/wifi-spot-visit")
 public class WifiSpotVisitController {
     private final WifiSpotVisitService wifiSpotVisitService;
+
+    @PostMapping("/mysql/create")
+    public ResponseEntity<String> importCsv() {
+        wifiSpotVisitService.importFromCsv();
+        return ResponseEntity.ok("Wi-Fi spots visits importados com sucesso!");
+    }
+
+    @PostMapping("/mongodb/create")
+    public ResponseEntity<String> importCsvMongodb() {
+        wifiSpotVisitService.importFromJsonMongodb();
+        return ResponseEntity.ok("Wi-Fi spots visits importados com sucesso!");
+    }
+
+    @PostMapping("/cassandra/create")
+    public ResponseEntity<String> importCsvCassandra() {
+        wifiSpotVisitService.importFromCsvCassandra();
+        return ResponseEntity.ok("Wi-Fi spots visits importados com sucesso!");
+    }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.CREATED)

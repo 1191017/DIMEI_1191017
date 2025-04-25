@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 public class ReviewRepositoryMySQL {
-<span class="nc" id="L18">    private final String url = &quot;jdbc:mysql://localhost:3306/netQuest&quot;;</span>
+<span class="nc" id="L18">    private final String url = &quot;jdbc:mysql://172.24.144.1:3306/netQuest&quot;;</span>
 <span class="nc" id="L19">    private final String username = &quot;netQuest&quot;;</span>
 <span class="nc" id="L20">    private final String password = &quot;netQuestLocal&quot;;</span>
 
@@ -23,7 +23,7 @@ public class ReviewRepositoryMySQL {
 
     // 5.3.1 - Insert a new review with attributes
     public int insertReview(ReviewCreateDto reviewCreateDto, UUID userId) {
-<span class="nc" id="L26">        UUID reviewId = UUID.randomUUID();</span>
+<span class="nc" id="L26">        UUID reviewId = reviewCreateDto.getReviewId();</span>
 <span class="nc" id="L27">        String reviewSql = &quot;&quot;&quot;</span>
             INSERT INTO review (review_id, review_comment, review_create_date_time, review_overall_classification, review_user_id, review_wifi_spot_id)
             VALUES (UUID_TO_BIN(?), ?, NOW(), ?, UUID_TO_BIN(?), UUID_TO_BIN(?))
@@ -122,38 +122,69 @@ public class ReviewRepositoryMySQL {
     public List&lt;ReviewFeedDto&gt; getReviewFeed() {
 <span class="nc" id="L123">        String sql = &quot;&quot;&quot;</span>
         SELECT 
-            BIN_TO_UUID(r.review_id) AS review_id, r.review_comment, r.review_create_date_time, r.review_overall_classification,
-            BIN_TO_UUID(u.user_id) AS user_id, u.user_name, u.mail,
-            BIN_TO_UUID(w.wifi_spot_id) AS wifi_spot_id, w.wifi_spot_name, w.wifi_spot_description
+            BIN_TO_UUID(r.review_id) AS review_id,
+            r.review_comment,
+            r.review_create_date_time,
+            r.review_overall_classification,
+            BIN_TO_UUID(u.user_id) AS user_id,
+            u.user_name,
+            u.mail,
+            BIN_TO_UUID(w.wifi_spot_id) AS wifi_spot_id,
+            w.wifi_spot_name,
+            w.wifi_spot_description
         FROM review r
         JOIN users u ON r.review_user_id = u.user_id
         JOIN wifi_spot w ON r.review_wifi_spot_id = w.wifi_spot_id
+        JOIN wifi_spot_visit v ON r.review_wifi_spot_id = v.wifi_spot_id
+        GROUP BY r.review_id 
         ORDER BY r.review_create_date_time DESC
     &quot;&quot;&quot;;
 
-<span class="nc" id="L134">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
-<span class="nc" id="L135">             PreparedStatement stmt = connection.prepareStatement(sql);</span>
-<span class="nc" id="L136">             ResultSet rs = stmt.executeQuery()) {</span>
+<span class="nc" id="L143">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L144">             PreparedStatement stmt = connection.prepareStatement(sql);</span>
+<span class="nc" id="L145">             ResultSet rs = stmt.executeQuery()) {</span>
 
-<span class="nc" id="L138">            List&lt;ReviewFeedDto&gt; feed = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L139" title="All 2 branches missed.">            while (rs.next()) {</span>
-<span class="nc" id="L140">                feed.add(new ReviewFeedDto(</span>
-<span class="nc" id="L141">                        UUID.fromString(rs.getString(&quot;review_id&quot;)),</span>
-<span class="nc" id="L142">                        rs.getTimestamp(&quot;review_create_date_time&quot;).toLocalDateTime(),</span>
-<span class="nc" id="L143">                        rs.getString(&quot;review_comment&quot;),</span>
-<span class="nc" id="L144">                        rs.getInt(&quot;review_overall_classification&quot;),</span>
-<span class="nc" id="L145">                        UUID.fromString(rs.getString(&quot;user_id&quot;)),</span>
-<span class="nc" id="L146">                        rs.getString(&quot;user_name&quot;),</span>
-<span class="nc" id="L147">                        rs.getString(&quot;mail&quot;),</span>
-<span class="nc" id="L148">                        UUID.fromString(rs.getString(&quot;wifi_spot_id&quot;)),</span>
-<span class="nc" id="L149">                        rs.getString(&quot;wifi_spot_name&quot;),</span>
-<span class="nc" id="L150">                        rs.getString(&quot;wifi_spot_description&quot;)</span>
+<span class="nc" id="L147">            List&lt;ReviewFeedDto&gt; feed = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L149">                feed.add(new ReviewFeedDto(</span>
+<span class="nc" id="L150">                        UUID.fromString(rs.getString(&quot;review_id&quot;)),</span>
+<span class="nc" id="L151">                        rs.getTimestamp(&quot;review_create_date_time&quot;).toLocalDateTime(),</span>
+<span class="nc" id="L152">                        rs.getString(&quot;review_comment&quot;),</span>
+<span class="nc" id="L153">                        rs.getInt(&quot;review_overall_classification&quot;),</span>
+<span class="nc" id="L154">                        getReviewAttributes(rs.getString(&quot;review_id&quot;)), // assuming this is done separately</span>
+<span class="nc" id="L155">                        UUID.fromString(rs.getString(&quot;user_id&quot;)),</span>
+<span class="nc" id="L156">                        rs.getString(&quot;user_name&quot;),</span>
+<span class="nc" id="L157">                        UUID.fromString(rs.getString(&quot;wifi_spot_id&quot;)),</span>
+<span class="nc" id="L158">                        rs.getString(&quot;wifi_spot_name&quot;)</span>
                 ));
             }
-<span class="nc" id="L153">            return feed;</span>
-<span class="nc" id="L154">        } catch (SQLException e) {</span>
-<span class="nc" id="L155">            throw new RuntimeException(&quot;Error fetching review feed&quot;, e);</span>
+<span class="nc" id="L161">            return feed;</span>
+<span class="nc" id="L162">        } catch (SQLException e) {</span>
+<span class="nc" id="L163">            throw new RuntimeException(&quot;Error fetching review feed&quot;, e);</span>
         }
+    }
+
+    private List&lt;ReviewAttributeClassificationDto&gt; getReviewAttributes(String reviewId) {
+<span class="nc" id="L168">        String sql = &quot;SELECT review_attribute_classification_name, review_attribute_classification_value FROM review_attribute_classification WHERE review_id = UUID_TO_BIN(?)&quot;;</span>
+<span class="nc" id="L169">        List&lt;ReviewAttributeClassificationDto&gt; attributes = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L171">        try (Connection conn = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L172">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+
+<span class="nc" id="L174">            stmt.setString(1, reviewId);</span>
+<span class="nc" id="L175">            ResultSet rs = stmt.executeQuery();</span>
+
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L178">                attributes.add(new ReviewAttributeClassificationDto(</span>
+<span class="nc" id="L179">                        rs.getString(&quot;review_attribute_classification_name&quot;),</span>
+<span class="nc" id="L180">                        rs.getString(&quot;review_attribute_classification_value&quot;)</span>
+                ));
+            }
+<span class="nc" id="L183">        } catch (SQLException e) {</span>
+<span class="nc" id="L184">            throw new RuntimeException(&quot;Error fetching review attributes&quot;, e);</span>
+<span class="nc" id="L185">        }</span>
+
+<span class="nc" id="L187">        return attributes;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

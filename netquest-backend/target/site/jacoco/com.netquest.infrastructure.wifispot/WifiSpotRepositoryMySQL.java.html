@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotRepositoryMySQL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.infrastructure.wifispot</a> &gt; <span class="el_source">WifiSpotRepositoryMySQL.java</span></div><h1>WifiSpotRepositoryMySQL.java</h1><pre class="source lang-java linenums">package com.netquest.infrastructure.wifispot;
 
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
+import org.hibernate.type.SqlTypes;
 import org.springframework.stereotype.Repository;
 import java.sql.*;
 
@@ -7,25 +10,149 @@ import java.util.UUID;
 
 @Repository
 public class WifiSpotRepositoryMySQL {
-<span class="nc" id="L10">    private final String url = &quot;jdbc:mysql://localhost:3306/netQuest&quot;;</span>
-<span class="nc" id="L11">    private final String username = &quot;netQuest&quot;;</span>
-<span class="nc" id="L12">    private final String password = &quot;netQuestLocal&quot;;</span>
+<span class="nc" id="L13">    private final String url = &quot;jdbc:mysql://172.24.144.1:3306/netQuest&quot;;</span>
+<span class="nc" id="L14">    private final String username = &quot;netQuest&quot;;</span>
+<span class="nc" id="L15">    private final String password = &quot;netQuestLocal&quot;;</span>
 
-<span class="nc" id="L14">    public WifiSpotRepositoryMySQL() {}</span>
+<span class="nc" id="L17">    public WifiSpotRepositoryMySQL() {}</span>
 
-    // 5.3.2 - Update a Wi-Fi spot description
-    public int updateWifiSpotDescription(UUID wifiSpotId, String newDescription) {
-<span class="nc" id="L18">        String sql = &quot;UPDATE wifi_spot SET wifi_spot_description = ? WHERE wifi_spot_id = UUID_TO_BIN(?)&quot;;</span>
+    // 5.3.2 - Update a Wi-Fi spot name
+    public int updateWifiSpotName(UUID wifiSpotId, String newName) {
+<span class="nc" id="L21">        String sql = &quot;UPDATE wifi_spot SET wifi_spot_name = ? WHERE wifi_spot_id = UUID_TO_BIN(?)&quot;;</span>
 
-<span class="nc" id="L20">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
-<span class="nc" id="L21">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L23">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L24">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
 
-<span class="nc" id="L23">            stmt.setString(1, newDescription);</span>
-<span class="nc" id="L24">            stmt.setString(2, wifiSpotId.toString());</span>
-<span class="nc" id="L25">            return stmt.executeUpdate();</span>
-<span class="nc" id="L26">        } catch (SQLException e) {</span>
-<span class="nc" id="L27">            throw new RuntimeException(&quot;Error updating Wi-Fi spot description&quot;, e);</span>
+<span class="nc" id="L26">            stmt.setString(1, newName);</span>
+<span class="nc" id="L27">            stmt.setString(2, wifiSpotId.toString());</span>
+<span class="nc" id="L28">            return stmt.executeUpdate();</span>
+<span class="nc" id="L29">        } catch (SQLException e) {</span>
+<span class="nc" id="L30">            throw new RuntimeException(&quot;Error updating Wi-Fi spot name&quot;, e);</span>
         }
     }
+
+    public void createWifiSpot(UUID userId, WifiSpotCreateDto dto) {
+<span class="nc" id="L35">        String insertAddressSql = &quot;&quot;&quot;</span>
+            INSERT INTO wifi_spot_address (
+                wifi_spot_address_id,
+                wifi_spot_address_country,
+                wifi_spot_address_zip_code,
+                wifi_spot_address_line_1,
+                wifi_spot_address_line_2,
+                wifi_spot_address_city,
+                wifi_spot_address_district
+            ) VALUES (
+                UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?
+            )
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L49">        String insertSpotSql = &quot;&quot;&quot;</span>
+            INSERT INTO wifi_spot (
+                wifi_spot_id,
+                wifi_spot_latitude,
+                wifi_spot_longitude,
+                wifi_spot_create_date_time,
+                wifi_spot_description,
+                wifi_spot_air_conditioning,
+                wifi_spot_child_friendly,
+                wifi_spot_covered_area,
+                wifi_spot_crowded,
+                wifi_spot_disabled_access,
+                wifi_spot_good_view,
+                wifi_spot_noise_level,
+                wifi_spot_outdoor_seating,
+                wifi_spot_pet_friendly,
+                wifi_spot_available_power_outlets,
+                wifi_spot_charging_stations,
+                wifi_spot_drink_options,
+                wifi_spot_food_options,
+                wifi_spot_parking_availability,
+                wifi_spot_restrooms_available,
+                wifi_spot_location_type,
+                wifi_spot_management,
+                wifi_spot_name,
+                wifi_spot_bandwith_limitations,
+                end_time,
+                start_time,
+                wifi_spot_signal_strength,
+                wifi_spot_wifi_quality,
+                wifi_spot_heated_in_winter,
+                wifi_spot_open_during_heat,
+                wifi_spot_open_during_rain,
+                wifi_spot_outdoor_fans,
+                wifi_spot_shaded_areas,
+                wifi_spot_address_id,
+                wifi_spot_user_id
+            ) VALUES (
+                UUID_TO_BIN(?), ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UUID_TO_BIN(?), UUID_TO_BIN(?)
+            )
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L91">        try (Connection connection = DriverManager.getConnection(url, username, password)) {</span>
+<span class="nc" id="L92">            connection.setAutoCommit(false);</span>
+
+<span class="nc" id="L94">            try (PreparedStatement addressStmt = connection.prepareStatement(insertAddressSql);</span>
+<span class="nc" id="L95">                 PreparedStatement spotStmt = connection.prepareStatement(insertSpotSql)) {</span>
+
+<span class="nc" id="L97">                WifiSpotAddressCreateDto addr = dto.address();</span>
+
+                // Inserir morada
+<span class="nc" id="L100">                addressStmt.setString(1, addr.id());</span>
+<span class="nc" id="L101">                addressStmt.setString(2, addr.country());</span>
+<span class="nc" id="L102">                addressStmt.setString(3, addr.zipCode());</span>
+<span class="nc" id="L103">                addressStmt.setString(4, addr.addressLine1());</span>
+<span class="nc" id="L104">                addressStmt.setString(5, addr.addressLine2());</span>
+<span class="nc" id="L105">                addressStmt.setString(6, addr.city());</span>
+<span class="nc" id="L106">                addressStmt.setString(7, addr.district());</span>
+<span class="nc" id="L107">                addressStmt.executeUpdate();</span>
+
+                // Inserir WiFi Spot
+<span class="nc" id="L110">                spotStmt.setString(1, dto.id().toString());</span>
+<span class="nc" id="L111">                spotStmt.setDouble(2, dto.latitude());</span>
+<span class="nc" id="L112">                spotStmt.setDouble(3, dto.longitude());</span>
+<span class="nc" id="L113">                spotStmt.setString(4, dto.description());</span>
+<span class="nc" id="L114">                spotStmt.setBoolean(5, dto.airConditioning());</span>
+<span class="nc" id="L115">                spotStmt.setBoolean(6, dto.childFriendly());</span>
+<span class="nc" id="L116">                spotStmt.setBoolean(7, dto.coveredArea());</span>
+<span class="nc" id="L117">                spotStmt.setBoolean(8, dto.crowded());</span>
+<span class="nc" id="L118">                spotStmt.setBoolean(9, dto.disableAccess());</span>
+<span class="nc" id="L119">                spotStmt.setBoolean(10, dto.goodView());</span>
+<span class="nc" id="L120">                spotStmt.setInt(11, 1);</span>
+<span class="nc" id="L121">                spotStmt.setBoolean(12, dto.outdoorSeating());</span>
+<span class="nc" id="L122">                spotStmt.setBoolean(13, dto.petFriendly());</span>
+<span class="nc" id="L123">                spotStmt.setBoolean(14, dto.availablePowerOutlets());</span>
+<span class="nc" id="L124">                spotStmt.setBoolean(15, dto.chargingStations());</span>
+<span class="nc" id="L125">                spotStmt.setBoolean(16, dto.drinkOptions());</span>
+<span class="nc" id="L126">                spotStmt.setBoolean(17, dto.foodOptions());</span>
+<span class="nc" id="L127">                spotStmt.setBoolean(18, dto.parkingAvailability());</span>
+<span class="nc" id="L128">                spotStmt.setBoolean(19, dto.restroomsAvailable());</span>
+<span class="nc" id="L129">                spotStmt.setInt(20, 1);</span>
+<span class="nc" id="L130">                spotStmt.setInt(21, 1);</span>
+<span class="nc" id="L131">                spotStmt.setString(22, dto.name());</span>
+<span class="nc" id="L132">                spotStmt.setInt(23, 1);</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                spotStmt.setTime(24, dto.peakUsageEnd() != null ? Time.valueOf(dto.peakUsageEnd()) : null);</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                spotStmt.setTime(25, dto.peakUsageStart() != null ? Time.valueOf(dto.peakUsageStart()) : null);</span>
+<span class="nc" id="L135">                spotStmt.setInt(26, 1);</span>
+<span class="nc" id="L136">                spotStmt.setInt(27, 1);</span>
+<span class="nc" id="L137">                spotStmt.setBoolean(28, dto.heatedInWinter());</span>
+<span class="nc" id="L138">                spotStmt.setBoolean(29, dto.openDuringHeat());</span>
+<span class="nc" id="L139">                spotStmt.setBoolean(30, dto.openDuringRain());</span>
+<span class="nc" id="L140">                spotStmt.setBoolean(31, dto.outdoorFans());</span>
+<span class="nc" id="L141">                spotStmt.setBoolean(32, dto.shadedAreas());</span>
+<span class="nc" id="L142">                spotStmt.setString(33, addr.id());</span>
+<span class="nc" id="L143">                spotStmt.setString(34, userId.toString());</span>
+
+<span class="nc" id="L145">                spotStmt.executeUpdate();</span>
+<span class="nc" id="L146">                connection.commit();</span>
+
+<span class="nc" id="L148">            } catch (SQLException e) {</span>
+<span class="nc" id="L149">                connection.rollback();</span>
+<span class="nc" id="L150">                throw new RuntimeException(&quot;Error creating Wi-Fi Spot and Address&quot;, e);</span>
+<span class="nc" id="L151">            }</span>
+
+<span class="nc" id="L153">        } catch (SQLException e) {</span>
+<span class="nc" id="L154">            throw new RuntimeException(&quot;Database connection error&quot;, e);</span>
+<span class="nc" id="L155">        }</span>
+<span class="nc" id="L156">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,5 +1,6 @@
 package com.netquest.infrastructure.review;
 
+import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
 import com.netquest.domain.review.dto.ReviewDto;
 import com.netquest.domain.review.dto.ReviewFeedDto;
 import com.netquest.domain.review.dto.ReviewCreateDto;
@@ -36,7 +37,7 @@ public class ReviewRepositoryMongoDB {
 
     // 5.3.1 - Insert a new review
     public String insertReview(ReviewCreateDto reviewCreateDto, UUID userId) {
-        Document review = new Document("_id", UUID.randomUUID())
+        Document review = new Document("_id", reviewCreateDto.getReviewId())
                 .append("wifi_spot_id", reviewCreateDto.getWifiSpotId())
                 .append("user_id", userId)
                 .append("comment", reviewCreateDto.getReviewComment())
@@ -53,7 +54,7 @@ public class ReviewRepositoryMongoDB {
         }
 
         collection.insertOne(review);
-        return review.getString("_id");
+        return review.get("_id").toString();
     }
 
     // 5.3.3 - Delete a review
@@ -65,9 +66,9 @@ public class ReviewRepositoryMongoDB {
     public List<ReviewDto> getReviewsForWifiSpot(UUID wifiSpotId) {
         List<Bson> pipeline = List.of(
                 match(Filters.eq("wifi_spot_id", wifiSpotId)),
-                //sort(Sorts.ascending("create_date_time")),
                 lookup("users", "user_id", "_id", "user_info"),
-                unwind("$user_info")
+                unwind("$user_info"),
+                sort(Sorts.ascending("create_date_time"))
         );
 
         List<ReviewDto> reviews = new ArrayList<>();
@@ -97,9 +98,12 @@ public class ReviewRepositoryMongoDB {
         List<Bson> pipeline = List.of(
                 lookup("users", "user_id", "_id", "user_info"),
                 unwind("$user_info"),
+
                 lookup("wifi_spot", "wifi_spot_id", "_id", "wifi_spot_info"),
-                unwind("$wifi_spot_info")
-                //sort(Sorts.descending("create_date_time"))
+                unwind("$wifi_spot_info"),
+
+                lookup("wifi_spot_visit", "wifi_spot_id", "wifi_spot_id", "visits"),
+                match(Filters.expr(new Document("$gt", List.of(new Document("$size", "$visits"), 0))))
         );
 
         List<ReviewFeedDto> reviewFeed = new ArrayList<>();
@@ -109,17 +113,24 @@ public class ReviewRepositoryMongoDB {
                     ZoneId.systemDefault()
             );
 
+            List<Document> attrDocs = doc.getList("attributes", Document.class);
+            List<ReviewAttributeClassificationDto> attributes = attrDocs.stream()
+                    .map(attr -> new ReviewAttributeClassificationDto(
+                            attr.getString("name"),
+                            attr.getString("value")
+                    ))
+                    .collect(Collectors.toList());
+
             reviewFeed.add(new ReviewFeedDto(
                     doc.get("_id", UUID.class),
                     dateTime,
                     doc.getString("comment"),
                     doc.getInteger("overall_classification"),
+                    attributes,
                     doc.get("user_id", UUID.class),
                     doc.get("user_info", Document.class).getString("user_name"),
-                    doc.get("user_info", Document.class).getString("mail"),
                     doc.get("wifi_spot_id", UUID.class),
-                    doc.get("wifi_spot_info", Document.class).getString("name"),
-                    doc.get("wifi_spot_info", Document.class).getString("description")
+                    doc.get("wifi_spot_info", Document.class).getString("name")
             ));
         }
 

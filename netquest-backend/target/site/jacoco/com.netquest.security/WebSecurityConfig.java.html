@@ -25,11 +25,11 @@ public class WebSecurityConfig {
 <span class="nc" id="L25">                        .requestMatchers(HttpMethod.GET, &quot;/api/users/me&quot;, &quot;/api/users/**&quot;).hasAnyAuthority(ADMIN, USER,USER_PREMIUM)</span>
 <span class="nc" id="L26">                        .requestMatchers(HttpMethod.PUT, &quot;/api/users/edit&quot;).hasAnyAuthority(ADMIN, USER,USER_PREMIUM)</span>
 <span class="nc" id="L27">                        .requestMatchers(HttpMethod.DELETE, &quot;/api/users/deleteMyAccount/**&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
-<span class="nc" id="L28">                        .requestMatchers(HttpMethod.POST, &quot;/api/wifi-spot&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
-<span class="nc" id="L29">                        .requestMatchers(HttpMethod.GET, &quot;/api/wifi-spot&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
+<span class="nc" id="L28">                        .requestMatchers(HttpMethod.POST, &quot;/api/wifi-spot/**&quot;).permitAll()</span>
+<span class="nc" id="L29">                        .requestMatchers(HttpMethod.GET, &quot;/api/wifi-spot&quot;).permitAll()</span>
 <span class="nc" id="L30">                        .requestMatchers(HttpMethod.GET, &quot;/api/wifi-spot/getAIWifiSpots/**&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
 <span class="nc" id="L31">                        .requestMatchers(HttpMethod.GET, &quot;/api/wifi-spot-visit/my-visits&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
-<span class="nc" id="L32">                        .requestMatchers(HttpMethod.GET, &quot;/api/review/my-reviews&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
+<span class="nc" id="L32">                        .requestMatchers(HttpMethod.GET, &quot;/api/review/**&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
 <span class="nc" id="L33">                        .requestMatchers(HttpMethod.GET, &quot;/api/review/review-of-wifi-spot/**&quot;).hasAnyAuthority(ADMIN, USER, USER_PREMIUM)</span>
 <span class="nc" id="L34">                        .requestMatchers(&quot;/api/users&quot;, &quot;/api/users/**&quot;).hasAuthority(ADMIN)</span>
 <span class="nc" id="L35">                        .requestMatchers(&quot;/public/**&quot;, &quot;/auth/**&quot;).permitAll()</span>

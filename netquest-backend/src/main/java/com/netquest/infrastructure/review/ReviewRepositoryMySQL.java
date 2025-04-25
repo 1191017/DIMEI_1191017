@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 public class ReviewRepositoryMySQL {
-    private final String url = "jdbc:mysql://localhost:3306/netQuest";
+    private final String url = "jdbc:mysql://172.24.144.1:3306/netQuest";
     private final String username = "netQuest";
     private final String password = "netQuestLocal";
 
@@ -23,7 +23,7 @@ public class ReviewRepositoryMySQL {
 
     // 5.3.1 - Insert a new review with attributes
     public int insertReview(ReviewCreateDto reviewCreateDto, UUID userId) {
-        UUID reviewId = UUID.randomUUID();
+        UUID reviewId = reviewCreateDto.getReviewId();
         String reviewSql = """
             INSERT INTO review (review_id, review_comment, review_create_date_time, review_overall_classification, review_user_id, review_wifi_spot_id)
             VALUES (UUID_TO_BIN(?), ?, NOW(), ?, UUID_TO_BIN(?), UUID_TO_BIN(?))
@@ -122,12 +122,21 @@ public class ReviewRepositoryMySQL {
     public List<ReviewFeedDto> getReviewFeed() {
         String sql = """
         SELECT 
-            BIN_TO_UUID(r.review_id) AS review_id, r.review_comment, r.review_create_date_time, r.review_overall_classification,
-            BIN_TO_UUID(u.user_id) AS user_id, u.user_name, u.mail,
-            BIN_TO_UUID(w.wifi_spot_id) AS wifi_spot_id, w.wifi_spot_name, w.wifi_spot_description
+            BIN_TO_UUID(r.review_id) AS review_id,
+            r.review_comment,
+            r.review_create_date_time,
+            r.review_overall_classification,
+            BIN_TO_UUID(u.user_id) AS user_id,
+            u.user_name,
+            u.mail,
+            BIN_TO_UUID(w.wifi_spot_id) AS wifi_spot_id,
+            w.wifi_spot_name,
+            w.wifi_spot_description
         FROM review r
         JOIN users u ON r.review_user_id = u.user_id
         JOIN wifi_spot w ON r.review_wifi_spot_id = w.wifi_spot_id
+        JOIN wifi_spot_visit v ON r.review_wifi_spot_id = v.wifi_spot_id
+        GROUP BY r.review_id 
         ORDER BY r.review_create_date_time DESC
     """;
 
@@ -142,17 +151,39 @@ public class ReviewRepositoryMySQL {
                         rs.getTimestamp("review_create_date_time").toLocalDateTime(),
                         rs.getString("review_comment"),
                         rs.getInt("review_overall_classification"),
+                        getReviewAttributes(rs.getString("review_id")), // assuming this is done separately
                         UUID.fromString(rs.getString("user_id")),
                         rs.getString("user_name"),
-                        rs.getString("mail"),
                         UUID.fromString(rs.getString("wifi_spot_id")),
-                        rs.getString("wifi_spot_name"),
-                        rs.getString("wifi_spot_description")
+                        rs.getString("wifi_spot_name")
                 ));
             }
             return feed;
         } catch (SQLException e) {
             throw new RuntimeException("Error fetching review feed", e);
         }
+    }
+
+    private List<ReviewAttributeClassificationDto> getReviewAttributes(String reviewId) {
+        String sql = "SELECT review_attribute_classification_name, review_attribute_classification_value FROM review_attribute_classification WHERE review_id = UUID_TO_BIN(?)";
+        List<ReviewAttributeClassificationDto> attributes = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, reviewId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                attributes.add(new ReviewAttributeClassificationDto(
+                        rs.getString("review_attribute_classification_name"),
+                        rs.getString("review_attribute_classification_value")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching review attributes", e);
+        }
+
+        return attributes;
     }
 }

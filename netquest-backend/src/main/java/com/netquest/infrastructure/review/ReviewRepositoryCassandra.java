@@ -11,9 +11,12 @@ import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class ReviewRepositoryCassandra {
@@ -25,7 +28,7 @@ public class ReviewRepositoryCassandra {
 
     // 5.3.1 - Insert a new review with attributes
     public void insertReview(ReviewCreateDto reviewCreateDto, UUID userId) {
-        UUID reviewId = UUID.randomUUID();
+        UUID reviewId = reviewCreateDto.getReviewId();
         Instant timestamp = Instant.now();
 
         String reviewQuery = """
@@ -91,36 +94,68 @@ public class ReviewRepositoryCassandra {
                     "Unknown"
             ));
         }
-        return reviews;
+
+        return reviews.stream()
+                .sorted(Comparator.comparing(ReviewDto::getReviewCreateDateTime).reversed())
+                .collect(Collectors.toList());
     }
 
     // 5.3.5 - Get review feed (fetch reviews first, attributes separately)
     public List<ReviewFeedDto> getReviewFeed() {
         String reviewQuery = """
-            SELECT wifi_spot_id, review_id, review_create_date_time, review_comment, review_overall_classification, user_id
-            FROM review
-        """;
+        SELECT wifi_spot_id, review_id, review_create_date_time, review_comment, review_overall_classification, user_id
+        FROM review
+    """;
 
         ResultSet rs = session.execute(session.prepare(reviewQuery).bind());
 
         List<ReviewFeedDto> reviewFeed = new ArrayList<>();
         for (Row row : rs) {
+            UUID wifiSpotId = row.getUuid("wifi_spot_id");
+
+            if (!wasWifiSpotVisited(wifiSpotId)) continue;
+
+            UUID userId = row.getUuid("user_id");
             UUID reviewId = row.getUuid("review_id");
+
+            String username = getUsername(userId);
+            String wifiSpotName = getWifiSpotName(wifiSpotId);
+
+            List<ReviewAttributeClassificationDto> attributes = getReviewAttributes(reviewId);
 
             reviewFeed.add(new ReviewFeedDto(
                     reviewId,
-                    row.getInstant("review_create_date_time").atZone(java.time.ZoneId.systemDefault()).toLocalDateTime(),
+                    row.getInstant("review_create_date_time").atZone(ZoneId.systemDefault()).toLocalDateTime(),
                     row.getString("review_comment"),
                     row.getInt("review_overall_classification"),
-                    row.getUuid("user_id"),
-                    "Unknown",
-                    "Unknown",
-                    row.getUuid("wifi_spot_id"),
-                    "Unknown",
-                    "Unknown"
+                    attributes,
+                    userId,
+                    username,
+                    wifiSpotId,
+                    wifiSpotName
             ));
         }
         return reviewFeed;
+    }
+
+    private boolean wasWifiSpotVisited(UUID wifiSpotId) {
+        String visitQuery = "SELECT COUNT(*) FROM wifi_spot_visit WHERE wifi_spot_id = ?";
+        ResultSet rs = session.execute(session.prepare(visitQuery).bind(wifiSpotId));
+        return rs.one().getLong(0) > 0;
+    }
+
+    private String getUsername(UUID userId) {
+        String userQuery = "SELECT user_name FROM users WHERE user_id = ?";
+        ResultSet rs = session.execute(session.prepare(userQuery).bind(userId));
+        Row row = rs.one();
+        return row != null ? row.getString("username") : "Unknown";
+    }
+
+    private String getWifiSpotName(UUID wifiSpotId) {
+        String spotQuery = "SELECT wifi_spot_name FROM wifi_spot WHERE wifi_spot_id = ?";
+        ResultSet rs = session.execute(session.prepare(spotQuery).bind(wifiSpotId));
+        Row row = rs.one();
+        return row != null ? row.getString("name") : "Unknown";
     }
 
     // Fetch review attributes separately

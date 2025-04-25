@@ -1,107 +1,249 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.controller.review</a> &gt; <span class="el_source">ReviewController.java</span></div><h1>ReviewController.java</h1><pre class="source lang-java linenums">package com.netquest.controller.review;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
 import com.netquest.domain.review.dto.ReviewCreateDto;
 import com.netquest.domain.review.dto.ReviewDto;
 import com.netquest.domain.review.dto.ReviewFeedDto;
-import com.netquest.domain.review.dto.ReviewHistoryDto;
 import com.netquest.domain.review.service.ReviewService;
-import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
-import com.netquest.security.CustomUserDetails;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.bson.Document;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;api/review&quot;)
 public class ReviewController {
     private final ReviewService reviewService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     //MongoDB
 
     // 5.3.1 - Create a new review
-    @PostMapping(&quot;/mongodb/{userId}&quot;)
-    public ResponseEntity&lt;String&gt; createReviewMongoDB(@PathVariable String userId, @RequestBody ReviewCreateDto reviewCreateDto) {
-<span class="nc" id="L40">        String reviewId = reviewService.createReviewMongoDB(reviewCreateDto, UUID.fromString(userId));</span>
-<span class="nc" id="L41">        return ResponseEntity.ok(&quot;Review created successfully with ID: &quot; + reviewId);</span>
+    @PostMapping(&quot;/mongodb/file-create&quot;)
+    public ResponseEntity&lt;String&gt; createReviewsMongoDBFromFile() {
+        try {
+<span class="nc" id="L35">            Path path = Paths.get(&quot;/app/scripts/mongodb/review.json&quot;);</span>
+
+<span class="nc" id="L37">            String jsonContent = Files.readString(path);</span>
+<span class="nc" id="L38">            List&lt;Map&lt;String, Object&gt;&gt; reviews = objectMapper.readValue(jsonContent, new TypeReference&lt;&gt;() {});</span>
+<span class="nc" id="L39">            List&lt;ReviewCreateDto&gt; dtos = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            for (Map&lt;String, Object&gt; review : reviews) {</span>
+<span class="nc" id="L42">                List&lt;Map&lt;String, String&gt;&gt; attrList = (List&lt;Map&lt;String, String&gt;&gt;) review.get(&quot;attributes&quot;);</span>
+<span class="nc" id="L43">                List&lt;ReviewAttributeClassificationDto&gt; mappedAttributes = attrList.stream()</span>
+<span class="nc" id="L44">                        .map(a -&gt; new ReviewAttributeClassificationDto(a.get(&quot;name&quot;), a.get(&quot;value&quot;)))</span>
+<span class="nc" id="L45">                        .collect(Collectors.toList());</span>
+
+<span class="nc" id="L47">                ReviewCreateDto dto = new ReviewCreateDto();</span>
+<span class="nc" id="L48">                dto.setReviewId(UUID.fromString((String) review.get(&quot;_id&quot;)));</span>
+<span class="nc" id="L49">                dto.setWifiSpotId(UUID.fromString((String) review.get(&quot;wifi_spot_id&quot;)));</span>
+<span class="nc" id="L50">                dto.setReviewComment((String) review.get(&quot;comment&quot;));</span>
+<span class="nc" id="L51">                dto.setReviewOverallClassification((Integer) review.get(&quot;overall_classification&quot;));</span>
+<span class="nc" id="L52">                dto.setReviewAttributeClassificationDtoList(mappedAttributes);</span>
+
+<span class="nc" id="L54">                dtos.add(dto);</span>
+<span class="nc" id="L55">            }</span>
+
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            for (ReviewCreateDto dto : dtos) {</span>
+<span class="nc" id="L58">                reviewService.createReviewMongoDB(dto, UUID.fromString((String) reviews.get(dtos.indexOf(dto)).get(&quot;user_id&quot;)));</span>
+<span class="nc" id="L59">            }</span>
+
+<span class="nc" id="L61">            return ResponseEntity.ok(&quot;Created &quot; + dtos.size() + &quot; reviews in MongoDB.&quot;);</span>
+<span class="nc" id="L62">        } catch (Exception e) {</span>
+<span class="nc" id="L63">            return ResponseEntity.internalServerError().body(&quot;Error: &quot; + e.getMessage());</span>
+        }
     }
 
-    @DeleteMapping(&quot;/mongodb/{reviewId}&quot;)
-    public ResponseEntity&lt;String&gt; deleteReviewMongoDB(@PathVariable String reviewId) {
-<span class="nc" id="L46">        reviewService.deleteReviewMongoDB(reviewId);</span>
-<span class="nc" id="L47">        return ResponseEntity.ok(&quot;Review deleted successfully.&quot;);</span>
+    @DeleteMapping(&quot;/mongodb/file-delete&quot;)
+    public ResponseEntity&lt;String&gt; deleteReviewsMongoDBFromFile() {
+        try {
+<span class="nc" id="L70">            Path path = Paths.get(&quot;/app/scripts/mongodb/review.json&quot;);</span>
+
+            // Read file content into a String
+<span class="nc" id="L73">            String jsonContent = Files.readString(path);</span>
+<span class="nc" id="L74">            List&lt;Map&lt;String, Object&gt;&gt; reviews = objectMapper.readValue(jsonContent, new TypeReference&lt;&gt;() {});</span>
+<span class="nc" id="L75">            List&lt;String&gt; ids = reviews.stream()</span>
+<span class="nc" id="L76">                    .map(r -&gt; (String) r.get(&quot;_id&quot;))</span>
+<span class="nc" id="L77">                    .collect(Collectors.toList());</span>
+
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            for (String id : ids) {</span>
+<span class="nc" id="L80">                reviewService.deleteReviewMongoDB(id);</span>
+<span class="nc" id="L81">            }</span>
+
+<span class="nc" id="L83">            return ResponseEntity.ok(&quot;Deleted &quot; + ids.size() + &quot; reviews from MongoDB.&quot;);</span>
+<span class="nc" id="L84">        } catch (Exception e) {</span>
+<span class="nc" id="L85">            return ResponseEntity.internalServerError().body(&quot;Error: &quot; + e.getMessage());</span>
+        }
     }
 
     @GetMapping(&quot;/mongodb/wifiSpot/{wifiSpotId}&quot;)
     public ResponseEntity&lt;List&lt;ReviewDto&gt;&gt; getReviewsForWifiSpotMongoDB(@PathVariable String wifiSpotId) {
-<span class="nc" id="L52">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMongoDB(UUID.fromString(wifiSpotId)));</span>
+<span class="nc" id="L91">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMongoDB(UUID.fromString(wifiSpotId)));</span>
     }
 
     @GetMapping(&quot;/mongodb/feed&quot;)
     public ResponseEntity&lt;List&lt;ReviewFeedDto&gt;&gt; getReviewFeedMongoDB() {
-<span class="nc" id="L57">        return ResponseEntity.ok(reviewService.getReviewFeedMongoDB());</span>
+<span class="nc" id="L96">        return ResponseEntity.ok(reviewService.getReviewFeedMongoDB());</span>
     }
 
     //MySQL
-    @PostMapping(&quot;/mysql/{userId}&quot;)
-    public ResponseEntity&lt;String&gt; createReviewMySQL(@PathVariable String userId, @RequestBody ReviewCreateDto reviewCreateDto) {
-<span class="nc" id="L63">        int reviewId = reviewService.createReviewMySQL(reviewCreateDto, UUID.fromString(userId));</span>
-<span class="nc" id="L64">        return ResponseEntity.ok(&quot;Reviews created: &quot; + reviewId);</span>
+    // 5.3.1 - Create reviews from file
+    @PostMapping(&quot;/mysql/file-create&quot;)
+    public ResponseEntity&lt;String&gt; createReviewsMySQLFromFile() {
+        try {
+<span class="nc" id="L104">            List&lt;String&gt; lines = Files.readAllLines(Paths.get(&quot;/app/scripts/mysql/review.csv&quot;));</span>
+<span class="nc" id="L105">            lines.remove(0);</span>
+
+<span class="nc" id="L107">            Map&lt;String, List&lt;ReviewAttributeClassificationDto&gt;&gt; attributesMap = Files.readAllLines(Paths.get(&quot;scripts/mysql/review_attribute_classification.csv&quot;))</span>
+<span class="nc" id="L108">                    .stream()</span>
+<span class="nc" id="L109">                    .skip(1)</span>
+<span class="nc" id="L110">                    .map(line -&gt; line.split(&quot;,&quot;))</span>
+<span class="nc" id="L111">                    .collect(Collectors.groupingBy(</span>
+<span class="nc" id="L112">                            parts -&gt; parts[0],</span>
+<span class="nc" id="L113">                            Collectors.mapping(</span>
+<span class="nc" id="L114">                                    parts -&gt; new ReviewAttributeClassificationDto(parts[1], parts[2]),</span>
+<span class="nc" id="L115">                                    Collectors.toList()</span>
+                            )
+                    ));
+
+<span class="nc" id="L119">            List&lt;ReviewCreateDto&gt; dtos = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            for (String line : lines) {</span>
+<span class="nc" id="L121">                String[] parts = line.split(&quot;,&quot;);</span>
+<span class="nc" id="L122">                String reviewId = parts[0];</span>
+<span class="nc" id="L123">                List&lt;ReviewAttributeClassificationDto&gt; attrList = attributesMap.getOrDefault(reviewId, new ArrayList&lt;&gt;());</span>
+
+<span class="nc" id="L125">                ReviewCreateDto dto = new ReviewCreateDto();</span>
+<span class="nc" id="L126">                dto.setReviewId(UUID.fromString(reviewId));</span>
+<span class="nc" id="L127">                dto.setWifiSpotId(UUID.fromString(parts[5]));</span>
+<span class="nc" id="L128">                dto.setReviewComment(parts[2]);</span>
+<span class="nc" id="L129">                dto.setReviewOverallClassification(Integer.parseInt(parts[3]));</span>
+<span class="nc" id="L130">                dto.setReviewAttributeClassificationDtoList(attrList);</span>
+
+<span class="nc" id="L132">                dtos.add(dto);</span>
+<span class="nc" id="L133">            }</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            for (ReviewCreateDto dto : dtos) {</span>
+<span class="nc" id="L136">                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(&quot;,&quot;)[4]));</span>
+<span class="nc" id="L137">            }</span>
+
+<span class="nc" id="L139">            return ResponseEntity.ok(&quot;Created &quot; + dtos.size() + &quot; reviews in MySQL.&quot;);</span>
+<span class="nc" id="L140">        } catch (Exception e) {</span>
+<span class="nc" id="L141">            return ResponseEntity.internalServerError().body(&quot;Error: &quot; + e.getMessage());</span>
+        }
     }
 
-    @DeleteMapping(&quot;/mysql/{reviewId}&quot;)
-    public ResponseEntity&lt;String&gt; deleteReviewMySQL(@PathVariable String reviewId) {
-<span class="nc" id="L69">        int reviews = reviewService.deleteReviewMySQL(UUID.fromString(reviewId));</span>
-<span class="nc" id="L70">        return ResponseEntity.ok(&quot;Review deleted successfully:&quot; + reviews);</span>
+    @DeleteMapping(&quot;/mysql/file-delete&quot;)
+    public ResponseEntity&lt;String&gt; deleteReviewsMySQLFromFile() {
+        try {
+<span class="nc" id="L148">            List&lt;String&gt; lines = Files.readAllLines(Paths.get(&quot;/app/scripts/mysql/review.csv&quot;));</span>
+<span class="nc" id="L149">            lines.remove(0);</span>
+<span class="nc" id="L150">            List&lt;UUID&gt; ids = lines.stream()</span>
+<span class="nc" id="L151">                    .map(l -&gt; UUID.fromString(l.split(&quot;,&quot;)[0]))</span>
+<span class="nc" id="L152">                    .collect(Collectors.toList());</span>
+
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            for (UUID id : ids) {</span>
+<span class="nc" id="L155">                reviewService.deleteReviewMySQL(id);</span>
+<span class="nc" id="L156">            }</span>
+
+<span class="nc" id="L158">            return ResponseEntity.ok(&quot;Deleted &quot; + ids.size() + &quot; reviews from MySQL.&quot;);</span>
+<span class="nc" id="L159">        } catch (Exception e) {</span>
+<span class="nc" id="L160">            return ResponseEntity.internalServerError().body(&quot;Error: &quot; + e.getMessage());</span>
+        }
     }
 
     @GetMapping(&quot;/mysql/wifiSpot/{wifiSpotId}&quot;)
     public ResponseEntity&lt;List&lt;ReviewDto&gt;&gt; getReviewsForWifiSpotMySQL(@PathVariable String wifiSpotId) {
-<span class="nc" id="L75">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMySQL(UUID.fromString(wifiSpotId)));</span>
+<span class="nc" id="L166">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMySQL(UUID.fromString(wifiSpotId)));</span>
     }
 
     @GetMapping(&quot;/mysql/feed&quot;)
     public ResponseEntity&lt;List&lt;ReviewFeedDto&gt;&gt; getReviewFeedMySQL() {
-<span class="nc" id="L80">        return ResponseEntity.ok(reviewService.getReviewFeedMySQL());</span>
+<span class="nc" id="L171">        return ResponseEntity.ok(reviewService.getReviewFeedMySQL());</span>
     }
 
     //CASSANDRA
 
-    @PostMapping(&quot;/cassandra/{userId}&quot;)
-    public ResponseEntity&lt;String&gt; createReviewCassandra(@PathVariable String userId, @RequestBody ReviewCreateDto reviewCreateDto) {
-<span class="nc" id="L87">        reviewService.createReviewCassandra(reviewCreateDto, UUID.fromString(userId));</span>
-<span class="nc" id="L88">        return ResponseEntity.ok(&quot;Review created successfully.&quot;);</span>
+    @PostMapping(&quot;/cassandra/file-create&quot;)
+    public ResponseEntity&lt;String&gt; createReviewsCassandraFromFile() {
+        try {
+<span class="nc" id="L179">            List&lt;String&gt; lines = Files.readAllLines(Paths.get(&quot;/app/scripts/cassandra/cassandra_review.csv&quot;));</span>
+<span class="nc" id="L180">            lines.remove(0);</span>
+
+<span class="nc" id="L182">            Map&lt;String, List&lt;ReviewAttributeClassificationDto&gt;&gt; attributesMap = Files.readAllLines(Paths.get(&quot;scripts/cassandra/cassandra_review_attribute_classification.csv&quot;))</span>
+<span class="nc" id="L183">                    .stream()</span>
+<span class="nc" id="L184">                    .skip(1)</span>
+<span class="nc" id="L185">                    .map(line -&gt; line.split(&quot;,&quot;))</span>
+<span class="nc" id="L186">                    .collect(Collectors.groupingBy(</span>
+<span class="nc" id="L187">                            parts -&gt; parts[0],</span>
+<span class="nc" id="L188">                            Collectors.mapping(</span>
+<span class="nc" id="L189">                                    parts -&gt; new ReviewAttributeClassificationDto(parts[1], parts[2]),</span>
+<span class="nc" id="L190">                                    Collectors.toList()</span>
+                            )
+                    ));
+
+<span class="nc" id="L194">            List&lt;ReviewCreateDto&gt; dtos = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            for (String line : lines) {</span>
+<span class="nc" id="L196">                String[] parts = line.split(&quot;,&quot;);</span>
+<span class="nc" id="L197">                String reviewId = parts[1];</span>
+<span class="nc" id="L198">                List&lt;ReviewAttributeClassificationDto&gt; attrList = attributesMap.getOrDefault(reviewId, new ArrayList&lt;&gt;());</span>
+
+<span class="nc" id="L200">                ReviewCreateDto dto = new ReviewCreateDto();</span>
+<span class="nc" id="L201">                dto.setReviewId(UUID.fromString(reviewId));</span>
+<span class="nc" id="L202">                dto.setWifiSpotId(UUID.fromString(parts[0]));</span>
+<span class="nc" id="L203">                dto.setReviewComment(parts[3]);</span>
+<span class="nc" id="L204">                dto.setReviewOverallClassification(Integer.parseInt(parts[5]));</span>
+<span class="nc" id="L205">                dto.setReviewAttributeClassificationDtoList(attrList);</span>
+
+<span class="nc" id="L207">                dtos.add(dto);</span>
+<span class="nc" id="L208">            }</span>
+
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            for (ReviewCreateDto dto : dtos) {</span>
+<span class="nc" id="L211">                reviewService.createReviewCassandra(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(&quot;,&quot;)[2]));</span>
+<span class="nc" id="L212">            }</span>
+
+<span class="nc" id="L214">            return ResponseEntity.ok(&quot;Created &quot; + dtos.size() + &quot; reviews in Cassandra.&quot;);</span>
+<span class="nc" id="L215">        } catch (Exception e) {</span>
+<span class="nc" id="L216">            return ResponseEntity.internalServerError().body(&quot;Error: &quot; + e.getMessage());</span>
+        }
     }
 
-    @DeleteMapping(&quot;/cassandra/{wifiSpotId}/{reviewId}&quot;)
-    public ResponseEntity&lt;String&gt; deleteReviewCassandra(@PathVariable String wifiSpotId, @PathVariable String reviewId) {
-<span class="nc" id="L93">        reviewService.deleteReviewCassandra(UUID.fromString(reviewId), UUID.fromString(wifiSpotId));</span>
-<span class="nc" id="L94">        return ResponseEntity.ok(&quot;Review deleted successfully.&quot;);</span>
+    @DeleteMapping(&quot;/cassandra/file-delete&quot;)
+    public ResponseEntity&lt;String&gt; deleteReviewsCassandraFromFile() {
+        try {
+<span class="nc" id="L223">            List&lt;String&gt; lines = Files.readAllLines(Paths.get(&quot;/app/scripts/cassandra/cassandra_review.csv&quot;));</span>
+<span class="nc" id="L224">            lines.remove(0);</span>
+<span class="nc" id="L225">            List&lt;UUID&gt; ids = lines.stream()</span>
+<span class="nc" id="L226">                    .map(l -&gt; UUID.fromString(l.split(&quot;,&quot;)[1]))</span>
+<span class="nc" id="L227">                    .collect(Collectors.toList());</span>
+
+<span class="nc bnc" id="L229" title="All 2 branches missed.">            for (UUID id : ids) {</span>
+<span class="nc" id="L230">                reviewService.deleteReviewCassandra(id);</span>
+<span class="nc" id="L231">            }</span>
+
+<span class="nc" id="L233">            return ResponseEntity.ok(&quot;Deleted &quot; + ids.size() + &quot; reviews from Cassandra.&quot;);</span>
+<span class="nc" id="L234">        } catch (Exception e) {</span>
+<span class="nc" id="L235">            return ResponseEntity.internalServerError().body(&quot;Error: &quot; + e.getMessage());</span>
+        }
     }
 
     @GetMapping(&quot;/cassandra/wifiSpot/{wifiSpotId}&quot;)
     public ResponseEntity&lt;List&lt;ReviewDto&gt;&gt; getReviewsForWifiSpotCassandra(@PathVariable String wifiSpotId) {
-<span class="nc" id="L99">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotCassandra(UUID.fromString(wifiSpotId)));</span>
+<span class="nc" id="L241">        return ResponseEntity.ok(reviewService.getReviewsForWifiSpotCassandra(UUID.fromString(wifiSpotId)));</span>
     }
 
     @GetMapping(&quot;/cassandra/feed&quot;)
     public ResponseEntity&lt;List&lt;ReviewFeedDto&gt;&gt; getReviewFeedCassandra() {
-<span class="nc" id="L104">        return ResponseEntity.ok(reviewService.getReviewFeedCassandra());</span>
+<span class="nc" id="L246">        return ResponseEntity.ok(reviewService.getReviewFeedCassandra());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

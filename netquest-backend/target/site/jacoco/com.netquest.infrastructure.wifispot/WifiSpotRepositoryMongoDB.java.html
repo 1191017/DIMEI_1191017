@@ -2,24 +2,95 @@
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import org.bson.Document;
 
 import com.mongodb.client.model.Updates;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
 
 @Repository
 public class WifiSpotRepositoryMongoDB {
     private final MongoCollection&lt;Document&gt; collection;
+    private final MongoCollection&lt;Document&gt; wifiSpotVisitCollection;
 
-<span class="nc" id="L14">    public WifiSpotRepositoryMongoDB(MongoClient mongoClient) {</span>
-<span class="nc" id="L15">        MongoDatabase database = mongoClient.getDatabase(&quot;netQuest&quot;);</span>
-<span class="nc" id="L16">        this.collection = database.getCollection(&quot;wifi_spot&quot;);</span>
-<span class="nc" id="L17">    }</span>
+<span class="nc" id="L23">    public WifiSpotRepositoryMongoDB(MongoClient mongoClient) {</span>
+<span class="nc" id="L24">        MongoDatabase database = mongoClient.getDatabase(&quot;netQuest&quot;);</span>
+<span class="nc" id="L25">        this.collection = database.getCollection(&quot;wifi_spot&quot;);</span>
+<span class="nc" id="L26">        this.wifiSpotVisitCollection = database.getCollection(&quot;wifi_spot_visit&quot;);</span>
+<span class="nc" id="L27">    }</span>
 
-    // 5.3.2 - Update a Wi-Fi spot description
-    public void updateWifiSpotDescription(String wifiSpotId, String newDescription) {
-<span class="nc" id="L21">        collection.updateOne(Filters.eq(&quot;_id&quot;, wifiSpotId),</span>
-<span class="nc" id="L22">                Updates.set(&quot;description&quot;, newDescription));</span>
-<span class="nc" id="L23">    }</span>
+    // 5.3.2 - Update a Wi-Fi spot name
+    public void updateWifiSpotName(UUID wifiSpotId, String newName) {
+
+<span class="nc" id="L32">        collection.updateOne(</span>
+<span class="nc" id="L33">                Filters.eq(&quot;_id&quot;, wifiSpotId),</span>
+<span class="nc" id="L34">                Updates.set(&quot;name&quot;, newName)</span>
+        );
+
+<span class="nc" id="L37">        wifiSpotVisitCollection.updateMany(</span>
+<span class="nc" id="L38">                Filters.eq(&quot;wifi_spot._id&quot;, wifiSpotId),</span>
+<span class="nc" id="L39">                Updates.set(&quot;wifi_spot.name&quot;, newName)</span>
+        );
+<span class="nc" id="L41">    }</span>
+
+    public void createWifiSpot(WifiSpotCreateDto dto) {
+        // Map 'features'
+<span class="nc" id="L45">        Document features = new Document()</span>
+<span class="nc" id="L46">                .append(&quot;air_conditioning&quot;, dto.airConditioning())</span>
+<span class="nc" id="L47">                .append(&quot;child_friendly&quot;, dto.childFriendly())</span>
+<span class="nc" id="L48">                .append(&quot;covered_area&quot;, dto.coveredArea())</span>
+<span class="nc" id="L49">                .append(&quot;crowded&quot;, dto.crowded())</span>
+<span class="nc" id="L50">                .append(&quot;disabled_access&quot;, dto.disableAccess())</span>
+<span class="nc" id="L51">                .append(&quot;good_view&quot;, dto.goodView())</span>
+<span class="nc" id="L52">                .append(&quot;noise_level&quot;, 1)</span>
+<span class="nc" id="L53">                .append(&quot;signal_strength&quot;, 1)</span>
+<span class="nc" id="L54">                .append(&quot;wifi_quality&quot;, 1)</span>
+<span class="nc" id="L55">                .append(&quot;bandwidth_limitations&quot;, true) // true if LIMITED</span>
+<span class="nc" id="L56">                .append(&quot;location_type&quot;, 1)</span>
+<span class="nc" id="L57">                .append(&quot;management&quot;, 1)</span>
+<span class="nc" id="L58">                .append(&quot;available_power_outlets&quot;, dto.availablePowerOutlets())</span>
+<span class="nc" id="L59">                .append(&quot;charging_stations&quot;, dto.chargingStations())</span>
+<span class="nc" id="L60">                .append(&quot;pet_friendly&quot;, dto.petFriendly())</span>
+<span class="nc" id="L61">                .append(&quot;food_options&quot;, dto.foodOptions())</span>
+<span class="nc" id="L62">                .append(&quot;drink_options&quot;, dto.drinkOptions())</span>
+<span class="nc" id="L63">                .append(&quot;restrooms_available&quot;, dto.restroomsAvailable())</span>
+<span class="nc" id="L64">                .append(&quot;parking_availability&quot;, dto.parkingAvailability())</span>
+<span class="nc" id="L65">                .append(&quot;heated_in_winter&quot;, dto.heatedInWinter())</span>
+<span class="nc" id="L66">                .append(&quot;open_during_heat&quot;, dto.openDuringHeat())</span>
+<span class="nc" id="L67">                .append(&quot;open_during_rain&quot;, dto.openDuringRain())</span>
+<span class="nc" id="L68">                .append(&quot;outdoor_fans&quot;, dto.outdoorFans())</span>
+<span class="nc" id="L69">                .append(&quot;shaded_areas&quot;, dto.shadedAreas());</span>
+
+        // Map 'address'
+<span class="nc" id="L72">        WifiSpotAddressCreateDto addressDto = dto.address();</span>
+<span class="nc" id="L73">        Document address = new Document()</span>
+<span class="nc" id="L74">                .append(&quot;city&quot;, addressDto.city())</span>
+<span class="nc" id="L75">                .append(&quot;country&quot;, addressDto.country())</span>
+<span class="nc" id="L76">                .append(&quot;district&quot;, addressDto.district())</span>
+<span class="nc" id="L77">                .append(&quot;line1&quot;, addressDto.addressLine1())</span>
+<span class="nc" id="L78">                .append(&quot;line2&quot;, addressDto.addressLine2())</span>
+<span class="nc" id="L79">                .append(&quot;zip_code&quot;, addressDto.zipCode());</span>
+
+        // Create the main document
+<span class="nc" id="L82">        Document document = new Document()</span>
+<span class="nc" id="L83">                .append(&quot;_id&quot;, dto.id())</span>
+<span class="nc" id="L84">                .append(&quot;user_id&quot;, null) // Assumindo que ainda não passas o user aqui. Podes adaptar.</span>
+<span class="nc" id="L85">                .append(&quot;name&quot;, dto.name())</span>
+<span class="nc" id="L86">                .append(&quot;latitude&quot;, dto.latitude())</span>
+<span class="nc" id="L87">                .append(&quot;longitude&quot;, dto.longitude())</span>
+<span class="nc" id="L88">                .append(&quot;description&quot;, dto.description())</span>
+<span class="nc" id="L89">                .append(&quot;features&quot;, features)</span>
+<span class="nc" id="L90">                .append(&quot;address&quot;, address)</span>
+<span class="nc" id="L91">                .append(&quot;create_date_time&quot;, Date.from(Instant.now()));</span>
+
+<span class="nc" id="L93">        collection.insertOne(document);</span>
+<span class="nc" id="L94">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

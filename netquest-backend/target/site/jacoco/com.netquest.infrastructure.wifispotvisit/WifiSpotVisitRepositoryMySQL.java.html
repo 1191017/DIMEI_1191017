@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WifiSpotVisitRepositoryMySQL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">netquest-api</a> &gt; <a href="index.source.html" class="el_package">com.netquest.infrastructure.wifispotvisit</a> &gt; <span class="el_source">WifiSpotVisitRepositoryMySQL.java</span></div><h1>WifiSpotVisitRepositoryMySQL.java</h1><pre class="source lang-java linenums">package com.netquest.infrastructure.wifispotvisit;
+
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
+import org.springframework.stereotype.Repository;
+
+import java.sql.*;
+import java.util.UUID;
+
+@Repository
+public class WifiSpotVisitRepositoryMySQL {
+<span class="nc" id="L13">    private final String url = &quot;jdbc:mysql://172.24.144.1:3306/netQuest&quot;;</span>
+<span class="nc" id="L14">    private final String username = &quot;netQuest&quot;;</span>
+<span class="nc" id="L15">    private final String password = &quot;netQuestLocal&quot;;</span>
+
+<span class="nc" id="L17">    public WifiSpotVisitRepositoryMySQL() {}</span>
+
+    public void createWifiSpotVisit(UUID userId, WifiSpotVisitCreateDto dto) {
+<span class="nc" id="L20">        String sql = &quot;&quot;&quot;</span>
+            INSERT INTO wifi_spot_visit (
+                wifi_spot_visit_id,
+                wifi_spot_visit_user_id,
+                wifi_spot_visit_wifi_spot_id,
+                wifi_spot_visit_start_datetime,
+                wifi_spot_visit_end_datetime
+            ) VALUES (
+                UUID_TO_BIN(?), UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?
+            )
+        &quot;&quot;&quot;;
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        UUID visitId = dto.getWifiSpotVisitId() != null ? dto.getWifiSpotVisitId() : UUID.randomUUID();</span>
+
+<span class="nc" id="L34">        try (Connection connection = DriverManager.getConnection(url, username, password);</span>
+<span class="nc" id="L35">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+
+<span class="nc" id="L37">            stmt.setString(1, visitId.toString());</span>
+<span class="nc" id="L38">            stmt.setString(2, userId.toString());</span>
+<span class="nc" id="L39">            stmt.setString(3, dto.getWifiSpotId().toString());</span>
+<span class="nc" id="L40">            stmt.setTimestamp(4, Timestamp.valueOf(dto.getStartDateTime()));</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            stmt.setTimestamp(5, dto.getEndDateTime() != null ? Timestamp.valueOf(dto.getEndDateTime()) : null);</span>
+
+<span class="nc" id="L43">            stmt.executeUpdate();</span>
+
+<span class="nc" id="L45">        } catch (SQLException e) {</span>
+<span class="nc" id="L46">            throw new RuntimeException(&quot;Error creating Wi-Fi spot visit&quot;, e);</span>
+<span class="nc" id="L47">        }</span>
+<span class="nc" id="L48">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

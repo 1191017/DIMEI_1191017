@@ -44,6 +44,7 @@ com\netquest\domain\wifispotvisit\dto\WifiSpotVisitHistoryDto.class
 com\netquest\domain\user\model\UserBirthDate.class
 com\netquest\controller\wifispot\WifiSpotController.class
 com\netquest\domain\review\exception\ReviewAttributeClassificationValueEmpty.class
+com\netquest\infrastructure\wifispotvisit\WifiSpotVisitRepositoryMySQL.class
 com\netquest\security\CustomUserDetails.class
 com\netquest\security\UserDetailsServiceImpl.class
 com\netquest\domain\wifispot\service\impl\WifiSpotServiceImpl.class
@@ -57,6 +58,7 @@ com\netquest\domain\pointsearntransaction\dto\PointsEarnTransactionCreateByVisit
 com\netquest\domain\auth\dto\AuthResponse.class
 com\netquest\domain\wifispot\model\WifiSpotWeatherFeatures.class
 com\netquest\domain\pointsearntransaction\mapper\PointsEarnTransactionMapper.class
+com\netquest\controller\review\ReviewController$1.class
 com\netquest\domain\wifispotvisit\exception\WifiSpotVisitEndDateTimeAlreadyFilledException.class
 com\netquest\domain\user\model\UserId.class
 com\netquest\domain\wifispot\model\WifiSpotCoordinates.class
@@ -86,6 +88,8 @@ com\netquest\domain\review\service\impl\ReviewServiceImpl.class
 com\netquest\domain\wifispot\model\WifiSpotAddressLine1.class
 com\netquest\domain\pointsearntransaction\service\PointsEarnTransactionService.class
 com\netquest\domain\user\mapper\impl\UserMapperImpl.class
+com\netquest\infrastructure\wifispotvisit\WifiSpotVisitRepositoryCassandra.class
+com\netquest\controller\review\ReviewController$2.class
 com\netquest\domain\pointsearntransaction\model\PointsEarnTransactionId.class
 com\netquest\controller\wifispotvisit\WifiSpotVisitController.class
 com\netquest\domain\review\service\ReviewService.class
@@ -124,9 +128,11 @@ com\netquest\domain\shared\BandwithType.class
 com\netquest\domain\wifispotvisit\exception\FutureWifiSpotVisitStartDateTimeException.class
 com\netquest\domain\pointsearntransaction\dto\PointsEarnTransactionCreateByReviewDto.class
 com\netquest\domain\wifispotvisit\mapper\impl\WifiSpotVisitMapperImpl.class
+com\netquest\domain\wifispot\service\impl\WifiSpotServiceImpl$1.class
 com\netquest\domain\pointsearntransaction\dto\PointsEarnTransactionDetailedDto.class
 com\netquest\domain\review\model\ReviewComment.class
 com\netquest\domain\pointsearntransaction\model\PointsEarnTransactionAmount.class
+com\netquest\infrastructure\wifispotvisit\WifiSpotVisitRepositoryMongoDB.class
 com\netquest\domain\pointsearntransaction\dto\LeaderboardEntryDto.class
 com\netquest\domain\user\model\UserRole.class
 com\netquest\domain\wifispot\exception\WifiSpotNotFoundException.class

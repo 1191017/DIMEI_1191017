@@ -2,23 +2,119 @@
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Repository
 public class WifiSpotRepositoryCassandra {
     private final CqlSession session;
 
-<span class="nc" id="L13">    public WifiSpotRepositoryCassandra(CqlSession session) {</span>
-<span class="nc" id="L14">        this.session = session;</span>
-<span class="nc" id="L15">    }</span>
+<span class="nc" id="L18">    public WifiSpotRepositoryCassandra(CqlSession session) {</span>
+<span class="nc" id="L19">        this.session = session;</span>
+<span class="nc" id="L20">    }</span>
 
-    // 5.3.2 - Update Wi-Fi spot description
-    public void updateWifiSpotDescription(UUID wifiSpotId, String newDescription) {
-<span class="nc" id="L19">        String query = &quot;UPDATE wifi_spots SET wifi_spot_description = ? WHERE wifi_spot_id = ?&quot;;</span>
-<span class="nc" id="L20">        PreparedStatement stmt = session.prepare(query);</span>
-<span class="nc" id="L21">        session.execute(stmt.bind(newDescription, wifiSpotId));</span>
-<span class="nc" id="L22">    }</span>
+    public void updateWifiSpotName(UUID wifiSpotId, String newName) {
+<span class="nc" id="L23">        String updateSpotQuery = &quot;UPDATE wifi_spot SET wifi_spot_name = ? WHERE wifi_spot_id = ?&quot;;</span>
+<span class="nc" id="L24">        session.execute(session.prepare(updateSpotQuery).bind(newName, wifiSpotId));</span>
+
+<span class="nc" id="L26">        String selectVisits = &quot;SELECT visit_id FROM wifi_spot_visit WHERE wifi_spot_id = ?&quot;;</span>
+<span class="nc" id="L27">        PreparedStatement selectStmt = session.prepare(selectVisits);</span>
+<span class="nc" id="L28">        ResultSet resultSet = session.execute(selectStmt.bind(wifiSpotId));</span>
+
+<span class="nc" id="L30">        String updateVisitQuery = &quot;UPDATE wifi_spot_visit SET wifi_spot_name = ? WHERE visit_id = ?&quot;;</span>
+<span class="nc" id="L31">        PreparedStatement updateVisitStmt = session.prepare(updateVisitQuery);</span>
+
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        for (Row row : resultSet) {</span>
+<span class="nc" id="L34">            session.execute(updateVisitStmt.bind(</span>
+                    newName,
+<span class="nc" id="L36">                    row.getUuid(&quot;visit_id&quot;)</span>
+            ));
+<span class="nc" id="L38">        }</span>
+<span class="nc" id="L39">    }</span>
+
+    public void createWifiSpot(WifiSpotCreateDto dto) {
+<span class="nc" id="L42">        WifiSpotAddressCreateDto addr = dto.address();</span>
+
+<span class="nc" id="L44">        String query = &quot;&quot;&quot;</span>
+            INSERT INTO wifi_spot (
+                wifi_spot_id,
+                wifi_spot_name,
+                wifi_spot_latitude,
+                wifi_spot_longitude,
+                wifi_spot_description,
+                wifi_spot_air_conditioning,
+                wifi_spot_child_friendly,
+                wifi_spot_covered_area,
+                wifi_spot_crowded,
+                wifi_spot_disabled_access,
+                wifi_spot_good_view,
+                wifi_spot_noise_level,
+                wifi_spot_signal_strength,
+                wifi_spot_wifi_quality,
+                wifi_spot_bandwidth_limitations,
+                wifi_spot_location_type,
+                wifi_spot_management,
+                wifi_spot_available_power_outlets,
+                wifi_spot_charging_stations,
+                wifi_spot_pet_friendly,
+                wifi_spot_food_options,
+                wifi_spot_drink_options,
+                wifi_spot_restrooms_available,
+                wifi_spot_parking_availability,
+                wifi_spot_user_id,
+                wifi_spot_create_date_time,
+                wifi_spot_address_line_1,
+                wifi_spot_address_line_2,
+                wifi_spot_address_city,
+                wifi_spot_address_district,
+                wifi_spot_address_country,
+                wifi_spot_address_zip_code
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        &quot;&quot;&quot;;
+
+<span class="nc" id="L81">        session.execute(session</span>
+<span class="nc" id="L82">                .prepare(query)</span>
+<span class="nc" id="L83">                .bind(</span>
+<span class="nc" id="L84">                        dto.id(),</span>
+<span class="nc" id="L85">                        dto.name(),</span>
+<span class="nc" id="L86">                        dto.latitude(),</span>
+<span class="nc" id="L87">                        dto.longitude(),</span>
+<span class="nc" id="L88">                        dto.description(),</span>
+<span class="nc" id="L89">                        dto.airConditioning(),</span>
+<span class="nc" id="L90">                        dto.childFriendly(),</span>
+<span class="nc" id="L91">                        dto.coveredArea(),</span>
+<span class="nc" id="L92">                        dto.crowded(),</span>
+<span class="nc" id="L93">                        dto.disableAccess(),</span>
+<span class="nc" id="L94">                        dto.goodView(),</span>
+<span class="nc" id="L95">                        1,</span>
+<span class="nc" id="L96">                        1,</span>
+<span class="nc" id="L97">                        1,</span>
+<span class="nc" id="L98">                        true, // true if LIMITED</span>
+<span class="nc" id="L99">                        1,</span>
+<span class="nc" id="L100">                        1,</span>
+<span class="nc" id="L101">                        dto.availablePowerOutlets(),</span>
+<span class="nc" id="L102">                        dto.chargingStations(),</span>
+<span class="nc" id="L103">                        dto.petFriendly(),</span>
+<span class="nc" id="L104">                        dto.foodOptions(),</span>
+<span class="nc" id="L105">                        dto.drinkOptions(),</span>
+<span class="nc" id="L106">                        dto.restroomsAvailable(),</span>
+<span class="nc" id="L107">                        dto.parkingAvailability(),</span>
+                        null, // wifi_spot_user_id not passed in DTO
+<span class="nc" id="L109">                        Instant.now(),</span>
+<span class="nc" id="L110">                        addr.addressLine1(),</span>
+<span class="nc" id="L111">                        addr.addressLine2(),</span>
+<span class="nc" id="L112">                        addr.city(),</span>
+<span class="nc" id="L113">                        addr.district(),</span>
+<span class="nc" id="L114">                        addr.country(),</span>
+<span class="nc" id="L115">                        addr.zipCode()</span>
+                )
+        );
+<span class="nc" id="L118">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -21,24 +21,42 @@ public class WifiSpotController {
     private final WifiSpotService wifiSpotService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @PostMapping("/mysql/create")
+    public ResponseEntity<String> importCsv() {
+        wifiSpotService.importFromCsv();
+        return ResponseEntity.ok("Wi-Fi spots importados com sucesso!");
+    }
+
+    @PostMapping("/mongodb/create")
+    public ResponseEntity<String> importCsvMongodb() {
+        wifiSpotService.importFromCsvMongodb();
+        return ResponseEntity.ok("Wi-Fi spots importados com sucesso!");
+    }
+
+    @PostMapping("/cassandra/create")
+    public ResponseEntity<String> importCsvCassandra() {
+        wifiSpotService.importFromCsvCassandra();
+        return ResponseEntity.ok("Wi-Fi spots importados com sucesso!");
+    }
+
     @PutMapping("/mysql/name")
     public ResponseEntity<String> updateAllNamesMySQL() {
-        return bulkUpdateNames("scripts/mysql/wifi_spot.csv", true, false, false);
+        return bulkUpdateNames("/app/scripts/mysql/wifi_spot.csv", true, false, false);
     }
 
     @PutMapping("/mongodb/name")
     public ResponseEntity<String> updateAllNamesMongoDB() {
-        return bulkUpdateNames("scripts/mongodb/wifi_spot.json", false, true, false);
+        return bulkUpdateNames("/app/scripts/mongodb/wifi_spot.json", false, true, false);
     }
 
     @PutMapping("/cassandra/name")
     public ResponseEntity<String> updateAllNamesCassandra() {
-        return bulkUpdateNames("scripts/cassandra/cassandra_wifi_spot.csv", false, false, true);
+        return bulkUpdateNames("/app/scripts/cassandra/cassandra_wifi_spot.csv", false, false, true);
     }
 
     private ResponseEntity<String> bulkUpdateNames(String path, boolean mysql, boolean mongo, boolean cassandra) {
         try {
-            List<Pair<UUID, String>> updates = path.endsWith(".json") ? parseJson(path) : parseCsv(path);
+            List<Pair<UUID, String>> updates = path.endsWith(".json") ? parseJson(path) : parseCsv(path, mysql);
 
             wifiSpotService.updateAllWifiSpotNames(updates, mysql, mongo, cassandra);
 
@@ -48,7 +66,7 @@ public class WifiSpotController {
         }
     }
 
-    private List<Pair<UUID, String>> parseCsv(String path) throws IOException {
+    private List<Pair<UUID, String>> parseCsv(String path, boolean mysql) throws IOException {
         List<Pair<UUID, String>> updates = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(path))) {
             String line;
@@ -60,7 +78,7 @@ public class WifiSpotController {
                 }
                 String[] parts = line.split(",");
                 if (parts.length >= 2) {
-                    updates.add(Pair.of(UUID.fromString(parts[0].trim()), parts[1].trim()));
+                    updates.add(Pair.of(UUID.fromString(parts[0].trim()), mysql ? parts[2].trim() : parts[1].trim()));
                 }
             }
         }

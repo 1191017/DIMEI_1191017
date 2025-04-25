@@ -14,7 +14,7 @@ REVIEW_ATTRIBUTES = ['cleanliness', 'wifi_speed', 'comfort', 'ambience', 'servic
 
 def generate_bulk_json():
     # Utilizador único
-    user_id = str(uuid.uuid4())
+    user_id = "d0d325a1-c660-4a20-b5cd-cbef325dd834"
     users = [{
         "_id": user_id,
         "first_name": faker.first_name(),

@@ -26,7 +26,7 @@ def write_csv(filename, lines):
 
 def generate_dataset(size):
     # 1 Utilizador
-    user_id = str(uuid.uuid4())
+    user_id = "d0d325a1-c660-4a20-b5cd-cbef325dd834"
     users = ["user_id,first_name,last_name,user_name,mail,birthdate,gender,role,address_line1,address_line2,city,district,country,zip_code,vat_number"]
     users.append(f"{user_id},{escape_string(faker.first_name())},{escape_string(faker.last_name())},{faker.user_name()},{faker.email()},{faker.date_of_birth()},{random.choice(['MALE','FEMALE','OTHER'])},USER,{faker.street_address()},,{faker.city()},{faker.administrative_unit()},{faker.country()},{faker.postcode()},PT123456789")
     write_csv("cassandra_users.csv", users)

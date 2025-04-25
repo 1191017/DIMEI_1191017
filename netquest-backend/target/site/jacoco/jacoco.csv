@@ -1,5 +1,5 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-netquest-api,com.netquest.domain.review.service.impl,ReviewServiceImpl,61,0,0,0,15,0,12,0,12,0
+netquest-api,com.netquest.domain.review.service.impl,ReviewServiceImpl,60,0,0,0,15,0,12,0,12,0
 netquest-api,com.netquest.domain.wifispot.model,WifiSpotAddressLine2,6,0,0,0,3,0,1,0,1,0
 netquest-api,com.netquest.domain.wifispot.model,WifiSpotAddressLine1,5,12,2,2,1,4,2,1,0,1
 netquest-api,com.netquest.domain.wifispot.model,WifiSpotEnvironmentalFeatures,5,32,1,1,1,12,1,1,0,1
@@ -26,14 +26,14 @@ netquest-api,com.netquest.config,ErrorAttributesConfig,8,0,0,0,2,0,2,0,2,0
 netquest-api,com.netquest.config,ErrorAttributesConfig.new DefaultErrorAttributes() {...},26,0,0,0,2,0,2,0,2,0
 netquest-api,com.netquest.domain.pointsearntransaction.service.impl,PointsEarnTransactionServiceImpl,62,108,3,5,13,22,5,7,3,5
 netquest-api,com.netquest.domain.wifispot.exception,WifiSpotNotFoundException,4,0,0,0,2,0,1,0,1,0
-netquest-api,com.netquest.domain.wifispot.dto,WifiSpotAddressCreateDto,21,0,0,0,1,0,1,0,1,0
+netquest-api,com.netquest.domain.wifispot.dto,WifiSpotAddressCreateDto,24,0,0,0,1,0,1,0,1,0
 netquest-api,com.netquest.domain.wifispot.dto,WifiSpotAddressDto,24,0,0,0,1,0,1,0,1,0
 netquest-api,com.netquest.domain.wifispot.dto,WifiSpotDto,108,0,0,0,1,0,1,0,1,0
-netquest-api,com.netquest.domain.wifispot.dto,WifiSpotCreateDto,99,0,0,0,1,0,1,0,1,0
+netquest-api,com.netquest.domain.wifispot.dto,WifiSpotCreateDto,102,0,0,0,1,0,1,0,1,0
 netquest-api,com.netquest.domain.user.dto,UserDto,0,51,0,0,0,1,0,1,0,1
 netquest-api,com.netquest.domain.user.service.impl,UserServiceImpl,20,132,0,2,2,22,1,14,1,13
-netquest-api,com.netquest,NetquestBackendApplication,49,0,0,0,18,0,2,0,2,0
-netquest-api,com.netquest,MongoDBConfig,6,0,0,0,2,0,2,0,2,0
+netquest-api,com.netquest,NetquestBackendApplication,8,0,0,0,3,0,2,0,2,0
+netquest-api,com.netquest,MongoDBConfig,16,0,0,0,6,0,2,0,2,0
 netquest-api,com.netquest.domain.user.model,UserLastName,0,12,0,0,0,6,0,2,0,2
 netquest-api,com.netquest.domain.user.model,UserFirstName,0,12,0,0,0,6,0,2,0,2
 netquest-api,com.netquest.domain.user.model,UserMail,0,12,0,0,0,6,0,2,0,2
@@ -60,9 +60,9 @@ netquest-api,com.netquest.domain.wifispotvisit.model,WifiSpotVisit,23,77,3,11,3,
 netquest-api,com.netquest.domain.wifispotvisit.model,WifiSpotVisitEndDateTime,9,36,7,9,3,9,6,4,0,2
 netquest-api,com.netquest.domain.wifispotvisit.model,WifiSpotVisitStartDateTime,0,28,0,4,0,6,0,4,0,2
 netquest-api,com.netquest.domain.wifispotvisit.model,WifiSpotVisitId,0,12,0,0,0,6,0,2,0,2
-netquest-api,com.netquest.infrastructure.review,ReviewRepositoryMongoDB,248,0,4,0,52,0,7,0,5,0
-netquest-api,com.netquest.infrastructure.review,ReviewRepositoryCassandra,317,0,10,0,60,0,11,0,6,0
-netquest-api,com.netquest.infrastructure.review,ReviewRepositoryMySQL,291,0,8,0,75,0,9,0,5,0
+netquest-api,com.netquest.infrastructure.review,ReviewRepositoryMongoDB,308,0,8,0,67,0,11,0,7,0
+netquest-api,com.netquest.infrastructure.review,ReviewRepositoryCassandra,429,0,18,0,77,0,18,0,9,0
+netquest-api,com.netquest.infrastructure.review,ReviewRepositoryMySQL,339,0,10,0,88,0,11,0,6,0
 netquest-api,com.netquest.domain.shared,StrengthType,0,21,0,0,0,4,0,1,0,1
 netquest-api,com.netquest.domain.shared,NoiseType,0,27,0,0,0,5,0,1,0,1
 netquest-api,com.netquest.domain.shared,WifiSpotManagementType,0,21,0,0,0,4,0,1,0,1
@@ -70,10 +70,15 @@ netquest-api,com.netquest.domain.shared,QualityType,0,21,0,0,0,4,0,1,0,1
 netquest-api,com.netquest.domain.shared,LocationType,0,45,0,0,0,8,0,1,0,1
 netquest-api,com.netquest.domain.shared,BandwithType,0,15,0,0,0,3,0,1,0,1
 netquest-api,com.netquest.controller.pointsearntransaction,PointsEarnTransactionController,40,0,0,0,9,0,3,0,3,0
-netquest-api,com.netquest.controller.review,ReviewController,94,0,0,0,18,0,12,0,12,0
+netquest-api,com.netquest.controller.review,ReviewController,628,0,18,0,123,0,31,0,22,0
+netquest-api,com.netquest.controller.review,ReviewController.new TypeReference() {...},6,0,0,0,1,0,1,0,1,0
+netquest-api,com.netquest.controller.review,ReviewController.new TypeReference() {...},6,0,0,0,1,0,1,0,1,0
+netquest-api,com.netquest.infrastructure.wifispotvisit,WifiSpotVisitRepositoryCassandra,125,0,4,0,26,0,6,0,4,0
+netquest-api,com.netquest.infrastructure.wifispotvisit,WifiSpotVisitRepositoryMongoDB,114,0,6,0,27,0,5,0,2,0
+netquest-api,com.netquest.infrastructure.wifispotvisit,WifiSpotVisitRepositoryMySQL,76,0,4,0,18,0,4,0,2,0
 netquest-api,com.netquest.security,UserDetailsServiceImpl,68,0,0,0,11,0,3,0,3,0
 netquest-api,com.netquest.security,CustomUserDetails,17,0,0,0,7,0,7,0,7,0
-netquest-api,com.netquest.security,WebSecurityConfig,309,0,0,0,21,0,4,0,4,0
+netquest-api,com.netquest.security,WebSecurityConfig,281,0,0,0,21,0,4,0,4,0
 netquest-api,com.netquest.security,CorsConfig,30,0,0,0,9,0,2,0,2,0
 netquest-api,com.netquest.controller.user,UserController,78,0,0,0,16,0,7,0,7,0
 netquest-api,com.netquest.domain.pointsearntransaction.mapper.impl,PointsEarnTransactionMapperImpl,144,0,4,0,32,0,8,0,6,0
@@ -84,16 +89,17 @@ netquest-api,com.netquest.domain.review.model,ReviewOverallClassification,16,0,4
 netquest-api,com.netquest.domain.review.model,ReviewCreateDateTime,40,0,12,0,13,0,9,0,3,0
 netquest-api,com.netquest.domain.review.model,ReviewId,6,6,0,0,3,3,1,1,1,1
 netquest-api,com.netquest.controller,PublicController,6,0,0,0,1,0,1,0,1,0
-netquest-api,com.netquest.infrastructure.wifispot,WifiSpotRepositoryCassandra,30,0,0,0,7,0,2,0,2,0
-netquest-api,com.netquest.infrastructure.wifispot,WifiSpotRepositoryMySQL,44,0,0,0,12,0,2,0,2,0
-netquest-api,com.netquest.infrastructure.wifispot,WifiSpotRepositoryMongoDB,23,0,0,0,7,0,2,0,2,0
+netquest-api,com.netquest.infrastructure.wifispot,WifiSpotRepositoryCassandra,273,0,2,0,52,0,4,0,3,0
+netquest-api,com.netquest.infrastructure.wifispot,WifiSpotRepositoryMySQL,306,0,4,0,71,0,5,0,3,0
+netquest-api,com.netquest.infrastructure.wifispot,WifiSpotRepositoryMongoDB,232,0,0,0,57,0,3,0,3,0
 netquest-api,com.netquest.domain.review.exception,ReviewAttributeClassificationNameEmpty,4,0,0,0,2,0,1,0,1,0
 netquest-api,com.netquest.domain.review.exception,ReviewAttributeClassificationValueEmpty,4,0,0,0,2,0,1,0,1,0
 netquest-api,com.netquest.domain.review.exception,ReviewOverallClassificationIllegalValue,4,0,0,0,2,0,1,0,1,0
-netquest-api,com.netquest.domain.wifispot.service.impl,WifiSpotServiceImpl,29,0,6,0,9,0,4,0,1,0
+netquest-api,com.netquest.domain.wifispot.service.impl,WifiSpotServiceImpl.new TypeReference() {...},6,0,0,0,1,0,1,0,1,0
+netquest-api,com.netquest.domain.wifispot.service.impl,WifiSpotServiceImpl,689,0,24,0,104,0,21,0,9,0
 netquest-api,com.netquest.domain.wifispotvisit.mapper.impl,WifiSpotVisitMapperImpl,123,0,22,0,23,0,15,0,4,0
-netquest-api,com.netquest.domain.wifispot.mapper.impl,WifiSpotMapperImpl,489,0,14,0,133,0,15,0,8,0
-netquest-api,com.netquest.controller.wifispotvisit,WifiSpotVisitController,57,0,0,0,12,0,4,0,4,0
+netquest-api,com.netquest.domain.wifispot.mapper.impl,WifiSpotMapperImpl,490,0,14,0,133,0,15,0,8,0
+netquest-api,com.netquest.controller.wifispotvisit,WifiSpotVisitController,75,0,0,0,18,0,7,0,7,0
 netquest-api,com.netquest.domain.user.exception,UserNotFoundException,0,4,0,0,0,2,0,1,0,1
 netquest-api,com.netquest.infrastructure.runner,DatabaseInitializer,122,0,2,0,9,0,3,0,2,0
 netquest-api,com.netquest.controller.auth,AuthController,151,0,6,0,27,0,6,0,3,0
@@ -105,7 +111,7 @@ netquest-api,com.netquest.domain.pointsearntransaction.model,PointsEarnTransacti
 netquest-api,com.netquest.domain.pointsearntransaction.model,PointsEarnTransaction,110,100,5,3,21,21,9,7,6,6
 netquest-api,com.netquest.domain.pointsearntransaction.model,PointsEarnTransactionDateTime,0,6,0,0,0,3,0,1,0,1
 netquest-api,com.netquest.domain.pointsearntransaction.model,PointsEarnTransactionId,6,6,0,0,3,3,1,1,1,1
-netquest-api,com.netquest.controller.wifispot,WifiSpotController,54,0,0,0,9,0,3,0,3,0
+netquest-api,com.netquest.controller.wifispot,WifiSpotController,167,0,12,0,34,0,15,0,9,0
 netquest-api,com.netquest.domain.pointsearntransaction.exception,PointsEarnTransactionAmountNegativeException,0,4,0,0,0,2,0,1,0,1
 netquest-api,com.netquest.domain.user.mapper.impl,UserMapperImpl,59,0,2,0,20,0,3,0,2,0
-netquest-api,com.netquest.domain.wifispotvisit.service.impl,WifiSpotVisitServiceImpl,288,50,27,3,62,7,26,1,11,1
+netquest-api,com.netquest.domain.wifispotvisit.service.impl,WifiSpotVisitServiceImpl,524,50,35,3,106,7,33,1,14,1

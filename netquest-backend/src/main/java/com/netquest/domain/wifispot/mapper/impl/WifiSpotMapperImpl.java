@@ -187,6 +187,7 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
     @Override
     public WifiSpotAddressCreateDto wifiSpotAddressDomainToCreateDto(WifiSpotAddress wifiSpotAddress) {
         return new WifiSpotAddressCreateDto(
+                null,
                 wifiSpotAddress.getWifiSpotAddressCountry().getValue(),
                 wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),
                 wifiSpotAddress.getWifiSpotAddressLine1().getValue(),

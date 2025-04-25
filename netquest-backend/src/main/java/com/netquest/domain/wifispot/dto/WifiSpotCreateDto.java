@@ -3,8 +3,10 @@ package com.netquest.domain.wifispot.dto;
 import com.netquest.domain.shared.*;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 public record WifiSpotCreateDto(
+        UUID id,
         String name,
         String description,
         double latitude,

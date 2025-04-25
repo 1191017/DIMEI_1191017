@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-app
+          image: roger/netquest-api
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: scripts-volume
+              mountPath: /app/scripts
+      volumes:
+        - name: scripts-volume
+          hostPath:
+            path: /run/desktop/mnt/host/c/Users/roger/OneDrive/Documentos/DIMEI/DIMEI_1191017/netquest-backend/scripts
+            type: Directory

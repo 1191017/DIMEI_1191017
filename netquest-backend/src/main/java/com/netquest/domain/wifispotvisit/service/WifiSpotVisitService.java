@@ -22,4 +22,10 @@ public interface WifiSpotVisitService {
     boolean hasUserVisitedWifiSpotBasedOnMinutes(UUID userUUID, UUID wifiSpotUUID, long minutes);
 
     List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits(UUID userUUID, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate);
+
+    void importFromCsv();
+
+    void importFromJsonMongodb();
+
+    void importFromCsvCassandra();
 }
