@@ -1,0 +1,2 @@
+user_id,first_name,last_name,user_name,mail,birthdate,gender,role,address_line1,address_line2,city,district,country,zip_code,vat_number
+d0d325a1-c660-4a20-b5cd-cbef325dd834,Maria,Almeida,kellyfigueiredo,igorloureiro@example.org,1958-01-20,FEMALE,USER,Rua da Rainha, 425,,Paços de Ferreira,Beja,Butão,8009-188,PT123456789

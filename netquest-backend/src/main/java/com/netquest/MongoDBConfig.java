@@ -14,7 +14,7 @@ public class MongoDBConfig {
     public MongoClient mongoClient() {
         MongoClientSettings settings = MongoClientSettings.builder()
                 .uuidRepresentation(UuidRepresentation.STANDARD)
-                .applyConnectionString(new com.mongodb.ConnectionString("mongodb://netQuest:netQuestLocal@172.24.144.1:27017"))
+                .applyConnectionString(new com.mongodb.ConnectionString("mongodb://netQuest:netQuestLocal@localhost:27017"))
                 .build();
         return MongoClients.create(settings);
     }

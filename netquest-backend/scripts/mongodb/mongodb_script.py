@@ -7,7 +7,7 @@ import json
 faker = Faker('pt_PT')
 
 # Configuração do tamanho do dataset
-DATASET_SIZE = 500  # Podes mudar para 5000 ou 5000000
+DATASET_SIZE = 50000
 
 REVIEW_ATTRIBUTES = ['cleanliness', 'wifi_speed', 'comfort', 'ambience', 'service']
 
@@ -89,7 +89,7 @@ def generate_bulk_json():
     wifi_spot_visits = []
     visit_ids = []
     for spot_id in wifi_spot_ids:
-        num_visits = random.randint(0, max(1, DATASET_SIZE // 10))
+        num_visits = random.randint(0, max(1, DATASET_SIZE // 100))
         for _ in range(num_visits):
             visit_id = str(uuid.uuid4())
             visit_ids.append((visit_id, spot_id))
@@ -130,25 +130,24 @@ def generate_bulk_json():
         reviews.append(review)
 
     # Transações de pontos
-    points_transactions = []
-    for _ in range(DATASET_SIZE // 10):
-        points_transactions.append({
-            "_id": str(uuid.uuid4()),
-            "user_id": user_id,
-            "amount": random.randint(10, 200),
-            "datetime": faker.date_time_this_decade().isoformat(),
-            "review_id": random.choice(review_ids),
-            "wifi_spot_id": random.choice(wifi_spot_ids),
-            "wifi_spot_visit_id": random.choice(visit_ids)[0] if visit_ids else None,
-            "wifi_spot_visit_my_spot_id": random.choice(visit_ids)[0] if visit_ids else None
-        })
+    # points_transactions = []
+    #for _ in range(DATASET_SIZE // 10):
+    #    points_transactions.append({
+    #        "_id": str(uuid.uuid4()),
+    #        "user_id": user_id,
+    #        "amount": random.randint(10, 200),
+    #        "datetime": faker.date_time_this_decade().isoformat(),
+    #        "review_id": random.choice(review_ids),
+    #        "wifi_spot_id": random.choice(wifi_spot_ids),
+    #        "wifi_spot_visit_id": random.choice(visit_ids)[0] if visit_ids else None,
+    #        "wifi_spot_visit_my_spot_id": random.choice(visit_ids)[0] if visit_ids else None
+    #    })
 
     return {
         "users": users,
         "wifi_spot": wifi_spots,
         "wifi_spot_visit": wifi_spot_visits,
-        "review": reviews,
-        "points_earn_transaction": points_transactions
+        "review": reviews
     }
 
 
@@ -156,5 +155,5 @@ def generate_bulk_json():
 if __name__ == "__main__":
     data = generate_bulk_json()
     for collection, docs in data.items():
-        with open(f"{collection}.json", "w", encoding="utf-8") as f:
+        with open(f"{DATASET_SIZE}/{collection}.json", "w", encoding="utf-8") as f:
             json.dump(docs, f, indent=2)

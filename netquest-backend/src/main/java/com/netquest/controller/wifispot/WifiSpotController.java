@@ -21,6 +21,8 @@ public class WifiSpotController {
     private final WifiSpotService wifiSpotService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final String DATA_SIZE = "1000";
+
     @PostMapping("/mysql/create")
     public ResponseEntity<String> importCsv() {
         wifiSpotService.importFromCsv();
@@ -41,17 +43,17 @@ public class WifiSpotController {
 
     @PutMapping("/mysql/name")
     public ResponseEntity<String> updateAllNamesMySQL() {
-        return bulkUpdateNames("/app/scripts/mysql/wifi_spot.csv", true, false, false);
+        return bulkUpdateNames("scripts/mysql/"+DATA_SIZE+"/wifi_spot.csv", true, false, false);
     }
 
     @PutMapping("/mongodb/name")
     public ResponseEntity<String> updateAllNamesMongoDB() {
-        return bulkUpdateNames("/app/scripts/mongodb/wifi_spot.json", false, true, false);
+        return bulkUpdateNames("scripts/mongodb/"+DATA_SIZE+"/wifi_spot.json", false, true, false);
     }
 
     @PutMapping("/cassandra/name")
     public ResponseEntity<String> updateAllNamesCassandra() {
-        return bulkUpdateNames("/app/scripts/cassandra/cassandra_wifi_spot.csv", false, false, true);
+        return bulkUpdateNames("scripts/cassandra/"+DATA_SIZE+"/cassandra_wifi_spot.csv", false, false, true);
     }
 
     private ResponseEntity<String> bulkUpdateNames(String path, boolean mysql, boolean mongo, boolean cassandra) {

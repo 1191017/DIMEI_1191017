@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 public class ReviewRepositoryMySQL {
-    private final String url = "jdbc:mysql://172.24.144.1:3306/netQuest";
+    private final String url = "jdbc:mysql://localhost:3306/netQuest";
     private final String username = "netQuest";
     private final String password = "netQuestLocal";
 

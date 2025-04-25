@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 
 faker = Faker('pt_PT')
 
-# Altera aqui para 500, 5000 ou 5000000
-DATASET_SIZE = 500
+DATASET_SIZE = 50000
 
 REVIEW_ATTRIBUTES = ['cleanliness', 'wifi_speed', 'comfort', 'ambience', 'service']
 
@@ -29,7 +28,7 @@ def generate_dataset(size):
     user_id = "d0d325a1-c660-4a20-b5cd-cbef325dd834"
     users = ["user_id,first_name,last_name,user_name,mail,birthdate,gender,role,address_line1,address_line2,city,district,country,zip_code,vat_number"]
     users.append(f"{user_id},{escape_string(faker.first_name())},{escape_string(faker.last_name())},{faker.user_name()},{faker.email()},{faker.date_of_birth()},{random.choice(['MALE','FEMALE','OTHER'])},USER,{faker.street_address()},,{faker.city()},{faker.administrative_unit()},{faker.country()},{faker.postcode()},PT123456789")
-    write_csv("cassandra_users.csv", users)
+    write_csv(f"{DATASET_SIZE}/cassandra_users.csv", users)
 
     # Wi-Fi Spots (endereços embutidos)
     wifi_spots = [
@@ -55,13 +54,13 @@ def generate_dataset(size):
             f"{random.choice([True, False])},{user_id},{faker.date_time_this_decade()},{faker.street_address()},,"
             f"{faker.city()},{faker.administrative_unit()},{faker.country()},{faker.postcode()}"
         )
-    write_csv("cassandra_wifi_spot.csv", wifi_spots)
+    write_csv(f"{DATASET_SIZE}/cassandra_wifi_spot.csv", wifi_spots)
 
     # Visitas (com info do spot embutida)
     wifi_spot_visits = ["user_id,visit_id,wifi_spot_id,wifi_spot_name,wifi_spot_location,visit_start,visit_end"]
     visit_ids = []
     for spot_id in wifi_spot_ids:
-        num_visits = random.randint(0, max(1, size // 10))
+        num_visits = random.randint(0, max(1, size // 100))
         spot_name = escape_string(faker.company())
         location = f"{faker.city()}, {faker.country()}"
         for _ in range(num_visits):
@@ -70,7 +69,7 @@ def generate_dataset(size):
             end = start + timedelta(hours=random.randint(1, 5))
             wifi_spot_visits.append(f"{user_id},{visit_id},{spot_id},{spot_name},{location},{start},{end}")
             visit_ids.append((visit_id, spot_id))
-    write_csv("cassandra_wifi_spot_visit.csv", wifi_spot_visits)
+    write_csv(f"{DATASET_SIZE}/cassandra_wifi_spot_visit.csv", wifi_spot_visits)
 
     # Reviews
     reviews = ["wifi_spot_id,review_id,user_id,review_comment,review_create_date_time,review_overall_classification"]
@@ -79,14 +78,14 @@ def generate_dataset(size):
         review_id = str(uuid.uuid4())
         review_ids.append(review_id)
         reviews.append(f"{spot_id},{review_id},{user_id},{escape_string(faker.text(50))},{faker.date_time_this_decade()},{random.randint(1, 5)}")
-    write_csv("cassandra_review.csv", reviews)
+    write_csv(f"{DATASET_SIZE}/cassandra_review.csv", reviews)
 
     # Atributos das reviews
     review_attributes = ["review_id,attribute_name,attribute_value"]
     for review_id in review_ids:
         for attr in random.sample(REVIEW_ATTRIBUTES, k=random.randint(2, 5)):
             review_attributes.append(f"{review_id},{attr},{random.choice(['low', 'medium', 'high'])}")
-    write_csv("cassandra_review_attribute_classification.csv", review_attributes)
+    write_csv(f"{DATASET_SIZE}/cassandra_review_attribute_classification.csv", review_attributes)
 
 
 # Executar

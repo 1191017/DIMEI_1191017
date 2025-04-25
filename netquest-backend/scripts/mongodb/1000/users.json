@@ -1,0 +1,21 @@
+[
+  {
+    "_id": "d0d325a1-c660-4a20-b5cd-cbef325dd834",
+    "first_name": "Leandro",
+    "last_name": "Morais",
+    "user_name": "castrojoel",
+    "mail": "vieiraleandro@example.com",
+    "birthdate": "1929-04-06",
+    "gender": "MALE",
+    "role": "USER_PREMIUM",
+    "vat_number": "736248178",
+    "address": {
+      "line1": "Pra\u00e7a de Coelho, 73",
+      "line2": "",
+      "city": "Porto",
+      "district": "Set\u00fabal",
+      "country": "Mayotte",
+      "zip_code": "1486-375"
+    }
+  }
+]

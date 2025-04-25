@@ -57,6 +57,8 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     private final WifiSpotVisitRepositoryMongoDB wifiSpotVisitRepositoryMongoDB;
     private final WifiSpotVisitRepositoryCassandra wifiSpotVisitRepositoryCassandra;
 
+    private final String DATA_SIZE = "1000";
+
 
     @Override
     public WifiSpotVisitDto saveWifiSpotVisit(UUID userUUID, WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
@@ -196,7 +198,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     }
 
     public void importFromCsv() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("/app/scripts/mysql/wifi_spot_visit.csv", StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("scripts/mysql/"+DATA_SIZE+"/wifi_spot_visit.csv", StandardCharsets.UTF_8))) {
             String header = reader.readLine(); // skip header
             String line;
 
@@ -220,7 +222,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     public void importFromJsonMongodb() {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(new File("/app/scripts/mongodb/wifi_spot_visit.json"));
+            JsonNode root = mapper.readTree(new File("scripts/mongodb/"+DATA_SIZE+"/wifi_spot_visit.json"));
 
             for (JsonNode visitNode : root) {
                 WifiSpotVisitCreateDto dto = new WifiSpotVisitCreateDto();
@@ -238,7 +240,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     }
 
     public void importFromCsvCassandra() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("/app/scripts/cassandra/cassandra_wifi_spot_visit.csv", StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("scripts/cassandra/"+DATA_SIZE+"/cassandra_wifi_spot_visit.csv", StandardCharsets.UTF_8))) {
             String header = reader.readLine(); // skip header
             String line;
 

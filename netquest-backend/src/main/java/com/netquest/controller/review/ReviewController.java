@@ -26,13 +26,15 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final String DATA_SIZE = "1000";
+
     //MongoDB
 
     // 5.3.1 - Create a new review
     @PostMapping("/mongodb/file-create")
     public ResponseEntity<String> createReviewsMongoDBFromFile() {
         try {
-            Path path = Paths.get("/app/scripts/mongodb/review.json");
+            Path path = Paths.get("scripts/mongodb/"+DATA_SIZE+"/review.json");
 
             String jsonContent = Files.readString(path);
             List<Map<String, Object>> reviews = objectMapper.readValue(jsonContent, new TypeReference<>() {});
@@ -67,7 +69,7 @@ public class ReviewController {
     @DeleteMapping("/mongodb/file-delete")
     public ResponseEntity<String> deleteReviewsMongoDBFromFile() {
         try {
-            Path path = Paths.get("/app/scripts/mongodb/review.json");
+            Path path = Paths.get("scripts/mongodb/"+DATA_SIZE+"/review.json");
 
             // Read file content into a String
             String jsonContent = Files.readString(path);
@@ -101,10 +103,10 @@ public class ReviewController {
     @PostMapping("/mysql/file-create")
     public ResponseEntity<String> createReviewsMySQLFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/mysql/review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review.csv"));
             lines.remove(0);
 
-            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/mysql/review_attribute_classification.csv"))
+            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review_attribute_classification.csv"))
                     .stream()
                     .skip(1)
                     .map(line -> line.split(","))
@@ -145,7 +147,7 @@ public class ReviewController {
     @DeleteMapping("/mysql/file-delete")
     public ResponseEntity<String> deleteReviewsMySQLFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/mysql/review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review.csv"));
             lines.remove(0);
             List<UUID> ids = lines.stream()
                     .map(l -> UUID.fromString(l.split(",")[0]))
@@ -176,10 +178,10 @@ public class ReviewController {
     @PostMapping("/cassandra/file-create")
     public ResponseEntity<String> createReviewsCassandraFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/cassandra/cassandra_review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review.csv"));
             lines.remove(0);
 
-            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/cassandra/cassandra_review_attribute_classification.csv"))
+            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review_attribute_classification.csv"))
                     .stream()
                     .skip(1)
                     .map(line -> line.split(","))
@@ -220,7 +222,7 @@ public class ReviewController {
     @DeleteMapping("/cassandra/file-delete")
     public ResponseEntity<String> deleteReviewsCassandraFromFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("/app/scripts/cassandra/cassandra_review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review.csv"));
             lines.remove(0);
             List<UUID> ids = lines.stream()
                     .map(l -> UUID.fromString(l.split(",")[1]))

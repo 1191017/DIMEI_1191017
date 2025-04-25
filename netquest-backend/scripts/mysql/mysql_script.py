@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 # CONFIGURAÇÃO
 # -----------------------------
 faker = Faker('pt_PT')
-DATASET_SIZE = 500  # 5000, 5000000
+DATASET_SIZE = 50000
 
 REVIEW_ATTRIBUTES = ['cleanliness', 'wifi_speed', 'comfort', 'ambience', 'service']
 
@@ -30,7 +30,7 @@ def generate_dataset(size):
                  f"{escape_string(faker.street_address())},{escape_string(faker.city())},{escape_string(faker.country())},"
                  f"{faker.postcode()},{faker.date_of_birth(minimum_age=18, maximum_age=80)},"
                  f"{random.choice(['MALE', 'FEMALE', 'OTHER'])},USER,{escape_string(faker.user_name())}")
-    write_csv("users.csv", users)
+    write_csv(f"{DATASET_SIZE}/users.csv", users)
 
     # Wi-Fi Spots
     wifi_spots = ["wifi_spot_id,wifi_spot_user_id,wifi_spot_name,wifi_spot_description,wifi_spot_latitude,wifi_spot_longitude,"
@@ -62,7 +62,7 @@ def generate_dataset(size):
             f"{random.randint(0, 1)},{random.randint(0, 1)},{random.randint(0, 1)},"
             f"{random.randint(0, 1)},{random.randint(0, 1)},{addr_id}"
         )
-    write_csv("wifi_spot.csv", wifi_spots)
+    write_csv(f"{DATASET_SIZE}/wifi_spot.csv", wifi_spots)
 
     # Wi-Fi Spot Addresses
     addresses = ["wifi_spot_address_id,wifi_spot_address_city,wifi_spot_address_country,wifi_spot_address_district,"
@@ -73,19 +73,19 @@ def generate_dataset(size):
             f"{escape_string(faker.city())},{escape_string(faker.street_address())},{escape_string(faker.building_number())},"
             f"{faker.postcode()}"
         )
-    write_csv("wifi_spot_address.csv", addresses)
+    write_csv(f"{DATASET_SIZE}/wifi_spot_address.csv", addresses)
 
     # Wi-Fi Spot Visits
     wifi_spot_visits = ["wifi_spot_visit_id,wifi_spot_visit_user_id,wifi_spot_visit_wifi_spot_id,"
                         "wifi_spot_visit_start_datetime,wifi_spot_visit_end_datetime"]
     for spot_id in wifi_spot_ids:
-        num_visits = random.randint(0, max(1, size // 10))
+        num_visits = random.randint(0, max(1, size // 100))
         for _ in range(num_visits):
             visit_id = str(uuid.uuid4())
             start = faker.date_time_this_decade()
             end = start + timedelta(hours=random.randint(1, 5))
             wifi_spot_visits.append(f"{visit_id},{user_id},{spot_id},{start},{end}")
-    write_csv("wifi_spot_visit.csv", wifi_spot_visits)
+    write_csv(f"{DATASET_SIZE}/wifi_spot_visit.csv", wifi_spot_visits)
 
     # Reviews
     reviews = ["review_id,review_comment,review_create_date_time,review_overall_classification,review_user_id,review_wifi_spot_id"]
@@ -97,7 +97,7 @@ def generate_dataset(size):
             f"{review_id},{escape_string(faker.text(max_nb_chars=100))},{faker.date_time_this_decade()},"
             f"{random.randint(1, 5)},{user_id},{spot_id}"
         )
-    write_csv("review.csv", reviews)
+    write_csv(f"{DATASET_SIZE}/review.csv", reviews)
 
     # Review Attributes
     review_attributes = ["review_id,review_attribute_classification_name,review_attribute_classification_value"]
@@ -106,7 +106,7 @@ def generate_dataset(size):
             review_attributes.append(
                 f"{review_id},{attr},{random.choice(['low', 'medium', 'high'])}"
             )
-    write_csv("review_attribute_classification.csv", review_attributes)
+    write_csv(f"{DATASET_SIZE}/review_attribute_classification.csv", review_attributes)
 
 # -----------------------------
 # EXECUÇÃO
