@@ -1,12 +1,8 @@
-# Use a base image with JDK
-FROM openjdk:17-jdk-slim
+# Use an official OpenJDK runtime as a base image
+FROM openjdk:17-jdk
 
-# Add a volume pointing to /tmp
-VOLUME /tmp
+# Copy the built .jar file into the image
+COPY target/netquest-api-0.0.1-SNAPSHOT.jar /app.jar
 
-# Add the application's jar to the container
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-
-# Run the jar file
+# Run the jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]

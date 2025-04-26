@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netquest-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netquest-api
+  template:
+    metadata:
+      labels:
+        app: netquest-api
+    spec:
+      containers:
+        - name: netquest-api
+          image: netquest-api:latest
+          ports:
+            - containerPort: 8080
