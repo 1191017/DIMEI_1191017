@@ -33,6 +33,8 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotRepositoryMongoDB wifiSpotRepositoryMongoDB;
     private final WifiSpotRepositoryCassandra wifiSpotRepositoryCassandra;
 
+    private final String DATA_SIZE = "1000";
+
     // 5.3.2 - Update Wi-Fi spot description
     private void updateWifiSpotName(UUID wifiSpotId, String newName, boolean mysql, boolean mongodb, boolean cassandra) {
         if (mysql) {
@@ -53,7 +55,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     }
 
     public void importFromCsv() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("scripts/mysql/wifi_spot.csv", StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("scripts/mysql/"+DATA_SIZE+"/wifi_spot.csv", StandardCharsets.UTF_8))) {
 
             String header = reader.readLine(); // skip header
             String line;
@@ -96,7 +98,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             List<Map<String, Object>> rawSpots = objectMapper.readValue(
-                    new File("scripts/mongodb/wifi_spot.json"), new TypeReference<>() {
+                    new File("scripts/mongodb/"+DATA_SIZE+"/wifi_spot.json"), new TypeReference<>() {
                     });
 
             for (Map<String, Object> rawSpot : rawSpots) {
@@ -167,7 +169,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     }
 
     public void importFromCsvCassandra() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("scripts/cassandra/cassandra_wifi_spot.csv", StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("scripts/cassandra/"+DATA_SIZE+"/cassandra_wifi_spot.csv", StandardCharsets.UTF_8))) {
 
             String header = reader.readLine(); // skip header
             String line;

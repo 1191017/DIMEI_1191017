@@ -81,7 +81,7 @@ public class WifiSpotRepositoryMongoDB {
         // Create the main document
         Document document = new Document()
                 .append("_id", dto.id())
-                .append("user_id", null) // Assumindo que ainda não passas o user aqui. Podes adaptar.
+                .append("user_id", null)
                 .append("name", dto.name())
                 .append("latitude", dto.latitude())
                 .append("longitude", dto.longitude())
