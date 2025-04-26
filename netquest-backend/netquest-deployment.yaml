@@ -15,5 +15,6 @@ spec:
       containers:
         - name: netquest-api
           image: netquest-api:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
