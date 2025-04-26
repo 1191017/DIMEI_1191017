@@ -26,6 +26,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/users/edit").hasAnyAuthority(ADMIN, USER,USER_PREMIUM)
                         .requestMatchers(HttpMethod.DELETE, "/api/users/deleteMyAccount/**").hasAnyAuthority(ADMIN, USER, USER_PREMIUM)
                         .requestMatchers(HttpMethod.POST, "/api/wifi-spot/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/wifi-spot-visit/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/wifi-spot").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/wifi-spot/getAIWifiSpots/**").hasAnyAuthority(ADMIN, USER, USER_PREMIUM)
                         .requestMatchers(HttpMethod.GET, "/api/wifi-spot-visit/my-visits").hasAnyAuthority(ADMIN, USER, USER_PREMIUM)
