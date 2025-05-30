@@ -21,39 +21,37 @@ public class WifiSpotController {
     private final WifiSpotService wifiSpotService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String DATA_SIZE = "1000";
-
-    @PostMapping("/mysql/create")
-    public ResponseEntity<String> importCsv() {
-        wifiSpotService.importFromCsv();
+    @PostMapping("/mysql/create/{DATA_SIZE}")
+    public ResponseEntity<String> importCsv(@PathVariable("DATA_SIZE") String dataSize) {
+        wifiSpotService.importFromCsv(dataSize);
         return ResponseEntity.ok("Wi-Fi spots importados com sucesso!");
     }
 
-    @PostMapping("/mongodb/create")
-    public ResponseEntity<String> importCsvMongodb() {
-        wifiSpotService.importFromCsvMongodb();
+    @PostMapping("/mongodb/create/{DATA_SIZE}")
+    public ResponseEntity<String> importCsvMongodb(@PathVariable("DATA_SIZE") String dataSize) {
+        wifiSpotService.importFromCsvMongodb(dataSize);
         return ResponseEntity.ok("Wi-Fi spots importados com sucesso!");
     }
 
-    @PostMapping("/cassandra/create")
-    public ResponseEntity<String> importCsvCassandra() {
-        wifiSpotService.importFromCsvCassandra();
+    @PostMapping("/cassandra/create/{DATA_SIZE}")
+    public ResponseEntity<String> importCsvCassandra(@PathVariable("DATA_SIZE") String dataSize) {
+        wifiSpotService.importFromCsvCassandra(dataSize);
         return ResponseEntity.ok("Wi-Fi spots importados com sucesso!");
     }
 
-    @PutMapping("/mysql/name")
-    public ResponseEntity<String> updateAllNamesMySQL() {
-        return bulkUpdateNames("scripts/mysql/"+DATA_SIZE+"/wifi_spot.csv", true, false, false);
+    @PutMapping("/mysql/name/{DATA_SIZE}")
+    public ResponseEntity<String> updateAllNamesMySQL(@PathVariable("DATA_SIZE") String dataSize) {
+        return bulkUpdateNames("scripts/mysql/"+dataSize+"/wifi_spot.csv", true, false, false);
     }
 
-    @PutMapping("/mongodb/name")
-    public ResponseEntity<String> updateAllNamesMongoDB() {
-        return bulkUpdateNames("scripts/mongodb/"+DATA_SIZE+"/wifi_spot.json", false, true, false);
+    @PutMapping("/mongodb/name/{DATA_SIZE}")
+    public ResponseEntity<String> updateAllNamesMongoDB(@PathVariable("DATA_SIZE") String dataSize) {
+        return bulkUpdateNames("scripts/mongodb/"+dataSize+"/wifi_spot.json", false, true, false);
     }
 
-    @PutMapping("/cassandra/name")
-    public ResponseEntity<String> updateAllNamesCassandra() {
-        return bulkUpdateNames("scripts/cassandra/"+DATA_SIZE+"/cassandra_wifi_spot.csv", false, false, true);
+    @PutMapping("/cassandra/name/{DATA_SIZE}")
+    public ResponseEntity<String> updateAllNamesCassandra(@PathVariable("DATA_SIZE") String dataSize) {
+        return bulkUpdateNames("scripts/cassandra/"+dataSize+"/cassandra_wifi_spot.csv", false, false, true);
     }
 
     private ResponseEntity<String> bulkUpdateNames(String path, boolean mysql, boolean mongo, boolean cassandra) {

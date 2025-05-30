@@ -5,12 +5,12 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://192.168.1.6:3306/netQuest
+    url: jdbc:mysql://192.168.1.9:3306/netQuest
     username: netQuest
     password: netQuestLocal
   cassandra:
     keyspace-name: netquest
-    contact-points: 192.168.1.6
+    contact-points: 192.168.1.9
     port: 9042
     local-datacenter: datacenter1
     username: netQuest

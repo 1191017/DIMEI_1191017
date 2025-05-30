@@ -23,9 +23,9 @@ public interface WifiSpotVisitService {
 
     List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits(UUID userUUID, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate);
 
-    void importFromCsv();
+    void importFromCsv(String DATA_SIZE);
 
-    void importFromJsonMongodb();
+    void importFromJsonMongodb(String DATA_SIZE);
 
-    void importFromCsvCassandra();
+    void importFromCsvCassandra(String DATA_SIZE);
 }

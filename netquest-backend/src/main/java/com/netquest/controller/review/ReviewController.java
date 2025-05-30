@@ -26,15 +26,13 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String DATA_SIZE = "1000";
-
     //MongoDB
 
     // 5.3.1 - Create a new review
-    @PostMapping("/mongodb/file-create")
-    public ResponseEntity<String> createReviewsMongoDBFromFile() {
+    @PostMapping("/mongodb/file-create/{DATA_SIZE}")
+    public ResponseEntity<String> createReviewsMongoDBFromFile(@PathVariable("DATA_SIZE") String dataSize) {
         try {
-            Path path = Paths.get("scripts/mongodb/"+DATA_SIZE+"/review.json");
+            Path path = Paths.get("scripts/mongodb/"+dataSize+"/review.json");
 
             String jsonContent = Files.readString(path);
             List<Map<String, Object>> reviews = objectMapper.readValue(jsonContent, new TypeReference<>() {});
@@ -43,14 +41,14 @@ public class ReviewController {
             for (Map<String, Object> review : reviews) {
                 List<Map<String, String>> attrList = (List<Map<String, String>>) review.get("attributes");
                 List<ReviewAttributeClassificationDto> mappedAttributes = attrList.stream()
-                        .map(a -> new ReviewAttributeClassificationDto(a.get("name"), a.get("value")))
+                        .map(a -> new ReviewAttributeClassificationDto(a.get("name"), "low"))
                         .collect(Collectors.toList());
 
                 ReviewCreateDto dto = new ReviewCreateDto();
                 dto.setReviewId(UUID.fromString((String) review.get("_id")));
                 dto.setWifiSpotId(UUID.fromString((String) review.get("wifi_spot_id")));
-                dto.setReviewComment((String) review.get("comment"));
-                dto.setReviewOverallClassification((Integer) review.get("overall_classification"));
+                dto.setReviewComment("comentário");
+                dto.setReviewOverallClassification(1);
                 dto.setReviewAttributeClassificationDtoList(mappedAttributes);
 
                 dtos.add(dto);
@@ -66,10 +64,10 @@ public class ReviewController {
         }
     }
 
-    @DeleteMapping("/mongodb/file-delete")
-    public ResponseEntity<String> deleteReviewsMongoDBFromFile() {
+    @DeleteMapping("/mongodb/file-delete/{DATA_SIZE}")
+    public ResponseEntity<String> deleteReviewsMongoDBFromFile(@PathVariable("DATA_SIZE") String dataSize) {
         try {
-            Path path = Paths.get("scripts/mongodb/"+DATA_SIZE+"/review.json");
+            Path path = Paths.get("scripts/mongodb/"+dataSize+"/review.json");
 
             // Read file content into a String
             String jsonContent = Files.readString(path);
@@ -100,10 +98,10 @@ public class ReviewController {
 
     //MySQL
     // 5.3.1 - Create reviews from file
-    @PostMapping("/mysql/file-create")
-    public ResponseEntity<String> createReviewsMySQLFromFile() {
+    @PostMapping("/mysql/file-create/{DATA_SIZE}")
+    public ResponseEntity<String> createReviewsMySQLFromFile(@PathVariable("DATA_SIZE") String dataSize) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+dataSize+"/review.csv"));
             lines.remove(0);
 
             Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review_attribute_classification.csv"))
@@ -113,7 +111,7 @@ public class ReviewController {
                     .collect(Collectors.groupingBy(
                             parts -> parts[0],
                             Collectors.mapping(
-                                    parts -> new ReviewAttributeClassificationDto(parts[1], parts[2]),
+                                    parts -> new ReviewAttributeClassificationDto(parts[1], "low"),
                                     Collectors.toList()
                             )
                     ));
@@ -126,16 +124,16 @@ public class ReviewController {
 
                 ReviewCreateDto dto = new ReviewCreateDto();
                 dto.setReviewId(UUID.fromString(reviewId));
-                dto.setWifiSpotId(UUID.fromString(parts[5]));
-                dto.setReviewComment(parts[2]);
-                dto.setReviewOverallClassification(Integer.parseInt(parts[3]));
+                dto.setWifiSpotId(UUID.fromString(parts[3]));
+                dto.setReviewComment("comentário");
+                dto.setReviewOverallClassification(1);
                 dto.setReviewAttributeClassificationDtoList(attrList);
 
                 dtos.add(dto);
             }
 
             for (ReviewCreateDto dto : dtos) {
-                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(",")[4]));
+                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(",")[2]));
             }
 
             return ResponseEntity.ok("Created " + dtos.size() + " reviews in MySQL.");
@@ -144,10 +142,10 @@ public class ReviewController {
         }
     }
 
-    @DeleteMapping("/mysql/file-delete")
-    public ResponseEntity<String> deleteReviewsMySQLFromFile() {
+    @DeleteMapping("/mysql/file-delete/{DATA_SIZE}")
+    public ResponseEntity<String> deleteReviewsMySQLFromFile(@PathVariable("DATA_SIZE") String dataSize) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+dataSize+"/review.csv"));
             lines.remove(0);
             List<UUID> ids = lines.stream()
                     .map(l -> UUID.fromString(l.split(",")[0]))
@@ -175,10 +173,10 @@ public class ReviewController {
 
     //CASSANDRA
 
-    @PostMapping("/cassandra/file-create")
-    public ResponseEntity<String> createReviewsCassandraFromFile() {
+    @PostMapping("/cassandra/file-create/{DATA_SIZE}")
+    public ResponseEntity<String> createReviewsCassandraFromFile(@PathVariable("DATA_SIZE") String dataSize) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+dataSize+"/cassandra_review.csv"));
             lines.remove(0);
 
             Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review_attribute_classification.csv"))
@@ -188,7 +186,7 @@ public class ReviewController {
                     .collect(Collectors.groupingBy(
                             parts -> parts[0],
                             Collectors.mapping(
-                                    parts -> new ReviewAttributeClassificationDto(parts[1], parts[2]),
+                                    parts -> new ReviewAttributeClassificationDto(parts[1], "low"),
                                     Collectors.toList()
                             )
                     ));
@@ -202,8 +200,8 @@ public class ReviewController {
                 ReviewCreateDto dto = new ReviewCreateDto();
                 dto.setReviewId(UUID.fromString(reviewId));
                 dto.setWifiSpotId(UUID.fromString(parts[0]));
-                dto.setReviewComment(parts[3]);
-                dto.setReviewOverallClassification(Integer.parseInt(parts[5]));
+                dto.setReviewComment("comentário");
+                dto.setReviewOverallClassification(1);
                 dto.setReviewAttributeClassificationDtoList(attrList);
 
                 dtos.add(dto);
@@ -219,10 +217,10 @@ public class ReviewController {
         }
     }
 
-    @DeleteMapping("/cassandra/file-delete")
-    public ResponseEntity<String> deleteReviewsCassandraFromFile() {
+    @DeleteMapping("/cassandra/file-delete/{DATA_SIZE}")
+    public ResponseEntity<String> deleteReviewsCassandraFromFile(@PathVariable("DATA_SIZE") String dataSize) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review.csv"));
+            List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+dataSize+"/cassandra_review.csv"));
             lines.remove(0);
             List<UUID> ids = lines.stream()
                     .map(l -> UUID.fromString(l.split(",")[1]))

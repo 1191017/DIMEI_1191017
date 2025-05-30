@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,8 +33,6 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotRepositoryMySQL wifiSpotRepositoryMySQL;
     private final WifiSpotRepositoryMongoDB wifiSpotRepositoryMongoDB;
     private final WifiSpotRepositoryCassandra wifiSpotRepositoryCassandra;
-
-    private final String DATA_SIZE = "1000";
 
     // 5.3.2 - Update Wi-Fi spot description
     private void updateWifiSpotName(UUID wifiSpotId, String newName, boolean mysql, boolean mongodb, boolean cassandra) {
@@ -54,7 +53,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         }
     }
 
-    public void importFromCsv() {
+    public void importFromCsv(String DATA_SIZE) {
         try (BufferedReader reader = new BufferedReader(new FileReader("scripts/mysql/"+DATA_SIZE+"/wifi_spot.csv", StandardCharsets.UTF_8))) {
 
             String header = reader.readLine(); // skip header
@@ -63,22 +62,22 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 String[] cols = line.split(",");
 
                 WifiSpotAddressCreateDto addressDto = new WifiSpotAddressCreateDto(
-                        cols[34], cols[2], cols[6], cols[4], cols[5], cols[3], cols[1]
+                        cols[2], "country", "zipcode", "addressline1", "address2", "city", "district"
                 );
 
                 WifiSpotCreateDto spotDto = new WifiSpotCreateDto(
-                        UUID.fromString(cols[0]), cols[2], cols[3], Double.parseDouble(cols[4]), Double.parseDouble(cols[5]),
+                        UUID.fromString(cols[0]), "nome", "descrição", 2, 3,
                         null,
                         null,
                         null,
                         null,
-                        LocalTime.parse(cols[25]), LocalTime.parse(cols[26]),
-                        parseBoolean(cols[10]), parseBoolean(cols[9]), parseBoolean(cols[7]), parseBoolean(cols[12]),
-                        parseBoolean(cols[11]), null, parseBoolean(cols[14]),
-                        parseBoolean(cols[8]), parseBoolean(cols[6]), parseBoolean(cols[15]), parseBoolean(cols[16]),
-                        parseBoolean(cols[20]), parseBoolean(cols[19]), parseBoolean(cols[18]), parseBoolean(cols[17]),
-                        parseBoolean(cols[24]), parseBoolean(cols[23]), parseBoolean(cols[30]),
-                        parseBoolean(cols[31]), parseBoolean(cols[32]),
+                        LocalTime.now(), LocalTime.now().plusHours(1),
+                        true, true, true, true,
+                        true, null, true,
+                        true, true, true, true,
+                        true, true, true, true,
+                        true, true, true,
+                        true, true,
                         addressDto, null
                 );
 
@@ -94,7 +93,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         return s.trim().equals("1") || s.equalsIgnoreCase("true");
     }
 
-    public void importFromCsvMongodb() {
+    public void importFromCsvMongodb(String DATA_SIZE) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             List<Map<String, Object>> rawSpots = objectMapper.readValue(
@@ -105,9 +104,9 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 UUID id = UUID.fromString((String) rawSpot.get("_id"));
                 UUID userId = UUID.fromString((String) rawSpot.get("user_id"));
                 String name = (String) rawSpot.get("name");
-                String description = (String) rawSpot.get("description");
-                double latitude = ((Number) rawSpot.get("latitude")).doubleValue();
-                double longitude = ((Number) rawSpot.get("longitude")).doubleValue();
+                String description = "descrição";
+                double latitude = 1;
+                double longitude = 2;
 
                 Map<String, Object> features = (Map<String, Object>) rawSpot.get("features");
 
@@ -123,26 +122,26 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                         null,
                         LocalTime.of(9, 0),
                         LocalTime.of(18, 0),
-                        (Boolean) features.get("crowded"),
-                        (Boolean) features.get("covered_area"),
-                        (Boolean) features.get("air_conditioning"),
+                        true,
+                        true,
+                        true,
                         false,
                         false,
                         null,
-                        (Boolean) features.get("pet_friendly"),
-                        (Boolean) features.get("child_friendly"),
-                        (Boolean) features.get("disabled_access"),
-                        (Boolean) features.get("available_power_outlets"),
-                        (Boolean) features.get("charging_stations"),
-                        (Boolean) features.get("restrooms_available"),
-                        (Boolean) features.get("parking_availability"),
-                        (Boolean) features.get("food_options"),
-                        (Boolean) features.get("drink_options"),
-                        (Boolean) features.get("open_during_rain"),
-                        (Boolean) features.get("open_during_heat"),
-                        (Boolean) features.get("heated_in_winter"),
-                        (Boolean) features.get("shaded_areas"),
-                        (Boolean) features.get("outdoor_fans"),
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
                         parseAddressDto(rawSpot),
                         null
                 );
@@ -168,7 +167,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         );
     }
 
-    public void importFromCsvCassandra() {
+    public void importFromCsvCassandra(String DATA_SIZE) {
         try (BufferedReader reader = new BufferedReader(new FileReader("scripts/cassandra/"+DATA_SIZE+"/cassandra_wifi_spot.csv", StandardCharsets.UTF_8))) {
 
             String header = reader.readLine(); // skip header
@@ -178,35 +177,35 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 String[] c = line.split(",", -1); // keep empty values
 
                 UUID spotId = UUID.fromString(c[0]);
-                UUID userId = UUID.fromString(c[24]);
+                UUID userId = UUID.fromString(c[1]);
                 UUID addressId = UUID.randomUUID(); // ou determinístico se quiseres
 
                 WifiSpotAddressCreateDto addressDto = new WifiSpotAddressCreateDto(
                         addressId.toString(),
-                        c[31], // country
-                        c[32], // zip
-                        c[25], // address_line_1
-                        c[26], // address_line_2
-                        c[27], // city
-                        c[28]  // district
+                        "country", // country
+                        "zip", // zip
+                        "address1", // address_line_1
+                        "address2", // address_line_2
+                        "city", // city
+                        "district"  // district
                 );
 
                 WifiSpotCreateDto spotDto = new WifiSpotCreateDto(
                         spotId,
-                        c[1],  // name
-                        c[4],  // description
-                        Double.parseDouble(c[2]),
-                        Double.parseDouble(c[3]),
+                        "nome",  // name
+                        "descrição",  // description
+                        1,
+                        2,
                         null,
                         null,
                         null,
                         null,
                         LocalTime.of(9, 0),
                         LocalTime.of(18, 0),
-                        toBool(c[5]), toBool(c[6]), toBool(c[7]), toBool(c[10]),
-                        toBool(c[9]), null, toBool(c[19]),
-                        toBool(c[8]), toBool(c[18]), toBool(c[17]), toBool(c[16]),
-                        toBool(c[21]), toBool(c[20]), toBool(c[22]), toBool(c[23]),
+                        true, true,true,true,
+                        true, null, true,
+                        true, true,true,true,
+                        true, true,true,true,
                         false, false, false, false, false, // campos adicionais opcionais
                         addressDto,
                         null // ou outro índice se necessário

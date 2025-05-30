@@ -7,7 +7,7 @@ import json
 faker = Faker('pt_PT')
 
 # Configuração do tamanho do dataset
-DATASET_SIZE = 50000
+DATASET_SIZE = 300000
 
 REVIEW_ATTRIBUTES = ['cleanliness', 'wifi_speed', 'comfort', 'ambience', 'service']
 
@@ -44,52 +44,14 @@ def generate_bulk_json():
         wifi_spots.append({
             "_id": spot_id,
             "user_id": user_id,
-            "name": faker.company(),
-            "latitude": float(faker.latitude()),
-            "longitude": float(faker.longitude()),
-            "description": faker.text(60),
-            "features": {
-                "air_conditioning": random.choice([True, False]),
-                "child_friendly": random.choice([True, False]),
-                "covered_area": random.choice([True, False]),
-                "crowded": random.choice([True, False]),
-                "disabled_access": random.choice([True, False]),
-                "good_view": random.choice([True, False]),
-                "noise_level": random.randint(0, 3),
-                "signal_strength": random.randint(0, 2),
-                "wifi_quality": random.randint(0, 2),
-                "bandwidth_limitations": random.choice([True, False]),
-                "location_type": random.randint(0, 6),
-                "management": random.randint(0, 2),
-                "available_power_outlets": random.choice([True, False]),
-                "charging_stations": random.choice([True, False]),
-                "pet_friendly": random.choice([True, False]),
-                "food_options": random.choice([True, False]),
-                "drink_options": random.choice([True, False]),
-                "restrooms_available": random.choice([True, False]),
-                "parking_availability": random.choice([True, False]),
-                "heated_in_winter": random.choice([True, False]),
-                "open_during_heat": random.choice([True, False]),
-                "open_during_rain": random.choice([True, False]),
-                "outdoor_fans": random.choice([True, False]),
-                "shaded_areas": random.choice([True, False])
-            },
-            "address": {
-                "line1": faker.street_address(),
-                "line2": "",
-                "city": faker.city(),
-                "district": faker.administrative_unit(),
-                "country": faker.country(),
-                "zip_code": faker.postcode()
-            },
-            "create_date_time": faker.date_time_this_decade().isoformat()
+            "name": faker.company()
         })
 
     # Visitas
     wifi_spot_visits = []
     visit_ids = []
     for spot_id in wifi_spot_ids:
-        num_visits = random.randint(0, max(1, DATASET_SIZE // 100))
+        num_visits = random.randint(0, DATASET_SIZE // 1000)
         for _ in range(num_visits):
             visit_id = str(uuid.uuid4())
             visit_ids.append((visit_id, spot_id))
@@ -100,11 +62,8 @@ def generate_bulk_json():
                 "user_id": user_id,
                 "wifi_spot": {
                     "_id": spot_id,
-                    "name": faker.company(),
-                    "location": f"{faker.street_address()}, {faker.city()}"
-                },
-                "start_time": start.isoformat(),
-                "end_time": end.isoformat()
+                    "name": faker.company()
+                }
             })
 
     # Reviews com atributos embutidos
@@ -117,15 +76,11 @@ def generate_bulk_json():
             "_id": review_id,
             "wifi_spot_id": spot_id,
             "user_id": user_id,
-            "comment": faker.text(60),
-            "create_date_time": faker.date_time_this_decade().isoformat(),
-            "overall_classification": random.randint(1, 5),
             "attributes": []
         }
         for attr in random.sample(REVIEW_ATTRIBUTES, k=random.randint(2, 5)):
             review["attributes"].append({
-                "name": attr,
-                "value": random.choice(["low", "medium", "high"])
+                "name": attr
             })
         reviews.append(review)
 

@@ -28,21 +28,21 @@ import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
 public class WifiSpotVisitController {
     private final WifiSpotVisitService wifiSpotVisitService;
 
-    @PostMapping("/mysql/create")
-    public ResponseEntity<String> importCsv() {
-        wifiSpotVisitService.importFromCsv();
+    @PostMapping("/mysql/create/{DATA_SIZE}")
+    public ResponseEntity<String> importCsv(@PathVariable("DATA_SIZE") String dataSize) {
+        wifiSpotVisitService.importFromCsv(dataSize);
         return ResponseEntity.ok("Wi-Fi spots visits importados com sucesso!");
     }
 
-    @PostMapping("/mongodb/create")
-    public ResponseEntity<String> importCsvMongodb() {
-        wifiSpotVisitService.importFromJsonMongodb();
+    @PostMapping("/mongodb/create/{DATA_SIZE}")
+    public ResponseEntity<String> importCsvMongodb(@PathVariable("DATA_SIZE") String dataSize) {
+        wifiSpotVisitService.importFromJsonMongodb(dataSize);
         return ResponseEntity.ok("Wi-Fi spots visits importados com sucesso!");
     }
 
-    @PostMapping("/cassandra/create")
-    public ResponseEntity<String> importCsvCassandra() {
-        wifiSpotVisitService.importFromCsvCassandra();
+    @PostMapping("/cassandra/create/{DATA_SIZE}")
+    public ResponseEntity<String> importCsvCassandra(@PathVariable("DATA_SIZE") String dataSize) {
+        wifiSpotVisitService.importFromCsvCassandra(dataSize);
         return ResponseEntity.ok("Wi-Fi spots visits importados com sucesso!");
     }
 

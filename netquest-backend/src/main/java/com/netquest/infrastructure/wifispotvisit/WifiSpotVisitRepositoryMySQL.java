@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Repository
 public class WifiSpotVisitRepositoryMySQL {
-    private final String url = "jdbc:mysql://192.168.1.6:3306/netQuest";
+    private final String url = "jdbc:mysql://192.168.1.9:3306/netQuest";
     private final String username = "netQuest";
     private final String password = "netQuestLocal";
 
