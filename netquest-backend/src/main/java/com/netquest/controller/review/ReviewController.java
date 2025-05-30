@@ -104,7 +104,7 @@ public class ReviewController {
             List<String> lines = Files.readAllLines(Paths.get("scripts/mysql/"+dataSize+"/review.csv"));
             lines.remove(0);
 
-            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/mysql/"+DATA_SIZE+"/review_attribute_classification.csv"))
+            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/mysql/"+dataSize+"/review_attribute_classification.csv"))
                     .stream()
                     .skip(1)
                     .map(line -> line.split(","))
@@ -179,7 +179,7 @@ public class ReviewController {
             List<String> lines = Files.readAllLines(Paths.get("scripts/cassandra/"+dataSize+"/cassandra_review.csv"));
             lines.remove(0);
 
-            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/cassandra/"+DATA_SIZE+"/cassandra_review_attribute_classification.csv"))
+            Map<String, List<ReviewAttributeClassificationDto>> attributesMap = Files.readAllLines(Paths.get("scripts/cassandra/"+dataSize+"/cassandra_review_attribute_classification.csv"))
                     .stream()
                     .skip(1)
                     .map(line -> line.split(","))
