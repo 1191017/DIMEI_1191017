@@ -124,7 +124,7 @@ public class ReviewController {
 
                 ReviewCreateDto dto = new ReviewCreateDto();
                 dto.setReviewId(UUID.fromString(reviewId));
-                dto.setWifiSpotId(UUID.fromString(parts[3]));
+                dto.setWifiSpotId(UUID.fromString(parts[2]));
                 dto.setReviewComment("comentário");
                 dto.setReviewOverallClassification(1);
                 dto.setReviewAttributeClassificationDtoList(attrList);
@@ -133,7 +133,7 @@ public class ReviewController {
             }
 
             for (ReviewCreateDto dto : dtos) {
-                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(",")[2]));
+                reviewService.createReviewMySQL(dto, UUID.fromString(lines.get(dtos.indexOf(dto)).split(",")[1]));
             }
 
             return ResponseEntity.ok("Created " + dtos.size() + " reviews in MySQL.");
