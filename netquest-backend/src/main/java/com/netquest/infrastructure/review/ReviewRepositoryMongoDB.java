@@ -1,5 +1,6 @@
 package com.netquest.infrastructure.review;
 
+import com.mongodb.client.model.Variable;
 import com.netquest.domain.review.dto.ReviewAttributeClassificationDto;
 import com.netquest.domain.review.dto.ReviewDto;
 import com.netquest.domain.review.dto.ReviewFeedDto;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Aggregates.*;
+import static com.mongodb.client.model.Filters.expr;
 
 @Repository
 public class ReviewRepositoryMongoDB {
@@ -102,8 +104,15 @@ public class ReviewRepositoryMongoDB {
                 lookup("wifi_spot", "wifi_spot_id", "_id", "wifi_spot_info"),
                 unwind("$wifi_spot_info"),
 
-                lookup("wifi_spot_visit", "wifi_spot_id", "wifi_spot_id", "visits"),
-                match(Filters.expr(new Document("$gt", List.of(new Document("$size", "$visits"), 0))))
+                lookup("wifi_spot_visit",
+                        List.of(
+                                match(expr(new Document("$eq", List.of("$$wifi_spot_id", "$wifi_spot._id"))))
+                        ).toString(),
+                        List.of(new Variable<>("wifi_spot_id", "$wifi_spot_id")).toString(),
+                        "visits"
+                ),
+
+                match(expr(new Document("$gt", List.of(new Document("$size", "$visits"), 0))))
         );
 
         List<ReviewFeedDto> reviewFeed = new ArrayList<>();

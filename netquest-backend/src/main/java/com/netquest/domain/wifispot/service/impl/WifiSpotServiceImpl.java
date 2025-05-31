@@ -159,15 +159,14 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     }
 
     private WifiSpotAddressCreateDto parseAddressDto(Map<String, Object> rawSpot) {
-        Map<String, Object> addr = (Map<String, Object>) rawSpot.get("address");
         return new WifiSpotAddressCreateDto(
                 UUID.randomUUID().toString(),
-                (String) addr.get("country"),
-                (String) addr.get("zip_code"),
-                (String) addr.get("line1"),
-                (String) addr.get("line2"),
-                (String) addr.get("city"),
-                (String) addr.get("district")
+                "country",
+                "zip",
+                "line1",
+                "line2",
+                "city",
+                "district"
         );
     }
 

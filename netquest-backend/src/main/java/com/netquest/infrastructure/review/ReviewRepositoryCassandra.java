@@ -148,14 +148,14 @@ public class ReviewRepositoryCassandra {
         String userQuery = "SELECT user_name FROM users WHERE user_id = ?";
         ResultSet rs = session.execute(session.prepare(userQuery).bind(userId));
         Row row = rs.one();
-        return row != null ? row.getString("username") : "Unknown";
+        return row != null ? row.getString("user_name") : "Unknown";
     }
 
     private String getWifiSpotName(UUID wifiSpotId) {
         String spotQuery = "SELECT wifi_spot_name FROM wifi_spot WHERE wifi_spot_id = ?";
         ResultSet rs = session.execute(session.prepare(spotQuery).bind(wifiSpotId));
         Row row = rs.one();
-        return row != null ? row.getString("name") : "Unknown";
+        return row != null ? row.getString("wifi_spot_name") : "Unknown";
     }
 
     // Fetch review attributes separately

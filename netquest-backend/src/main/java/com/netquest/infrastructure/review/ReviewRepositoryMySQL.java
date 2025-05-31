@@ -135,7 +135,7 @@ public class ReviewRepositoryMySQL {
         FROM review r
         JOIN users u ON r.review_user_id = u.user_id
         JOIN wifi_spot w ON r.review_wifi_spot_id = w.wifi_spot_id
-        JOIN wifi_spot_visit v ON r.review_wifi_spot_id = v.wifi_spot_id
+        JOIN wifi_spot_visit v ON r.review_wifi_spot_id = v.wifi_spot_visit_wifi_spot_id
         GROUP BY r.review_id 
         ORDER BY r.review_create_date_time DESC
     """;

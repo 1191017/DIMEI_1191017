@@ -89,10 +89,12 @@ public class WifiSpotController {
 
     private List<Pair<UUID, String>> parseJson(String path) throws IOException {
         List<Pair<UUID, String>> updates = new ArrayList<>();
+        int lineNumber = 0;
         JsonNode root = objectMapper.readTree(Files.newBufferedReader(Paths.get(path)));
         for (JsonNode node : root) {
+            lineNumber++;
             UUID id = UUID.fromString(node.get("_id").asText());
-            String name = node.get("name").asText();
+            String name = "nomeupdated"+lineNumber;
             updates.add(Pair.of(id, name));
         }
         return updates;
