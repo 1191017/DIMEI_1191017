@@ -199,15 +199,17 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         try (BufferedReader reader = new BufferedReader(new FileReader("scripts/mysql/"+DATA_SIZE+"/wifi_spot_visit.csv", StandardCharsets.UTF_8))) {
             String header = reader.readLine(); // skip header
             String line;
+            int lineNumber = 0;
 
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 String[] c = line.split(","); // -1 para manter vazios
 
                 WifiSpotVisitCreateDto dto = new WifiSpotVisitCreateDto();
                 dto.setWifiSpotVisitId(UUID.fromString(c[0]));
                 dto.setWifiSpotId(UUID.fromString(c[2]));
                 dto.setStartDateTime(LocalDateTime.now());
-                dto.setEndDateTime(LocalDateTime.now().plusHours(1));
+                dto.setEndDateTime(LocalDateTime.now().plusHours(lineNumber));
 
                 wifiSpotVisitRepositoryMySQL.createWifiSpotVisit(UUID.fromString(c[1]), dto);
             }
@@ -219,14 +221,16 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
 
     public void importFromJsonMongodb(String DATA_SIZE) {
         try {
+            int lineNumber = 0;
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(new File("scripts/mongodb/"+DATA_SIZE+"/wifi_spot_visit.json"));
 
             for (JsonNode visitNode : root) {
+                lineNumber++;
                 WifiSpotVisitCreateDto dto = new WifiSpotVisitCreateDto();
                 dto.setWifiSpotVisitId(UUID.fromString(visitNode.get("_id").asText()));
                 dto.setStartDateTime(LocalDateTime.now());
-                dto.setEndDateTime(LocalDateTime.now().plusHours(1));
+                dto.setEndDateTime(LocalDateTime.now().plusHours(lineNumber));
                 dto.setWifiSpotId(UUID.fromString(visitNode.get("wifi_spot").get("_id").asText()));
 
                 wifiSpotVisitRepositoryMongoDB.createWifiSpotVisit(UUID.fromString(visitNode.get("user_id").asText()), dto);
@@ -241,15 +245,17 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         try (BufferedReader reader = new BufferedReader(new FileReader("scripts/cassandra/"+DATA_SIZE+"/cassandra_wifi_spot_visit.csv", StandardCharsets.UTF_8))) {
             String header = reader.readLine(); // skip header
             String line;
+            int lineNumber = 0;
 
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 String[] c = line.split(",", -1);
 
                 WifiSpotVisitCreateDto dto = new WifiSpotVisitCreateDto();
                 dto.setWifiSpotVisitId(UUID.fromString(c[1]));              // visit_id
                 dto.setWifiSpotId(UUID.fromString(c[2]));                   // wifi_spot_id
                 dto.setStartDateTime(LocalDateTime.now());            // visit_start
-                dto.setEndDateTime(LocalDateTime.now().plusHours(1));              // visit_end
+                dto.setEndDateTime(LocalDateTime.now().plusHours(lineNumber));              // visit_end
 
                 wifiSpotVisitRepositoryCassandra.createWifiSpotVisit(UUID.fromString(c[0]), dto);
             }

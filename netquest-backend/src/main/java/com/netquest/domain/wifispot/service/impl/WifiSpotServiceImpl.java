@@ -58,7 +58,9 @@ public class WifiSpotServiceImpl implements WifiSpotService {
 
             String header = reader.readLine(); // skip header
             String line;
+            int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 String[] cols = line.split(",");
 
                 WifiSpotAddressCreateDto addressDto = new WifiSpotAddressCreateDto(
@@ -66,7 +68,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 );
 
                 WifiSpotCreateDto spotDto = new WifiSpotCreateDto(
-                        UUID.fromString(cols[0]), "nome", "descrição", 2, 3,
+                        UUID.fromString(cols[0]), "nome"+lineNumber, "descrição", 2, 3,
                         null,
                         null,
                         null,
@@ -96,11 +98,13 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     public void importFromCsvMongodb(String DATA_SIZE) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
+            int lineNumber = 0;
             List<Map<String, Object>> rawSpots = objectMapper.readValue(
                     new File("scripts/mongodb/"+DATA_SIZE+"/wifi_spot.json"), new TypeReference<>() {
                     });
 
             for (Map<String, Object> rawSpot : rawSpots) {
+                lineNumber++;
                 UUID id = UUID.fromString((String) rawSpot.get("_id"));
                 UUID userId = UUID.fromString((String) rawSpot.get("user_id"));
                 String name = (String) rawSpot.get("name");
@@ -112,7 +116,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
 
                 WifiSpotCreateDto spotDto = new WifiSpotCreateDto(
                         id,
-                        name,
+                        name+lineNumber,
                         description,
                         latitude,
                         longitude,
@@ -172,8 +176,10 @@ public class WifiSpotServiceImpl implements WifiSpotService {
 
             String header = reader.readLine(); // skip header
             String line;
+            int lineNumber = 0;
 
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 String[] c = line.split(",", -1); // keep empty values
 
                 UUID spotId = UUID.fromString(c[0]);
@@ -192,7 +198,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
 
                 WifiSpotCreateDto spotDto = new WifiSpotCreateDto(
                         spotId,
-                        "nome",  // name
+                        "nome"+lineNumber,  // name
                         "descrição",  // description
                         1,
                         2,
