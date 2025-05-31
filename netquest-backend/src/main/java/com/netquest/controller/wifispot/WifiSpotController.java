@@ -71,14 +71,16 @@ public class WifiSpotController {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(path))) {
             String line;
             boolean skip = true;
+            int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 if (skip) {
                     skip = false;
                     continue;
                 }
                 String[] parts = line.split(",");
                 if (parts.length >= 2) {
-                    updates.add(Pair.of(UUID.fromString(parts[0].trim()), mysql ? parts[2].trim() : parts[1].trim()));
+                    updates.add(Pair.of(UUID.fromString(parts[0].trim()), "nomeupdated"+lineNumber));
                 }
             }
         }
