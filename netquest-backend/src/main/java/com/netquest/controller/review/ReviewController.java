@@ -86,12 +86,12 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/mongodb/wifiSpot/{wifiSpotId}")
+    @PostMapping("/mongodb/wifiSpot/{wifiSpotId}")
     public ResponseEntity<List<ReviewDto>> getReviewsForWifiSpotMongoDB(@PathVariable String wifiSpotId) {
         return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMongoDB(UUID.fromString(wifiSpotId)));
     }
 
-    @GetMapping("/mongodb/feed")
+    @PostMapping("/mongodb/feed")
     public ResponseEntity<List<ReviewFeedDto>> getReviewFeedMongoDB() {
         return ResponseEntity.ok(reviewService.getReviewFeedMongoDB());
     }
@@ -161,12 +161,12 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/mysql/wifiSpot/{wifiSpotId}")
+    @PostMapping("/mysql/wifiSpot/{wifiSpotId}")
     public ResponseEntity<List<ReviewDto>> getReviewsForWifiSpotMySQL(@PathVariable String wifiSpotId) {
         return ResponseEntity.ok(reviewService.getReviewsForWifiSpotMySQL(UUID.fromString(wifiSpotId)));
     }
 
-    @GetMapping("/mysql/feed")
+    @PostMapping("/mysql/feed")
     public ResponseEntity<List<ReviewFeedDto>> getReviewFeedMySQL() {
         return ResponseEntity.ok(reviewService.getReviewFeedMySQL());
     }
@@ -236,12 +236,12 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/cassandra/wifiSpot/{wifiSpotId}")
+    @PostMapping("/cassandra/wifiSpot/{wifiSpotId}")
     public ResponseEntity<List<ReviewDto>> getReviewsForWifiSpotCassandra(@PathVariable String wifiSpotId) {
         return ResponseEntity.ok(reviewService.getReviewsForWifiSpotCassandra(UUID.fromString(wifiSpotId)));
     }
 
-    @GetMapping("/cassandra/feed")
+    @PostMapping("/cassandra/feed")
     public ResponseEntity<List<ReviewFeedDto>> getReviewFeedCassandra() {
         return ResponseEntity.ok(reviewService.getReviewFeedCassandra());
     }
