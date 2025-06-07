@@ -18,10 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Aggregates.*;
@@ -98,24 +95,23 @@ public class ReviewRepositoryMongoDB {
     // 5.3.5 - Get review feed with user and Wi-Fi spot info
     public List<ReviewFeedDto> getReviewFeed() {
         List<Bson> pipeline = List.of(
-                lookup("users", "user_id", "_id", "user_info"),
-                unwind("$user_info"),
+                // Join user data
+                Aggregates.lookup("users", "user_id", "_id", "user_info"),
+                Aggregates.unwind("$user_info"),
 
-                lookup("wifi_spot", "wifi_spot_id", "_id", "wifi_spot_info"),
-                unwind("$wifi_spot_info"),
+                // Join WiFi spot data
+                Aggregates.lookup("wifi_spot", "wifi_spot_id", "_id", "wifi_spot_info"),
+                Aggregates.unwind("$wifi_spot_info"),
 
-                lookup("wifi_spot_visit",
-                        List.of(
-                                match(expr(new Document("$eq", List.of("$$wifi_spot_id", "$wifi_spot._id"))))
-                        ).toString(),
-                        List.of(new Variable<>("wifi_spot_id", "$wifi_spot_id")).toString(),
-                        "visits"
-                ),
+                // Optimized lookup: joins directly on wifi_spot_id (must exist in wifi_spot_visit)
+                Aggregates.lookup("wifi_spot_visit", "wifi_spot_id", "wifi_spot_id", "visits"),
 
-                match(expr(new Document("$gt", List.of(new Document("$size", "$visits"), 0))))
+                // Keep only reviews with at least 1 visit
+                Aggregates.match(Filters.expr(new Document("$gt", List.of(new Document("$size", "$visits"), 0))))
         );
 
         List<ReviewFeedDto> reviewFeed = new ArrayList<>();
+
         for (Document doc : collection.aggregate(pipeline)) {
             LocalDateTime dateTime = LocalDateTime.ofInstant(
                     doc.getDate("create_date_time").toInstant(),
@@ -123,12 +119,17 @@ public class ReviewRepositoryMongoDB {
             );
 
             List<Document> attrDocs = doc.getList("attributes", Document.class);
-            List<ReviewAttributeClassificationDto> attributes = attrDocs.stream()
+            List<ReviewAttributeClassificationDto> attributes = attrDocs != null
+                    ? attrDocs.stream()
                     .map(attr -> new ReviewAttributeClassificationDto(
                             attr.getString("name"),
                             attr.getString("value")
                     ))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+                    : Collections.emptyList();
+
+            Document userInfo = doc.get("user_info", Document.class);
+            Document wifiSpotInfo = doc.get("wifi_spot_info", Document.class);
 
             reviewFeed.add(new ReviewFeedDto(
                     doc.get("_id", UUID.class),
@@ -137,9 +138,9 @@ public class ReviewRepositoryMongoDB {
                     doc.getInteger("overall_classification"),
                     attributes,
                     doc.get("user_id", UUID.class),
-                    doc.get("user_info", Document.class).getString("user_name"),
+                    userInfo != null ? userInfo.getString("user_name") : null,
                     doc.get("wifi_spot_id", UUID.class),
-                    doc.get("wifi_spot_info", Document.class).getString("name")
+                    wifiSpotInfo != null ? wifiSpotInfo.getString("name") : null
             ));
         }
 
