@@ -50,6 +50,7 @@ public class WifiSpotVisitRepositoryMongoDB {
         Document visit = new Document()
                 .append("_id", dto.getWifiSpotVisitId())
                 .append("user_id", userId)
+                .append("wifi_spot_id", dto.getWifiSpotId())
                 .append("wifi_spot", embeddedWifiSpot)
                 .append("start_time", Date.from(dto.getStartDateTime().atZone(ZoneOffset.UTC).toInstant()))
                 .append("end_time", dto.getEndDateTime() != null

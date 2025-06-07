@@ -103,9 +103,7 @@ public class ReviewRepositoryMongoDB {
                 Aggregates.lookup("wifi_spot", "wifi_spot_id", "_id", "wifi_spot_info"),
                 Aggregates.unwind("$wifi_spot_info"),
 
-                // Optimized lookup: joins directly on wifi_spot_id (must exist in wifi_spot_visit)
                 Aggregates.lookup("wifi_spot_visit", "wifi_spot_id", "wifi_spot_id", "visits"),
-
                 // Keep only reviews with at least 1 visit
                 Aggregates.match(Filters.expr(new Document("$gt", List.of(new Document("$size", "$visits"), 0))))
         );
