@@ -121,7 +121,7 @@ public class ReviewRepositoryMySQL {
     // 5.3.5 - Complex Select: Get review feed with user and Wi-Fi Spot info
     public List<ReviewFeedDto> getReviewFeed() {
         String sql = """
-        SELECT 
+        SELECT DISTINCT
             BIN_TO_UUID(r.review_id) AS review_id,
             r.review_comment,
             r.review_create_date_time,
@@ -136,7 +136,6 @@ public class ReviewRepositoryMySQL {
         JOIN users u ON r.review_user_id = u.user_id
         JOIN wifi_spot w ON r.review_wifi_spot_id = w.wifi_spot_id
         JOIN wifi_spot_visit v ON r.review_wifi_spot_id = v.wifi_spot_visit_wifi_spot_id
-        GROUP BY r.review_id 
         ORDER BY r.review_create_date_time DESC
     """;
 
