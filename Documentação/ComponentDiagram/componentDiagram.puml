@@ -1,0 +1,30 @@
+@startuml Component Diagram Level 2
+left to right direction
+
+component system_backend as "Java System Backend" {
+    portin " " as port_backend_from_db
+}
+
+database database_mysql_db as "MySQL Relational Database" {
+    portout " " as port_db_from_backend
+}
+
+database database_mongodb_db as "MongoDB Database" {
+    portout " " as port_db_from_backend_mongodb
+}
+
+database database_cassandra_db as "Apache Cassandra Database" {
+    portout " " as port_db_from_backend_cassandra
+}
+
+interface interface_mysql_db as "JDBC" 
+interface interface_mongodb_db as "MongoDB Java Driver" 
+interface interface_cassandra_db as "DataStax Java Driver" 
+
+port_db_from_backend -- interface_mysql_db
+port_backend_from_db -up-( interface_mysql_db
+port_db_from_backend_mongodb -- interface_mongodb_db
+port_backend_from_db -up-( interface_mongodb_db
+port_db_from_backend_cassandra -- interface_cassandra_db
+port_backend_from_db -up-( interface_cassandra_db
+@enduml

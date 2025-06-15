@@ -1,0 +1,15 @@
+@startuml
+skinparam componentStyle rectangle
+
+node "Application Server" {
+    [Backend (Java Spring Boot)]
+    [MySQL]
+    [MongoDB]
+    [Apache Cassandra]
+}
+
+[Backend (Java Spring Boot)] --> [MySQL] : JDBC
+[Backend (Java Spring Boot)] --> [MongoDB] : MongoDB Java Driver
+[Backend (Java Spring Boot)] --> [Apache Cassandra] : DataStax Java Driver
+
+@enduml
